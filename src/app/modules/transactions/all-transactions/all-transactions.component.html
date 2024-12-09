@@ -1,0 +1,14 @@
+<div class="container mt-2" id="all-transactions-section">
+    <h3>All Transactions</h3>
+    @for (transaction of transactions; track transaction) {
+    <div class="row">
+        <div class="col-sm-6">{{ transaction.description }}</div>
+        <div class="col-sm-6 text-right">Icon Placeholders</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">{{ transaction.acc_name }}</div>
+        <div class="col-sm-4 text-center">{{ transaction.date }}</div>
+        <div class="col-sm-4 text-right">{{ transaction.amount }}</div>
+    </div>
+    }
+</div>

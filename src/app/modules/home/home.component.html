@@ -1,0 +1,29 @@
+<div class="container mt-2" id="home-section">
+    <h3>Categories</h3>
+    <div class="row">
+        @for (category of categories; track category) {
+        <div class="col-md-2">
+            <div class="card category-box" (click)="setCategory(category.id)">
+                <img [src]="category.image" class="card-img-top" alt="{{ category.name }}">
+                <div class="category-header">{{ category.name }}</div>
+                <div class="card-body">
+                    <p class="card-title card-text float-right" [ngClass]="getClassVal(category.amount)">
+                        {{ category.amount }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <h3 id="selected-catagory-section">{{ selectedCategory.name }}</h3>
+    <div class="">
+        <div class="col-md-12">
+            <mat-selection-list #accounts [multiple]="false" (selectionChange)="onAccountSelected($event)">
+                @for (account of selectedCategory.accounts; track account) {
+                <mat-list-option [value]="account" togglePosition="before">{{ account.name }}</mat-list-option>
+                }
+            </mat-selection-list>
+        </div>
+    </div>
+</div>

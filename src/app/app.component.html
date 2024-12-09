@@ -1,0 +1,13 @@
+<app-header></app-header>
+
+<div class="show-alert alert alert-dismissible" role="alert">
+    <span>A simple danger alert—check it out!</span>
+    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<router-outlet></router-outlet>
+
+<app-footer></app-footer>
+
+<mat-icon class="scroller" (click)="scrollToTop()" matTooltip="Go to Top"
+    [matTooltipPosition]="'left'">arrow_circle_up</mat-icon>

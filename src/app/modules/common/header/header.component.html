@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="">Accounts Tracker</a>
+    <button class="navbar-toggler" type="button" (click)="toggle()" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse {{showClass}} navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="transactionsDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Transactions
+                </a>
+                <div class="dropdown-menu" aria-labelledby="transactionsDropdown">
+                    <a class="dropdown-item" href="#">All Transactions</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Recurring Transactions</a>
+                    <a class="dropdown-item" href="#">Scheduled Transactions</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Mail Transactions</a>
+                    <a class="dropdown-item" href="#">Transaction Tags</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Manage
+                </a>
+                <div class="dropdown-menu" aria-labelledby="manageDropdown">
+                    <a class="dropdown-item" href="#">Manage Mutual Funds</a>
+                    <a class="dropdown-item" href="#">Manage Equity Shares</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Manage Admin Activities</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="addDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Add
+                </a>
+                <div class="dropdown-menu" aria-labelledby="addDropdown">
+                    <a class="dropdown-item" href="#">Add Transaction</a>
+                    <a class="dropdown-item" href="#">Add Account</a>
+                    <a class="dropdown-item" href="#">Add Category</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Add Mail Filter Mapping</a>
+                    <a class="dropdown-item" href="#">Map Mutual Fund</a>
+                    <a class="dropdown-item" href="#">Map Stocks</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="#">Logout</a>
+            </li>
+        </ul>
+        <form class="form-line">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        </form>
+    </div>
+</nav>

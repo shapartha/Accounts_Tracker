@@ -1,0 +1,32 @@
+.card-img-top {
+    height: 140px;
+}
+
+#home-section {
+    padding-bottom: 40px;
+}
+
+.category-box {
+    cursor: pointer;
+}
+
+:host ::ng-deep .mat-mdc-list-option-radio-before {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .row>* {
+        width: 50% !important;
+    }
+}
+
+.category-header {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: white;
+    padding: 0 5px;
+    background: url('../../../assets/images/banner.gif');
+    color: white;
+    font-weight: bolder;
+}
