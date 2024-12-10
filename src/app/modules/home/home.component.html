@@ -7,7 +7,7 @@
                 <img [src]="category.image" class="card-img-top" alt="{{ category.name }}">
                 <div class="category-header">{{ category.name }}</div>
                 <div class="card-body">
-                    <p class="card-title card-text float-right" [ngClass]="getClassVal(category.amount)">
+                    <p class="card-title card-text float-end" [ngClass]="getClassVal(category.amount)">
                         {{ category.amount }}
                     </p>
                 </div>

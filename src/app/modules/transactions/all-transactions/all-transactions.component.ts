@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
+import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ApiConstants } from 'app/const/api.constants';
 import { AppConstants } from 'app/const/app.constants';
 import { Account } from 'app/models/account';
@@ -11,7 +13,7 @@ import { UtilService } from 'app/services/util.service';
 @Component({
   selector: 'app-all-transactions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule, ContextMenuModule],
   templateUrl: './all-transactions.component.html',
   styleUrl: './all-transactions.component.scss'
 })
@@ -102,6 +104,26 @@ export class AllTransactionsComponent implements OnInit {
     }
     this.inputParams.limit = this.transactionStartOffset + ", " + this.transactionEndOffset;
     this.fetchTransactions(this.inputParams, this.apiFuncName);
+  }
+
+  update(event: any) {
+    console.log(event);
+  }
+
+  showDeleteCopy(value: any) {
+    return value['is_mf'] != true && value['is_equity'] != true;
+  }
+
+  showRedeem(value: any) {
+    return value['is_mf'] == true || value['is_equity'] == true;
+  }
+
+  showMarkDelivery(value: any) {
+    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] != true && value['is_delivered'] != true;
+  }
+
+  showUnmarkSetDelivery(value: any) {
+    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] == true && value['is_delivered'] != true;
   }
 
   getMoneyVal(value: any, existingClass: string, negativeClass: string, positiveClass: string) {
