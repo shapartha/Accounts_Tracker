@@ -10,12 +10,12 @@
                 <a class="nav-link" href="">Home</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="transactionsDropdown" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="transactionsDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Transactions
                 </a>
                 <div class="dropdown-menu" aria-labelledby="transactionsDropdown">
-                    <a class="dropdown-item" href="#">All Transactions</a>
+                    <a class="dropdown-item" href="all-transactions">All Transactions</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">Recurring Transactions</a>
                     <a class="dropdown-item" href="#">Scheduled Transactions</a>
@@ -55,8 +55,9 @@
                 <a class="nav-link" href="#">Logout</a>
             </li>
         </ul>
-        <form class="form-line">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="form-line" (submit)="search()">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
+                [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}">
         </form>
     </div>
 </nav>

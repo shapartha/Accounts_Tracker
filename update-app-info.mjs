@@ -7,7 +7,7 @@ const buildDate = moment().format('DD-MM-YYYY HH:mm');
  
 const options = {
     files: 'src/app-info.ts',
-    from: [/version: '(.*)'/, /tag: '(.*)'/, /buildNumber: (.*)/, /buildDate: '(.*)'/],
+    from: [/version: '(.*)'/, /buildDate: '(.*)'/],
     to: ["version: 'v" + buildVersion + "'", "buildDate: '" + buildDate + "'"],
     allowEmptyPaths: false,
 };

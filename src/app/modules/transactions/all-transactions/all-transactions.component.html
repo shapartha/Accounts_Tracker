@@ -1,14 +1,29 @@
 <div class="container mt-2" id="all-transactions-section">
-    <h3>All Transactions</h3>
+    <h3>{{ transactionHeader }}</h3>
     @for (transaction of transactions; track transaction) {
-    <div class="row">
-        <div class="col-sm-6">{{ transaction.description }}</div>
-        <div class="col-sm-6 text-right">Icon Placeholders</div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4">{{ transaction.acc_name }}</div>
-        <div class="col-sm-4 text-center">{{ transaction.date }}</div>
-        <div class="col-sm-4 text-right">{{ transaction.amount }}</div>
+    <div [classList]="getMoneyVal(transaction, 'transaction-item pl-2 pr-2 pt-2 ', 'bg-danger-subtle', 'bg-success-subtle')">
+        <div class="row">
+            <div class="col-sm-6" style="font-size: 16px;">{{ transaction.description }}</div>
+            <div class="col-sm-6 text-right">Icon Placeholders</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">{{ transaction.acc_name }}</div>
+            <div class="col-sm-4 text-center">{{ transaction.date }}</div>
+            <div style="font-size: 16px;"
+                [classList]="getMoneyVal(transaction, 'col-sm-4 text-right font-weight-bold ', 'negative-val', 'positive-val')">
+                {{ transaction.amount }}
+            </div>
+        </div>
     </div>
     }
+    <div class="text-center paginator mt-3">
+        <span class="pr-3">Showing {{ (transactionStartOffset + 1) }} - {{ transactionStartOffset + noOfRecordsFetched
+            }} of {{ totalRecords }} records </span>
+        <div class="btn-group" role="group" aria-label="Navigator">
+            <button type="button" class="btn btn-outline-primary" (click)="prev()"
+                [disabled]="disablePrev">&lt;</button>
+            <button type="button" class="btn btn-outline-primary" (click)="next()"
+                [disabled]="disableNext">&gt;</button>
+        </div>
+    </div>
 </div>

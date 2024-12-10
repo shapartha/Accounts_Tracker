@@ -16,4 +16,5 @@ export class AppConstants {
         11: "Nov",
         12: "Dec"
     };
+    static FETCH_RECORDS_COUNT: number = 30;
 }

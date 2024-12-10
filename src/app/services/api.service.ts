@@ -42,9 +42,8 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getAllTransactions(apiFuncParams: any) {
-      const apiFuncName = ApiConstants.API_GET_ALL_TRANS;
-      return this.invokeApiCall(apiFuncName, apiFuncParams);
+  getTransactions(apiFuncParams: any, apiName: string) {
+      return this.invokeApiCall(apiName, apiFuncParams);
   }
 
   appendMandatoryParams(): string {
