@@ -11,14 +11,9 @@ import { UtilService } from 'app/services/util.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  showClass = '';
   searchText: string = '';
 
   constructor(private router: Router, private utilService: UtilService) { }
-
-  toggle() {
-    this.showClass = (this.showClass == '') ? 'show' : '';
-  }
 
   search() {
     this.router.navigate(['all-transactions'], {

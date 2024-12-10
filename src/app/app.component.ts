@@ -12,7 +12,7 @@ import { RouterOutlet } from '@angular/router';
   imports: [
     MatIconModule, MatTooltipModule, RouterOutlet,
     HeaderComponent, FooterComponent
-],
+  ],
   templateUrl: './app.component.html',
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   styleUrl: './app.component.scss'

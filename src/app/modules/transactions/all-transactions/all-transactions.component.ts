@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiConstants } from 'app/const/api.constants';
@@ -10,7 +11,7 @@ import { UtilService } from 'app/services/util.service';
 @Component({
   selector: 'app-all-transactions',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './all-transactions.component.html',
   styleUrl: './all-transactions.component.scss'
 })
