@@ -36,6 +36,12 @@
             ],
             "scripts": [
               "src/assets/scripts/app.script.js"
+            ],
+            "fileReplacements": [
+              {
+                "replace": "src/env/default.ts",
+                "with": "src/env/dev.ts"
+              }
             ]
           },
           "configurations": {
@@ -52,7 +58,13 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/env/default.ts",
+                  "with": "src/env/prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,

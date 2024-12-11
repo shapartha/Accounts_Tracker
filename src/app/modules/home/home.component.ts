@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { Router } from '@angular/router';
-import { AppConstants } from 'app/const/app.constants';
 import { Account } from 'app/models/account';
 import { Category } from 'app/models/category';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
+import { EnvConstants } from 'env/default';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +16,7 @@ import { UtilService } from 'app/services/util.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  linkPath = AppConstants.UI_HOSTED_URL;
+  linkPath = EnvConstants.UI_HOSTED_URL;
   categories: Category[] = [];
   selectedCategory: Category = {} as any;
 
