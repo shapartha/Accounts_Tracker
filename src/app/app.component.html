@@ -1,13 +1,10 @@
-<app-header></app-header>
+<app-header *ngIf="isLoggedIn"></app-header>
 
-<div class="show-alert alert alert-dismissible" role="alert">
-    <span>A simple danger alert—check it out!</span>
-    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-</div>
+<div class="show-alert"> </div>
 
 <router-outlet></router-outlet>
 
 <app-footer></app-footer>
 
-<mat-icon class="scroller" (click)="scrollToTop()" matTooltip="Go to Top"
+<mat-icon class="scroller" (click)="scrollToTop()" matTooltip="Go to Top" *ngIf="isLoggedIn"
     [matTooltipPosition]="'left'">arrow_circle_up</mat-icon>

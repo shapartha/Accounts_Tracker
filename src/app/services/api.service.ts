@@ -32,6 +32,11 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams, false);
   }
 
+  loginUser(apiFuncParams: any) {
+      const apiFuncName = ApiConstants.API_USER_LOGIN;
+      return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   getCategory(apiFuncParams: any): Observable<any> {
     const apiFuncName = ApiConstants.API_GET_CATEGORY;
     return this.invokeApiCall(apiFuncName, apiFuncParams);

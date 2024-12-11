@@ -5,6 +5,7 @@ export class ApiConstants {
     static API_GET_TRANS_BY_ACCOUNT: string = "getTransByAccount";
     static API_SEARCH_TRANSACTION: string = "searchTransactions";
     static API_GET_TOKEN: string = "getToken";
+    static API_USER_LOGIN: string = "getUserDataEmailPassword";
     
     static SERVER_URL: string = "https://shapartha.online/accountstracker/api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
