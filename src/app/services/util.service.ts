@@ -49,17 +49,17 @@ export class UtilService {
   eraseCookie(name: string) {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   }
-  
+
   getSessionStorageData(key: string) {
-      return sessionStorage.getItem(key);
+    return sessionStorage.getItem(key);
   }
-  
+
   setSessionStorageData(key: string, value: string) {
-      return sessionStorage.setItem(key, value);
+    return sessionStorage.setItem(key, value);
   }
-  
+
   removeSessionStorageData(key: string) {
-      return sessionStorage.removeItem(key);
+    return sessionStorage.removeItem(key);
   }
 
   removeAlert() {
@@ -135,5 +135,47 @@ export class UtilService {
 
   getMonthName(val: string): string {
     return AppConstants.MONTH[parseInt(val)];
+  }
+
+  formatStringValueToAmount(amt: string | undefined): number {
+      if (amt === undefined) {
+          return 0;
+      }
+      let arr = amt.split(AppConstants.RUPEE_SYMBOL);
+      return parseFloat(arr[0] + (arr[1]).replace(/,/g, ""));
+  }
+
+  getDate(_currDate?: string): string {
+    let _cDate: Date;
+    if (_currDate === undefined || _currDate === null) {
+      _cDate = new Date();
+    } else {
+      _cDate = new Date(_currDate);
+    }
+    return _cDate.getFullYear() + "-" + this.padLeadingZero(_cDate.getMonth() + 1) + "-" + this.padLeadingZero(_cDate.getDate());
+  }
+
+  padLeadingZero(s: any) {
+    return (s < 10) ? '0' + s : s;
+  }
+
+  convertEmailDate(_dateStr: string): string {
+    var __parts = _dateStr.split(" ");
+    let _time = __parts[1];
+    let _date = __parts[0];
+    let __date_parts = _date.split("-");
+    if (_time != undefined) {
+      return [__date_parts[0], this.getMonthName(parseInt(__date_parts[1]).toString()), __date_parts[2]].join('-') + ' ' + _time;
+    } else {
+      return [__date_parts[0], this.getMonthName(parseInt(__date_parts[1]).toString()), __date_parts[2]].join('-')
+    }
+  }
+
+  convertDate(_date?: any) {
+    var d = new Date();
+    if (_date !== undefined && _date !== null) {
+      d = new Date(_date);
+    }
+    return [this.padLeadingZero(d.getDate()), this.padLeadingZero(d.getMonth() + 1), d.getFullYear()].join('-')
   }
 }

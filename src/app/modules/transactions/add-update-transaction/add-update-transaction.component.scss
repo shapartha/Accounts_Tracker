@@ -1,3 +1,19 @@
 #add-update-transaction-section {
     padding-bottom: 40px;
 }
+
+#fileInput {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    height: 50px;
+    left: 0px;
+    top: 0px;
+}
+
+.mat-toolbar-single-row {
+    height: auto !important;
+    background: transparent;
+    padding: 0;
+}

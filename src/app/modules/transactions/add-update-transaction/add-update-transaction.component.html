@@ -1,115 +1,129 @@
 <div class="container mt-2" id="add-update-transaction-section">
     <h3>Add New Transaction</h3>
-<form [formGroup]="form">
-    <div class="row">
-        <mat-form-field appearance="outline" class="col-md-4 mt-3">
-            <mat-label>Amount</mat-label>
-            <input type="number" min="0" matInput placeholder="Amount" name="transAmount" required formControlName="amount">
-            <mat-error *ngIf="trans.amount == null || trans.amount == undefined">
-                Valid amount required.
-            </mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="col-md-4 mt-3">
-            <mat-label>Description</mat-label>
-            <input type="text" matInput placeholder="Description" name="transDesc" required formControlName="description">
-            <mat-error>
-                Valid description required.
-            </mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="col-md-4 mt-3">
-            <mat-label>Transaction Date</mat-label>
-            <input matInput [matDatepicker]="picker" required name="transDate" formControlName="transDate">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <mat-error>
-            Valid date required.
-            </mat-error>
-        </mat-form-field>
-    </div>
-    <mat-slide-toggle formControlName="isTransferTrans" name="isTransferTrans">Is this transfer transaction ? </mat-slide-toggle>
-    <div class="row">
-        <div class="col-md-4 mt-3" *ngIf="!form.get('isTransferTrans')?.value">
-            <mat-label>Select Transaction Type:</mat-label>
-            <mat-radio-group name="transType" formControlName="transType">
-                <mat-radio-button value="DEBIT">DEBIT</mat-radio-button>
-                <mat-radio-button value="CREDIT">CREDIT</mat-radio-button>
-            </mat-radio-group>
-            <mat-error *ngIf="!isValid && (trans.transType == null || trans.transType == undefined)" style="font-size: 75%;">
-            Valid transaction type required.
-            </mat-error>
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Amount</mat-label>
+                <input type="number" min="0" matInput placeholder="Amount" name="transAmount" required
+                    formControlName="amount">
+                <mat-error *ngIf="form.get('amount')?.value == null || form.get('amount')?.value == undefined">
+                    Valid amount required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Description</mat-label>
+                <input type="text" matInput placeholder="Description" name="transDesc" required
+                    formControlName="description">
+                <mat-error>
+                    Valid description required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Transaction Date</mat-label>
+                <input matInput [matDatepicker]="picker" required name="transDate" formControlName="transDate">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>
+                    Valid date required.
+                </mat-error>
+            </mat-form-field>
         </div>
-        <mat-form-field appearance="outline" class="col-md-4 mt-3">
-            <mat-label>From Account: </mat-label>
-            <mat-select formControlName="fromAccDetails" required name="fromAccDetails" (selectionChange)="onChangeFromAccount($event)">
-                <mat-option value="-1">None</mat-option>
-                <mat-option *ngFor="let item of fromAcc" value="{{item.id}}">{{item.name}}</mat-option>
-            </mat-select>
-            <mat-label *ngIf="form.get('fromAccDetails')?.value != '-1'">(Balance: {{fromAccBalance}})</mat-label>
-            <mat-error>
-                Valid from account required.
-            </mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="col-md-4 mt-3" *ngIf="form.get('isTransferTrans')?.value">
-            <mat-label>To Account: </mat-label>
-            <mat-select formControlName="toAccDetails" required name="toAccDetails" (selectionChange)="onChangeToAccount($event)">
-                <mat-option value="-1">None</mat-option>
-                <mat-option *ngFor="let item of toAcc" value="{{item.id}}">{{item.name}}</mat-option>
-            </mat-select>
-            <mat-label *ngIf="form.get('toAccBalance')?.value != '-1'">(Balance: {{toAccBalance}})</mat-label>
-            <mat-error>
-                Valid to account required.
-            </mat-error>
-        </mat-form-field>
-    </div>
-    <!-- <mat-form-field appearance="fill" *ngIf="isMf">
-        <mat-label>Select Mutual Fund Scheme: </mat-label>
-        <mat-select [(ngModel)]="mfSchemeCode" required name="mfSchemeCode" (selectionChange)="onChangeMfScheme($event)">
-          <mat-option>None</mat-option>
-          <mat-option *ngFor="let item of mfSchemes" value="{{item.scheme_code}}">{{item.scheme_name}}</mat-option>
-        </mat-select>
-        <mat-error>
-            Valid Mutual Fund scheme required.
-        </mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="fill" *ngIf="isMfSchemeSelected">
-        <mat-label>NAV Amount (as of {{selectedMfNavDate}})</mat-label>
-        <input type="number" matInput placeholder="NAV Amount" name="mfNavAmt" required [(ngModel)]="trans.mfNav">
-        <mat-error>
-            Valid NAV Amount required.
-        </mat-error>
-    </mat-form-field>
-    <mat-slide-toggle [(ngModel)]="isRecurringTrans" name="isRecurringTrans">Is this monthly recurring transaction ? </mat-slide-toggle>
-    <br>
-    <br>
-    <mat-form-field appearance="fill" *ngIf="isRecurringTrans">
-        <mat-label>Select Day of Month: </mat-label>
-        <mat-select [(ngModel)]="reccDate" required name="reccDate">
-          <mat-option>None</mat-option>
-          <mat-option *ngFor="let item of monthDays" value="{{item}}">{{item}}</mat-option>
-        </mat-select>
-        <mat-error>
-            Valid reccuring date required.
-        </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-        <mat-label>Upload Transaction Receipt: </mat-label>
-        <div>
-            <mat-toolbar>
-            <input matInput [value]="fileName" readonly />
-            <button mat-flat-button color="primary" (click)="fileUpload.click()">Select</button>
-            </mat-toolbar>
-            <input type="file" id="fileInput" (change)="selectFile($event)" name="fileInput" #fileUpload/>
+        <mat-slide-toggle formControlName="isTransferTrans" name="isTransferTrans">Is this transfer transaction ?
+        </mat-slide-toggle>
+        <div class="row">
+            <div class="col-md-4 mt-3" *ngIf="!form.get('isTransferTrans')?.value">
+                <mat-label>Select Transaction Type:</mat-label>
+                <mat-radio-group name="transType" formControlName="transType">
+                    <mat-radio-button value="DEBIT">DEBIT</mat-radio-button>
+                    <mat-radio-button value="CREDIT">CREDIT</mat-radio-button>
+                </mat-radio-group>
+                <mat-error *ngIf="!isValid && (form.get('transType')?.value == null || form.get('transType')?.value == undefined)"
+                    style="font-size: 75%;">
+                    Valid transaction type required.
+                </mat-error>
+            </div>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>From Account: </mat-label>
+                <mat-select formControlName="fromAccDetails" required name="fromAccDetails"
+                    (selectionChange)="onChangeFromAccount($event)">
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of fromAcc" value="{{item.id}}">{{item.name}}</mat-option>
+                </mat-select>
+                <mat-label *ngIf="form.get('fromAccDetails')?.value != ''">(Balance: {{fromAccBalance}})</mat-label>
+                <mat-error>
+                    Valid from account required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3" *ngIf="form.get('isTransferTrans')?.value">
+                <mat-label>To Account: </mat-label>
+                <mat-select formControlName="toAccDetails" name="toAccDetails"
+                    (selectionChange)="onChangeToAccount($event)">
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of toAcc" value="{{item.id}}">{{item.name}}</mat-option>
+                </mat-select>
+                <mat-label *ngIf="form.get('toAccBalance')?.value != ''">(Balance: {{toAccBalance}})</mat-label>
+                <mat-error>
+                    Valid to account required.
+                </mat-error>
+            </mat-form-field>
         </div>
-        <img id="upload-preview" *ngIf="currentFile" [src]="previewUrl" alt="your image" />
-        <div *ngIf="fileUploadMessage != ''" class="message">
-            {{ fileUploadMessage }}
+        <div class="row" *ngIf="isMf">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Select Mutual Fund Scheme: </mat-label>
+                <mat-select formControlName="mfSchemeCode" name="mfSchemeCode"
+                    (selectionChange)="onChangeMfScheme($event)">
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of mfSchemes"
+                        value="{{item.scheme_code}}">{{item.scheme_name}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid Mutual Fund scheme required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3"
+                *ngIf="!!form.get('mfSchemeCode')?.value && form.get('mfSchemeCode')?.value != ''">
+                <mat-label>NAV Amount (as of {{selectedMfNavDate}})</mat-label>
+                <input type="number" matInput placeholder="NAV Amount" name="mfNavAmt" formControlName="mfNav">
+                <mat-error>
+                    Valid NAV Amount required.
+                </mat-error>
+            </mat-form-field>
         </div>
-    </mat-form-field> -->
-    <div class="text-center mt-3">
-        <button class="btn btn-primary me-2" (click)="saveTransAndGoBack(trans)">Save</button>
-        <button class="btn btn-danger me-2" (click)="saveTrans(trans)">Save & Add More</button>
-        <button class="btn btn-success" (click)="handleRoute('home')">Cancel</button>
-    </div>
-</form>
+        <div class="row">
+            <mat-slide-toggle formControlName="isRecurringTrans" name="isRecurringTrans" class="col-md-4 mt-3">
+                Is this monthly recurring transaction ?
+            </mat-slide-toggle>
+            <mat-form-field appearance="outline" *ngIf="form.get('isRecurringTrans')?.value" class="col-md-4 mt-3">
+                <mat-label>Select Day of Month: </mat-label>
+                <mat-select formControlName="reccDate" name="reccDate">
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let item of monthDays" value="{{item}}">{{item}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid reccuring date required.
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline" class="mt-3 w-100">
+                <mat-label>Upload Transaction Receipt: </mat-label>
+                <div>
+                    <mat-toolbar>
+                        <input matInput [value]="fileName" readonly />
+                        <button mat-flat-button color="primary" (click)="fileUpload.click()">Select</button>
+                    </mat-toolbar>
+                    <input type="file" id="fileInput" (change)="selectFile($event)" name="fileInput" #fileUpload />
+                </div>
+                <img id="upload-preview" *ngIf="currentFile" [src]="previewUrl" alt="your image" />
+                <div *ngIf="fileUploadMessage != ''" class="message">
+                    {{ fileUploadMessage }}
+                </div>
+            </mat-form-field>
+        </div>
+        <div class="text-center mt-3">
+            <button class="btn btn-primary me-2" (click)="saveTrans(true)" [disabled]="!form.valid">Save</button>
+            <button class="btn btn-danger me-2" (click)="saveTrans()" [disabled]="!form.valid">Save & Add More</button>
+            <button class="btn btn-success" (click)="handleRoute('home')">Cancel</button>
+        </div>
+    </form>
 </div>

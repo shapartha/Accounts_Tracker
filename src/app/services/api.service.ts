@@ -33,12 +33,17 @@ export class ApiService {
   }
 
   loginUser(apiFuncParams: any) {
-      const apiFuncName = ApiConstants.API_USER_LOGIN;
-      return this.invokeApiCall(apiFuncName, apiFuncParams);
+    const apiFuncName = ApiConstants.API_USER_LOGIN;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
   getCategory(apiFuncParams: any): Observable<any> {
     const apiFuncName = ApiConstants.API_GET_CATEGORY;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getAllAccounts(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_ALL_ACCOUNTS;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
@@ -48,8 +53,23 @@ export class ApiService {
   }
 
   getTransactions(apiFuncParams: any, apiName: string) {
-      return this.invokeApiCall(apiName, apiFuncParams);
+    return this.invokeApiCall(apiName, apiFuncParams);
   }
+
+  getMfSchemesByAccount(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_MF_SCHEMES_BY_ACCOUNT;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  uploadReceiptImage(apiFuncParams: any): Observable<any> {
+    const apiFuncName = ApiConstants.API_UPLOAD_RECEIPT;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveTransaction(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_SAVE_TRANSACTION;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+}
 
   appendMandatoryParams(): string {
     let _apiJsonParams = "&apiKey=" + ApiConstants.API_KEY;
@@ -59,5 +79,14 @@ export class ApiService {
 
   invokeApiCall(apiFuncName: any, apiFuncParams: any, appendParams = true, serverUrl = ApiConstants.SERVER_URL) {
     return this.http.get<any>(serverUrl + "?apiFunctionName=" + encodeURIComponent(apiFuncName) + "&apiFunctionParams=" + encodeURIComponent(JSON.stringify(apiFuncParams)) + (appendParams == true ? this.appendMandatoryParams() : ''));
+  }
+
+  postApiCall(apiFuncName: any, apiFuncParams: any, appendParams = true, serverUrl = ApiConstants.SERVER_URL) {
+    const headers = {
+      'content-type': 'application/x-www-form-urlencoded',
+      'accept': 'application/json'
+    };
+    return this.http.post(serverUrl, "apiFunctionName=" + encodeURIComponent(apiFuncName) + "&apiFunctionParams=" + encodeURIComponent(JSON.stringify(apiFuncParams)) + (appendParams == true ? this.appendMandatoryParams() : ''),
+      { 'headers': headers });
   }
 }

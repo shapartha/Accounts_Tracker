@@ -1,6 +1,6 @@
 {
   "name": "accounts-tracker",
-  "version": "10.0.7",
+  "version": "10.0.8",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -24,6 +24,7 @@
     "@angular/router": "^17.3.0",
     "@perfectmemory/ngx-contextmenu": "^17.0.0",
     "moment-timezone": "^0.5.45",
+    "ngx-image-compress": "^18.1.5",
     "replace-in-file": "^8.2.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
