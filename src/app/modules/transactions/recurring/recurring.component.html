@@ -15,14 +15,16 @@
                         <p class="col-md-4 text-center">Due On {{
                             utilService.formatDate(utilService.getFullDate(trans.rec_trans_date))
                             }}</p>
-                        <p class="col-md-4 text-end">Last Executed: {{ utilService.formatDate(trans.rec_trans_last_executed) }}
+                        <p class="col-md-4 text-end">Last Executed: {{
+                            utilService.formatDate(trans.rec_trans_last_executed) }}
                         </p>
                     </div>
                     <div class="btn-group" role="group" aria-label="Action Buttons">
-                        <button type="button" class="btn btn-success">Process</button>
-                        <button type="button" class="btn btn-secondary">Skip</button>
-                        <button type="button" class="btn btn-secondary" *ngIf="trans.is_paused == '0'" (click)="pause(trans)">Pause</button>
-                        <button type="button" class="btn btn-warning">Update</button>
+                        <button type="button" class="btn btn-success" (click)="process(trans)">Process</button>
+                        <button type="button" class="btn btn-secondary" (click)="skip(trans)">Skip</button>
+                        <button type="button" class="btn btn-secondary" *ngIf="trans.is_paused == '0'"
+                            (click)="pause(trans)">Pause</button>
+                        <button type="button" class="btn btn-warning" (click)="update(content, trans)">Update</button>
                     </div>
                 </div>
             </div>
@@ -30,3 +32,24 @@
         }
     </ngb-carousel>
 </div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Update Recurring Transaction - {{ updateTrans.rec_trans_desc }}
+        </h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <label for="dateOfBirth">Date of birth</label>
+                <div class="input-group">
+                    Test
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="saveOrUpdate(updateTrans)">Update</button>
+    </div>
+</ng-template>

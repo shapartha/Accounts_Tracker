@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbCarousel, NgbCarouselModule, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDismissReasons, NgbCarousel, NgbCarouselModule, NgbModal, NgbModalRef, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { firstValueFrom } from 'rxjs';
@@ -17,9 +17,9 @@ export class RecurringComponent implements OnInit {
 
   pending_rec_trans: any[] = [];
   @Output() refreshParent: EventEmitter<any> = new EventEmitter();
+  updateTrans: any;
 
-
-  constructor(private apiService: ApiService, public utilService: UtilService) { }
+  constructor(private apiService: ApiService, public utilService: UtilService, private modalService: NgbModal) { }
 
   async ngOnInit() {
     setTimeout(() => {
@@ -86,67 +86,58 @@ export class RecurringComponent implements OnInit {
     return classListValue;
   }
 
-  // async processRecTransNow(item: any, edit?: number) {
-  //   this.appService.showLoader();
-  //   let _inpObj = {
-  //     desc: item.rec_trans_desc,
-  //     date: this.appService.convertDate(new Date()),
-  //     amount: item.rec_trans_amount,
-  //     rec_trans_id: item.rec_trans_id
-  //   };
-  //   if (edit !== undefined) {
-  //     _inpObj.desc = item.newRecDesc;
-  //     _inpObj.date = this.appService.convertDate(item.newRecTransExecDate);
-  //     _inpObj.amount = this.appService.roundUpAmount(item.newRecAmt);
-  //   }
-  //   const completeRecTransResp = await this.appService.completeRecurTrans(_inpObj);
-  //   if (completeRecTransResp.success === true) {
-  //     this.refreshPendRecTrans = true;
-  //     this.refreshTransactions = true;
+  async process(item: any, edit?: number) {
+    let _inpObj = {
+      desc: item.rec_trans_desc,
+      date: this.utilService.convertDate(new Date()),
+      amount: item.rec_trans_amount,
+      rec_trans_id: item.rec_trans_id
+    };
+    if (edit !== undefined) {
+      _inpObj.desc = item.newRecDesc;
+      _inpObj.date = this.utilService.convertDate(item.newRecTransExecDate);
+      _inpObj.amount = this.utilService.roundUpAmount(item.newRecAmt);
+    }
+    const completeRecTransResp: any = await firstValueFrom(this.apiService.completeRecurTrans(_inpObj));
+    if (completeRecTransResp.success === true) {
+      this.fetchRecurringTransToday();
+      this.refreshParent.emit();
+      this.utilService.showAlert("Recurring Transaction completed successfully.", 'success');
+    } else {
+      this.utilService.showAlert(completeRecTransResp);
+    }
+  }
 
-  //     let _updCat = this.categories.filter(_cat => _cat.id === item.category_id)[0];
-  //     let _updAct = _updCat.accounts!.filter(_acc => _acc.id === item.account_id)[0];
-  //     let _trnAmt = Number(item.rec_trans_amount);
-  //     if (item.rec_trans_type.toUpperCase() === 'CREDIT') {
-  //       _updAct.balance = this.appService.formatAmountWithComma(this.appService.formatStringValueToAmount(_updAct.balance) + _trnAmt);
-  //       _updCat.amount = this.appService.formatAmountWithComma(this.appService.formatStringValueToAmount(_updCat.amount) + _trnAmt);
-  //     } else {
-  //       _updAct.balance = this.appService.formatAmountWithComma(this.appService.formatStringValueToAmount(_updAct.balance) - _trnAmt);
-  //       _updCat.amount = this.appService.formatAmountWithComma(this.appService.formatStringValueToAmount(_updCat.amount) - _trnAmt);
-  //     }
-
-  //     this.appService.showAlert("Recurring Transaction completed successfully.")
-  //   } else {
-  //     this.appService.showAlert(completeRecTransResp);
-  //   }
-  //   this.appService.hideLoader();
-  // }
-
-  // async skipRecTrans(data: any) {
-  //   let _updTrans = {
-  //     rec_trans_desc: data.rec_trans_desc,
-  //     rec_trans_id: data.rec_trans_id,
-  //     rec_trans_last_executed: this.appService.convertDate(new Date()),
-  //     rec_trans_amount: data.rec_trans_amount,
-  //     rec_account_id: data.rec_account_id,
-  //     user_id: this.appService.getAppUserId,
-  //     rec_trans_date: data.rec_trans_date,
-  //     rec_mf_scheme_name: "0",
-  //     rec_trans_executed: "true"
-  //   };
-  //   if (data.is_mf === '1') {
-  //     _updTrans.rec_mf_scheme_name = data.rec_mf_scheme_name;
-  //   }
-  //   this.appService.showLoader();
-  //   const updRecTransResp = await this.appService.updateRecTrans([_updTrans]);
-  //   if (updRecTransResp[0].success === true) {
-  //     this.refreshPendRecTrans = true;
-  //     this.appService.showAlert("Recurring Transaction skipped for current occurrence successfully.");
-  //   } else {
-  //     this.appService.showAlert(updRecTransResp[0]);
-  //   }
-  //   this.appService.hideLoader();
-  // }
+  skip(data: any) {
+    let _updTrans = {
+      rec_trans_desc: data.rec_trans_desc,
+      rec_trans_id: data.rec_trans_id,
+      rec_trans_last_executed: this.utilService.convertDate(new Date()),
+      rec_trans_amount: data.rec_trans_amount,
+      rec_account_id: data.rec_account_id,
+      user_id: this.utilService.appUserId,
+      rec_trans_date: data.rec_trans_date,
+      rec_mf_scheme_name: "0",
+      rec_trans_executed: "true"
+    };
+    if (data.is_mf === '1') {
+      _updTrans.rec_mf_scheme_name = data.rec_mf_scheme_name;
+    }
+    this.apiService.updateRecTrans([_updTrans]).subscribe({
+      next: (updRecTransResp: any) => {
+        if (updRecTransResp[0].success === true) {
+          this.fetchRecurringTransToday();
+          this.refreshParent.emit();
+          this.utilService.showAlert("Recurring Transaction skipped for current occurrence successfully.", 'success');
+        } else {
+          this.utilService.showAlert(updRecTransResp[0]);
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+  }
 
   pause(data: any) {
     let _updTrans = {
@@ -159,11 +150,44 @@ export class RecurringComponent implements OnInit {
           this.fetchRecurringTransToday();
           this.refreshParent.emit();
           this.utilService.showAlert("Recurring Transaction Paused.", 'success');
+        } else {
+          this.utilService.showAlert(updRecTransResp[0]);
         }
       }, error: (err) => {
         console.error(err);
         this.utilService.showAlert(err);
       }
     });
+  }
+
+  modalRef: any;
+
+  update(content: TemplateRef<any>, data: any) {
+    this.updateTrans = data;
+    this.modalRef = this.modalService.open(content,
+      {
+        ariaLabelledBy: 'modal-basic-title',
+        backdrop: 'static',
+        keyboard: false,
+        fullscreen: 'md',
+        scrollable: true,
+        size: 'lg'
+      });
+    this.modalRef.result.then(
+      (result: any) => {
+        console.log(result);
+      },
+      (reason: any) => {
+        console.log(reason);
+      },
+    );
+  }
+
+  saveOrUpdate(item: any) {
+    item.newRecDesc = item.rec_trans_desc;
+    item.newRecTransExecDate = new Date();
+    item.newRecAmt = item.rec_trans_amount;
+    // this.process(item, 1);
+    this.modalRef.close('Save clicked');
   }
 }
