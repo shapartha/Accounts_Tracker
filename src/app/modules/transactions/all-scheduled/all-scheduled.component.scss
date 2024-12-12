@@ -2,6 +2,18 @@
     .card-text.row>* {
         width: 33% !important;
     }
+
+    .card-text.row {
+        font-size: 13px;
+    }
+
+    .card {
+        margin-bottom: 0 !important;
+    }
+}
+
+#all-scheduled-section {
+    padding-bottom: 40px;
 }
 
 .card-text.row {
