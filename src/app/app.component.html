@@ -8,3 +8,7 @@
 
 <mat-icon class="scroller" (click)="scrollToTop()" matTooltip="Go to Top" *ngIf="isLoggedIn"
     [matTooltipPosition]="'left'">arrow_circle_up</mat-icon>
+
+<ngx-spinner bdColor="rgba(0,0,0,0.7)" size="large" color="#fff" type="ball-fussion" [fullScreen]="true">
+    <p style="color: white"> Loading... </p>
+</ngx-spinner>

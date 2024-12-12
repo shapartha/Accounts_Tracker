@@ -1,13 +1,22 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppConstants } from 'app/const/app.constants';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilService {
 
-  constructor(private snackBar: MatSnackBar) { }
+  constructor(private snackBar: MatSnackBar, private spinner: NgxSpinnerService) { }
+
+  showLoadSpinner() {
+    this.spinner.show();
+  }
+
+  hideLoadSpinner() {
+    this.spinner.hide();
+  }
 
   public get appToken(): string {
     return this.getCookie('app-token');
