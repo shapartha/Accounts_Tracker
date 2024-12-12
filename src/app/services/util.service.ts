@@ -147,11 +147,11 @@ export class UtilService {
   }
 
   formatStringValueToAmount(amt: string | undefined): number {
-      if (amt === undefined) {
-          return 0;
-      }
-      let arr = amt.split(AppConstants.RUPEE_SYMBOL);
-      return parseFloat(arr[0] + (arr[1]).replace(/,/g, ""));
+    if (amt === undefined) {
+      return 0;
+    }
+    let arr = amt.split(AppConstants.RUPEE_SYMBOL);
+    return parseFloat(arr[0] + (arr[1]).replace(/,/g, ""));
   }
 
   getDate(_currDate?: string): string {
@@ -186,5 +186,13 @@ export class UtilService {
       d = new Date(_date);
     }
     return [this.padLeadingZero(d.getDate()), this.padLeadingZero(d.getMonth() + 1), d.getFullYear()].join('-')
+  }
+
+  getFullDate(day: number, month?: number) {
+    let d = new Date();
+    if (month === undefined) {
+      month = d.getMonth() + 1;
+    }
+    return [this.padLeadingZero(day), this.padLeadingZero(month), d.getFullYear()].join('-');
   }
 }

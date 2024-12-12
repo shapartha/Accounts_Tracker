@@ -69,7 +69,51 @@ export class ApiService {
   saveTransaction(apiFuncParams: any) {
     const apiFuncName = ApiConstants.API_SAVE_TRANSACTION;
     return this.postApiCall(apiFuncName, apiFuncParams);
-}
+  }
+
+  getRecurringTransToday(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_TODAY_RECUR_TRANS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getScheduledTransToday(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_TODAY_SCHEDULE_TRANS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  /**
+  * 
+  * @param apiFuncParams ops_mode : 1 - PROCESS, 2 - DELETE, 3 - POSTPONE
+  */
+  processScheduledTrans(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_PROCESS_SCHEDULED_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getAllScheduledTrans(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_ALL_SCHEDULED_TRANS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getAllRecurringTrans(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_ALL_RECUR_TRANS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  completeRecurTrans(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_COMPLETE_RECUR_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateRecTrans(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_UPDATE_RECUR_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteRecTrans(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_DELETE_RECUR_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
 
   appendMandatoryParams(): string {
     let _apiJsonParams = "&apiKey=" + ApiConstants.API_KEY;

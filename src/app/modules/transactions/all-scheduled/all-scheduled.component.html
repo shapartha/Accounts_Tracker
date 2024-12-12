@@ -1,0 +1,20 @@
+<div class="container">
+    <h3>All Scheduled Transactions</h3>
+    <div *ngIf="scheduled_trans == null || scheduled_trans.length == 0" class="no-trans-header">
+        No scheduled transactions available.
+    </div>
+    <div>
+        @for (trans of scheduled_trans; track trans; let i = $index) {
+        <div class="card">
+            <div class="card-body" [ngClass]="trans.trans_type == 'DEBIT' ? 'bg-info-subtle': 'bg-warning-subtle'">
+                <h5> {{ trans.trans_desc }}</h5>
+                <div class="card-text row">
+                    <p class="col-md-4">{{ trans.account_name }}</p>
+                    <p class="col-md-4 text-center">{{ trans.trans_date }}</p>
+                    <p class="col-md-4 text-end font-weight-bold" [ngClass]="trans.trans_type == 'DEBIT' ? 'negative-val': 'positive-val'" style="font-size: 1rem;">{{ trans.trans_amount }}</p>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

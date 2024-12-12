@@ -32,8 +32,9 @@ export class AllTransactionsComponent implements OnInit {
   inputParams: any;
   transactionHeader: string = 'All Transactions';
   pageLoaded = false;
+  showAmount = '';
 
-  constructor(private route: ActivatedRoute, private utilService: UtilService, private apiService: ApiService) {
+  constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService) {
     this.route.queryParams.subscribe({
       next: (params) => {
         if (params['text'] != null) {
@@ -67,6 +68,7 @@ export class AllTransactionsComponent implements OnInit {
     if (this.inputAccountData != null && this.inputAccountData.id != null) {
       this.apiFuncName = ApiConstants.API_GET_TRANS_BY_ACCOUNT;
       this.inputParams.account_id = this.inputAccountData.id;
+      this.showAmount = this.inputAccountData.balance;
       this.transactionHeader = this.inputAccountData.name + " - Transactions";
     } else if (this.inputSearchObj != null && this.inputSearchObj.user_id != null) {
       this.apiFuncName = ApiConstants.API_SEARCH_TRANSACTION;

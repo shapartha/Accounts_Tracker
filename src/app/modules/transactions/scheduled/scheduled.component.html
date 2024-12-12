@@ -1,0 +1,29 @@
+<div *ngIf="pending_scheduled_trans.length > 0">
+    <h3>Scheduled Transactions for Today</h3>
+    <ngb-carousel #carousel [interval]="slideInterval" [pauseOnHover]="pauseOnHover" [pauseOnFocus]="pauseOnFocus"
+        [showNavigationArrows]="false" (slide)="onSlide($event)">
+        @for (trans of pending_scheduled_trans; track trans; let i = $index) {
+        <ng-template ngbSlide>
+            <div class="card">
+                <h5 class="card-header bg-dark">{{ trans.trans_desc }}</h5>
+                <div
+                    [classList]="'card-body' + (trans.trans_type == 'DEBIT' ? ' bg-warning-subtle' : ' bg-primary-subtle')">
+                    <h5 class="" [classList]="getMoneyVal(trans, 'card-title ', 'negative-val', 'positive-val')">
+                        {{ utilService.formatAmountWithComma(trans.trans_amount) }}</h5>
+                    <div class="card-text row">
+                        <p class="col-md-6">{{ trans.account_name }}</p>
+                        <p class="col-md-6 text-end">Due On {{
+                            utilService.formatDate(utilService.getFullDate(trans.trans_date))
+                            }}</p>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Action Buttons">
+                        <button type="button" class="btn btn-success" (click)="process(trans)">Process</button>
+                        <button type="button" class="btn btn-danger" (click)="remove(trans)">Remove</button>
+                        <button type="button" class="btn btn-secondary" (click)="postpone(trans)">Postpone</button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        }
+    </ngb-carousel>
+</div>

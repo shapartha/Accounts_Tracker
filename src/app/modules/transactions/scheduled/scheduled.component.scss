@@ -1,0 +1,13 @@
+@media (max-width: 767px) {
+    .card-text.row>* {
+        width: 50% !important;
+    }
+}
+
+.card-header.bg-dark {
+    color: white;
+}
+
+.card-text.row {
+    font-size: 14px;
+}

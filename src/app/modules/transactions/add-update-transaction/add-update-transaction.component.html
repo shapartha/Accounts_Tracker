@@ -110,7 +110,7 @@
                 <div>
                     <mat-toolbar>
                         <input matInput [value]="fileName" readonly />
-                        <button mat-flat-button color="primary" (click)="fileUpload.click()">Select</button>
+                        <button class="btn btn-dark" color="primary" (click)="fileUpload.click()">Select</button>
                     </mat-toolbar>
                     <input type="file" id="fileInput" (change)="selectFile($event)" name="fileInput" #fileUpload />
                 </div>

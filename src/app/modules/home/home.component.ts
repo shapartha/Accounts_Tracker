@@ -7,11 +7,13 @@ import { Category } from 'app/models/category';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { EnvConstants } from 'env/default';
+import { RecurringComponent } from '../transactions/recurring/recurring.component';
+import { ScheduledComponent } from '../transactions/scheduled/scheduled.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, MatListModule],
+  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -20,7 +22,7 @@ export class HomeComponent implements OnInit {
   categories: Category[] = [];
   selectedCategory: Category = {} as any;
 
-  constructor(private apiService: ApiService, private utilService: UtilService, private router: Router) { }
+  constructor(private apiService: ApiService, public utilService: UtilService, private router: Router) { }
 
   ngOnInit(): void {
     this.getAllCategories();
@@ -46,6 +48,7 @@ export class HomeComponent implements OnInit {
     };
     this.apiService.getCategory(inputParams).subscribe({
       next: (data) => {
+        this.categories = [];
         if (data.success) {
           for (var i = 0; i < data.dataArray.length; i++) {
             let categoryAmt = 0;
@@ -100,5 +103,10 @@ export class HomeComponent implements OnInit {
   onAccountSelected(event: MatSelectionListChange) {
     const selectedAccount: Account = event.options[0].value;
     this.router.navigate(['all-transactions'], { state: selectedAccount });
+  }
+
+  refresh(event: any) {
+    this.getAllCategories();
+    this.selectedCategory = {} as Category;
   }
 }

@@ -1,4 +1,6 @@
 <div class="container mt-2" id="home-section">
+    <app-scheduled (refreshParent)="refresh($event)"></app-scheduled>
+    <app-recurring (refreshParent)="refresh($event)"></app-recurring>
     <h3>Categories</h3>
     <div class="row">
         @for (category of categories; track category) {
@@ -21,7 +23,12 @@
         <div class="col-md-12">
             <mat-selection-list #accounts [multiple]="false" (selectionChange)="onAccountSelected($event)">
                 @for (account of selectedCategory.accounts; track account) {
-                <mat-list-option [value]="account" togglePosition="before">{{ account.name }}</mat-list-option>
+                <mat-list-option [value]="account" togglePosition="before">
+                    {{ account.name }}
+                    <span class="float-end"
+                        [ngClass]="(utilService.formatStringValueToAmount(account.balance) < 0) ? 'negative-val': 'positive-val'">{{
+                        account.balance }}</span>
+                </mat-list-option>
                 }
             </mat-selection-list>
         </div>

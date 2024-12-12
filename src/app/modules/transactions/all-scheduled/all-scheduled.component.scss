@@ -1,0 +1,14 @@
+@media (max-width: 767px) {
+    .card-text.row>* {
+        width: 33% !important;
+    }
+}
+
+.card-text.row {
+    font-size: 14px;
+}
+
+.no-trans-header {
+    padding: 10px;
+    text-align: center;
+}

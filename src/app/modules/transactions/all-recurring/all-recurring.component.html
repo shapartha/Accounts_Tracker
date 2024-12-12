@@ -1,0 +1,21 @@
+<div class="container">
+    <h3>All Recurring Transactions</h3>
+    <div *ngIf="recurring_trans == null || recurring_trans.length == 0" class="no-trans-header">
+        No scheduled transactions available.
+    </div>
+    <div>
+        @for (trans of recurring_trans; track trans; let i = $index) {
+        <div class="card">
+            <div class="card-body" [ngClass]="trans.rec_trans_executed == '1' ? 'bg-success-subtle': ((trans.is_paused == '1') ? 'bg-secondary-subtle': 'bg-info-subtle')">
+                <h5> {{ trans.rec_trans_desc }}</h5>
+                <div class="card-text row">
+                    <span class="col-md-3 rec_trans_date">Recurring monthly on day {{ trans.rec_trans_date }}</span>
+                    <span class="col-md-3 rec_acc_name">{{ trans.account_name }}</span>
+                    <span class="col-md-3 rec_trans_last_executed_date">Last Executed: {{ trans.rec_trans_last_executed_date }}</span>
+                    <span class="col-md-3 text-end font-weight-bold" [ngClass]="trans.rec_trans_type == 'DEBIT' ? 'negative-val': 'positive-val'" style="font-size: 1rem;">{{ trans.rec_trans_amount }}</span>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

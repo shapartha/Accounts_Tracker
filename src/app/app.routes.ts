@@ -5,6 +5,8 @@ import { AddUpdateTransactionComponent } from './modules/transactions/add-update
 import { LoginComponent } from './modules/login/login.component';
 import { AuthGuard } from './services/auth.service';
 import { LogoutComponent } from './modules/logout/logout.component';
+import { AllRecurringComponent } from './modules/transactions/all-recurring/all-recurring.component';
+import { AllScheduledComponent } from './modules/transactions/all-scheduled/all-scheduled.component';
 
 export const routes: Routes = [
     {
@@ -16,6 +18,14 @@ export const routes: Routes = [
     {
         path: 'all-transactions',
         component: AllTransactionsComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'all-recurring',
+        component: AllRecurringComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'all-scheduled',
+        component: AllScheduledComponent, canActivate : [AuthGuard]
     },
     {
         path: 'add-transaction',

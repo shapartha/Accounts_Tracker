@@ -1,5 +1,9 @@
 <div class="container mt-2" id="all-transactions-section">
     <h3>{{ transactionHeader }}</h3>
+    <h4 *ngIf="inputAccountData != null && inputAccountData.id != null">Balance: <span
+            class="float-end font-weight-bold "
+            [ngClass]="utilService.formatStringValueToAmount(showAmount) < 0 ? 'negative-val': 'positive-val'">{{
+            showAmount }}</span></h4>
     @for (transaction of transactions; track transaction) {
     <div [contextMenu]="oneContextMenu" [contextMenuValue]="transaction"
         [classList]="getMoneyVal(transaction, 'transaction-item ps-2 pe-2 pt-2 ', 'bg-danger-subtle', 'bg-success-subtle')">
@@ -44,16 +48,14 @@
     <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="update($event)" let-value>Delete</ng-template>
     <!-- <ng-template contextMenuItem (execute)="update($event)" let-value>Generate Bill</ng-template> -->
     <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem All</ng-template>
-    <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem Partial</ng-template>
-    <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="update($event)" let-value>Mark as Delivery Order</ng-template>
-    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="update($event)" let-value>Unmark as Delivery Order</ng-template>
-    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="update($event)" let-value>Set Order Delivered</ng-template>
-    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="update($event)" let-value>Copy to New Transaction</ng-template>
-    <!-- <ng-template contextMenuItem (execute)="update($event)" let-value>Process Now</ng-template>
-    <ng-template contextMenuItem (execute)="update($event)" let-value>Remove</ng-template>
-    <ng-template contextMenuItem (execute)="update($event)" let-value>Postpone Tomorrow</ng-template>
-    <ng-template contextMenuItem (execute)="update($event)" let-value>Skip Current Occurrence</ng-template>
-    <ng-template contextMenuItem (execute)="update($event)" let-value>Update</ng-template>
-    <ng-template contextMenuItem (execute)="update($event)" let-value>Process Now</ng-template>
-    <ng-template contextMenuItem (execute)="update($event)" let-value>Pause</ng-template> -->
+    <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem
+        Partial</ng-template>
+    <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="update($event)" let-value>Mark as Delivery
+        Order</ng-template>
+    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="update($event)" let-value>Unmark as
+        Delivery Order</ng-template>
+    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="update($event)" let-value>Set Order
+        Delivered</ng-template>
+    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="update($event)" let-value>Copy to New
+        Transaction</ng-template>
 </context-menu>
