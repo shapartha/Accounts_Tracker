@@ -8,7 +8,7 @@ import { RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
   selector: 'app-root',

@@ -7,7 +7,7 @@
             <div class="card">
                 <h5 class="card-header bg-dark">{{ trans.rec_trans_desc }}</h5>
                 <div
-                    [classList]="'card-body' + (trans.rec_trans_type == 'DEBIT' ? ' bg-danger-subtle' : 'bg-success-subtle')">
+                    [classList]="'card-body' + (trans.rec_trans_type == 'DEBIT' ? ' bg-danger-subtle' : ' bg-success-subtle')">
                     <h5 class="" [classList]="getMoneyVal(trans, 'card-title ', 'negative-val', 'positive-val')">
                         {{ utilService.formatAmountWithComma(trans.rec_trans_amount) }}</h5>
                     <div class="card-text row">

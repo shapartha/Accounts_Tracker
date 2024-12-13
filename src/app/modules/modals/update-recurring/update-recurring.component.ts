@@ -1,3 +1,4 @@
+import { transition } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -63,6 +64,7 @@ export class UpdateRecurringComponent implements OnInit {
             this.accList.push(_acc);
           }
         });
+        this.onChangeAccount({ value: this.updateTransaction.account_id });
       },
       error: (err) => {
         this.utilService.showAlert(err);
@@ -80,18 +82,23 @@ export class UpdateRecurringComponent implements OnInit {
       transDate: this.updateTransaction.rec_trans_last_executed,
       hasExecuted: (this.updateTransaction.rec_trans_executed == '1') ? true : false,
       accountId: this.updateTransaction.account_id,
-      mfSchemeCode: this.updateTransaction.rec_mf_scheme_name,
+      mfSchemeCode: this.updateTransaction.rec_mf_scheme_code || this.updateTransaction.rec_mf_scheme_name,
       reccDate: this.updateTransaction.rec_trans_date
     });
     if (!this.isFullUpdate) {
       this.form.patchValue({
         transDate: this.utilService.getDate(),
       });
+    } else {
+      this.form.patchValue({
+        amount: this.utilService.roundUpAmount(this.utilService.formatStringValueToAmount(this.updateTransaction.rec_trans_amount)),
+        transDate: this.utilService.getDate(this.updateTransaction.rec_trans_last_executed)
+      });
     }
     for (var i = 1; i <= 28; i++) {
       this.monthDays.push(i);
     }
-    this.isMf = this.accList.find(acc => acc.id == this.form.get('accountId')?.value)?.is_mf == '1' ? true : false;
+    this.formData.emit(this.form.value);
     this.form.valueChanges.subscribe(val => {
       this.formData.emit(val);
     })

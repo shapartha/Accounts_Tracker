@@ -1,0 +1,19 @@
+<!-- Modal -->
+<div class="modal fade" id="confirmDialog" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="confirmDialogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="confirmDialogLabel">{{ modalTitle }}</h1>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ modalBody }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeConfirmDialog">Close</button>
+                <button type="button" class="btn btn-primary" (click)="submit()">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>

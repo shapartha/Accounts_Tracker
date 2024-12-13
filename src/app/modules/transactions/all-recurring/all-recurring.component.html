@@ -5,17 +5,59 @@
     </div>
     <div>
         @for (trans of recurring_trans; track trans; let i = $index) {
-        <div class="card">
-            <div class="card-body" [ngClass]="trans.rec_trans_executed == '1' ? 'bg-success-subtle': ((trans.is_paused == '1') ? 'bg-secondary-subtle': 'bg-info-subtle')">
-                <h5> {{ trans.rec_trans_desc }}</h5>
+        <div class="card" [contextMenu]="oneContextMenu" [contextMenuValue]="trans">
+            <div class="card-body"
+                [ngClass]="trans.rec_trans_executed == '1' ? 'bg-success-subtle': ((trans.is_paused == '1') ? 'bg-secondary-subtle': 'bg-info-subtle')">
+                <div class="row">
+                    <h5 class="col-md-6"> {{ trans.rec_trans_desc }}</h5>
+                    <span class="col-md-6" style="font-size: 14px; color: purple;" *ngIf="trans.is_mf == '1'">
+                        {{ trans.rec_mf_scheme_name }}
+                    </span>
+                </div>
                 <div class="card-text row">
                     <span class="col-md-3 rec_trans_date">Recurring monthly on day {{ trans.rec_trans_date }}</span>
                     <span class="col-md-3 rec_acc_name">{{ trans.account_name }}</span>
-                    <span class="col-md-3 rec_trans_last_executed_date">Last Executed: {{ trans.rec_trans_last_executed_date }}</span>
-                    <span class="col-md-3 text-end font-weight-bold" [ngClass]="trans.rec_trans_type == 'DEBIT' ? 'negative-val': 'positive-val'" style="font-size: 1rem;">{{ trans.rec_trans_amount }}</span>
+                    <span class="col-md-3 rec_trans_last_executed_date">Last Executed: {{ trans.rec_trans_last_executed
+                        }}</span>
+                    <span class="col-md-3 text-end font-weight-bold"
+                        [ngClass]="trans.rec_trans_type == 'DEBIT' ? 'negative-val': 'positive-val'"
+                        style="font-size: 1rem;">{{ trans.rec_trans_amount }}</span>
                 </div>
             </div>
         </div>
         }
     </div>
 </div>
+
+<context-menu #oneContextMenu [menuClass]="'app-rec-trans-context-menu'">
+    <ng-template contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
+    <ng-template contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
+    <ng-template [visible]="showPause" contextMenuItem (execute)="pause($event)" let-value>Pause</ng-template>
+    <ng-template [visible]="showResume" contextMenuItem (execute)="resume($event)" let-value>Resume</ng-template>
+</context-menu>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Update Recurring Transaction - {{ updateTrans.rec_trans_desc }}
+        </h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <app-update-recurring [updateTransaction]="updateTrans" (formData)="updatedRecord($event)"
+                    [isFullUpdate]="true"></app-update-recurring>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)">Update</button>
+    </div>
+</ng-template>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
+    [confirmObj]="confirmData" [canClose]="canClose"></app-confirm-dialog>
