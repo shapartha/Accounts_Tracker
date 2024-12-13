@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ModalDismissReasons, NgbCarousel, NgbCarouselModule, NgbModal, NgbModalRef, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarousel, NgbCarouselModule, NgbModal, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { firstValueFrom } from 'rxjs';
+import { UpdateRecurringComponent } from './../../modals/update-recurring/update-recurring.component';
 
 @Component({
   selector: 'app-recurring',
   standalone: true,
-  imports: [NgbCarouselModule, FormsModule, CommonModule],
+  imports: [NgbCarouselModule, FormsModule, CommonModule, UpdateRecurringComponent],
   templateUrl: './recurring.component.html',
   styleUrl: './recurring.component.scss'
 })
@@ -175,19 +176,26 @@ export class RecurringComponent implements OnInit {
       });
     this.modalRef.result.then(
       (result: any) => {
-        console.log(result);
+        console.log("Update - " + result);
       },
-      (reason: any) => {
-        console.log(reason);
-      },
+      (_reason: any) => { },
     );
   }
 
   saveOrUpdate(item: any) {
     item.newRecDesc = item.rec_trans_desc;
-    item.newRecTransExecDate = new Date();
+    item.newRecTransExecDate = item.rec_trans_last_executed;
     item.newRecAmt = item.rec_trans_amount;
-    // this.process(item, 1);
+    this.process(item, 1);
     this.modalRef.close('Save clicked');
+  }
+
+  modifiedRecord: any = {};
+
+  updatedRecord(event: any) {
+    this.modifiedRecord.rec_trans_id = event.id;
+    this.modifiedRecord.rec_trans_amount = this.utilService.roundUpAmount(event.amount);
+    this.modifiedRecord.rec_trans_desc = event.description;
+    this.modifiedRecord.rec_trans_last_executed = event.transDate;
   }
 }

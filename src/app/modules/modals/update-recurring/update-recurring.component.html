@@ -1,0 +1,71 @@
+<div class="container mt-2" id="update-recurring-transaction-section">
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Amount</mat-label>
+                <input type="number" min="0" matInput placeholder="Amount" name="transAmount" required
+                    formControlName="amount">
+                <mat-error *ngIf="form.get('amount')?.value == null || form.get('amount')?.value == undefined">
+                    Valid amount required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Description</mat-label>
+                <input type="text" matInput placeholder="Description" name="transDesc" required
+                    formControlName="description">
+                <mat-error>
+                    Valid description required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label *ngIf="isFullUpdate">Last Executed Date</mat-label>
+                <mat-label>Transaction Date</mat-label>
+                <input matInput [matDatepicker]="picker" required name="transDate" formControlName="transDate">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>
+                    Valid date required.
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row" *ngIf="isFullUpdate">
+            <mat-slide-toggle formControlName="hasExecuted" name="hasExecuted">Has Executed in this month ?
+            </mat-slide-toggle>
+        </div>
+        <div class="row" *ngIf="isFullUpdate">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Account: </mat-label>
+                <mat-select formControlName="accountId" required name="accountId"
+                    (selectionChange)="onChangeAccount($event)">
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of accList" value="{{item.id}}">{{item.name}}</mat-option>
+                </mat-select>
+                <!-- <mat-label *ngIf="form.get('fromAccDetails')?.value != ''">(Balance: {{accBalance}})</mat-label> -->
+                <mat-error>
+                    Valid from account required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3" *ngIf="isMf">
+                <mat-label>Mutual Fund Scheme: </mat-label>
+                <mat-select formControlName="mfSchemeCode" name="mfSchemeCode">
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of mfSchemes"
+                        value="{{item.scheme_code}}">{{item.scheme_name}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid Mutual Fund scheme required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Select Day of Month: </mat-label>
+                <mat-select formControlName="reccDate" name="reccDate">
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let item of monthDays" value="{{item}}">{{item}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid reccuring date required.
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </form>
+</div>

@@ -42,14 +42,12 @@
     <div class="modal-body">
         <form>
             <div class="mb-3">
-                <label for="dateOfBirth">Date of birth</label>
-                <div class="input-group">
-                    Test
-                </div>
+                <app-update-recurring [updateTransaction]="updateTrans" (formData)="updatedRecord($event)"></app-update-recurring>
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="saveOrUpdate(updateTrans)">Update</button>
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)">Update</button>
     </div>
 </ng-template>
