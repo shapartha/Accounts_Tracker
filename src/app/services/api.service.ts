@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiConstants } from 'app/const/api.constants';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { UtilService } from './util.service';
 
 @Injectable({
@@ -112,6 +112,26 @@ export class ApiService {
 
   deleteRecTrans(apiFuncParams: any) {
     const apiFuncName = ApiConstants.API_DELETE_RECUR_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteTransaction(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_DELETE_TRANSACTION;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateAccount(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_UPDATE_ACCOUNT;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateTransaction(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_UPDATE_TRANSACTION;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getReceiptImage(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_RECEIPT;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 

@@ -11,3 +11,7 @@
 .card-text.row {
     font-size: 14px;
 }
+
+::ng-deep.carousel-indicators [data-bs-target] {
+    background-color: black !important;
+}

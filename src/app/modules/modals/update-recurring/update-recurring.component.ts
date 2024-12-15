@@ -40,7 +40,8 @@ export class UpdateRecurringComponent implements OnInit {
       hasExecuted: [],
       accountId: [],
       mfSchemeCode: [],
-      reccDate: []
+      reccDate: [],
+      isMf: []
     });
   }
 
@@ -75,7 +76,7 @@ export class UpdateRecurringComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAccounts();
-    this.form.setValue({
+    this.form.patchValue({
       id: this.updateTransaction.rec_trans_id,
       amount: this.updateTransaction.rec_trans_amount,
       description: this.updateTransaction.rec_trans_desc,
@@ -83,7 +84,10 @@ export class UpdateRecurringComponent implements OnInit {
       hasExecuted: (this.updateTransaction.rec_trans_executed == '1') ? true : false,
       accountId: this.updateTransaction.account_id,
       mfSchemeCode: this.updateTransaction.rec_mf_scheme_code || this.updateTransaction.rec_mf_scheme_name,
-      reccDate: this.updateTransaction.rec_trans_date
+      reccDate: this.updateTransaction.rec_trans_date,
+    });
+    this.form.patchValue({
+      isMf: (this.form.get('mfSchemeCode')?.value != null) ? true : false
     });
     if (!this.isFullUpdate) {
       this.form.patchValue({
@@ -100,6 +104,7 @@ export class UpdateRecurringComponent implements OnInit {
     }
     this.formData.emit(this.form.value);
     this.form.valueChanges.subscribe(val => {
+      val['valid'] = this.form.valid;
       this.formData.emit(val);
     })
   }
@@ -129,5 +134,6 @@ export class UpdateRecurringComponent implements OnInit {
       this.isMf = true;
       this.populateMfSchemes(selectedAccount.id);
     }
+    this.form.get('isMf')?.setValue(this.isMf);
   }
 }

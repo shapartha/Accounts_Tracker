@@ -104,8 +104,36 @@ export class AllRecurringComponent {
   }
 
   saveOrUpdate(item: any) {
-    item.rec_trans_executed = (item.rec_trans_executed == true) ? 'true' : 'false';
-    this.updateRecurringTransaction(item);
+    if (item.is_valid == true) {
+      item.rec_trans_executed = (item.rec_trans_executed == true) ? 'true' : 'false';
+      if (item.rec_trans_desc == undefined || item.rec_trans_desc?.length! < 3) {
+        this.utilService.showAlert("Description must be atleast 3 characters");
+        return;
+      }
+      if (item.rec_trans_last_executed == undefined || item.rec_trans_last_executed == null) {
+        this.utilService.showAlert("Last Executed Date is invalid or blank.");
+        return;
+      }
+      if (item.rec_trans_amount == undefined || item.rec_trans_amount == null) {
+        this.utilService.showAlert("Amount is invalid or blank.");
+        return;
+      }
+      if (item.rec_account_id == undefined || item.rec_account_id == null) {
+        this.utilService.showAlert("Account is invalid or not selected.");
+        return;
+      }
+      if (item.rec_trans_date == undefined || item.rec_trans_date == null) {
+        this.utilService.showAlert("Recurring Date is invalid or not selected.");
+        return;
+      }
+      if (item.rec_is_mf === true && (item.rec_mf_scheme_name == undefined || item.rec_mf_scheme_name == null)) {
+        this.utilService.showAlert("Mutual Fund Scheme is invalid or not selected.");
+        return;
+      }
+      this.updateRecurringTransaction(item);
+    } else {
+      this.utilService.showAlert('One or more form fields are invalid');
+    }
   }
 
   updatedRecord(event: any) {
@@ -117,7 +145,9 @@ export class AllRecurringComponent {
     this.modifiedRecord.rec_trans_date = event.reccDate;
     this.modifiedRecord.rec_trans_executed = event.hasExecuted;
     this.modifiedRecord.rec_mf_scheme_name = event.mfSchemeCode;
+    this.modifiedRecord.rec_is_mf = event.isMf;
     this.modifiedRecord.user_id = this.utilService.appUserId;
+    this.modifiedRecord.is_valid = event.valid;
   }
 
   update(content: TemplateRef<any>, data: any) {

@@ -19,7 +19,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-md-4 mt-3">
                 <mat-label *ngIf="isFullUpdate">Last Executed Date</mat-label>
-                <mat-label>Transaction Date</mat-label>
+                <mat-label *ngIf="!isFullUpdate">Transaction Date</mat-label>
                 <input matInput [matDatepicker]="picker" required name="transDate" formControlName="transDate">
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>

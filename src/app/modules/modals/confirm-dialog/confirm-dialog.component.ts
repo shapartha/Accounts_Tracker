@@ -14,6 +14,7 @@ export class ConfirmDialogComponent implements OnChanges {
   @Output() onConfirmSubmit: EventEmitter<ConfirmData> = new EventEmitter();
   @Input() confirmObj: ConfirmData = {} as any;
   @Input() canClose: boolean = false;
+  @Input() modalMainButton = 'Confirm';
 
   submit() {
     this.confirmObj.value = true;

@@ -15,7 +15,7 @@
                 <mat-icon
                     *ngIf="transaction.is_delivery_order == '1' && (transaction.is_delivered == undefined || transaction.is_delivered == '0')"
                     class="text-end" style="color: grey;">add_shopping_cart</mat-icon>
-                <mat-icon *ngIf="transaction.receiptImgId != null" class="text-end">image</mat-icon>
+                <mat-icon *ngIf="transaction.receiptImgId != null" class="text-end" (click)="update(content, transaction, true)">image</mat-icon>
             </div>
         </div>
         <div class="row">
@@ -44,18 +44,45 @@
 </div>
 
 <context-menu #oneContextMenu [menuClass]="'app-trans-context-menu'">
-    <ng-template contextMenuItem (execute)="update($event)" let-value>Update</ng-template>
-    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="update($event)" let-value>Delete</ng-template>
+    <ng-template contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
+    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
     <!-- <ng-template contextMenuItem (execute)="update($event)" let-value>Generate Bill</ng-template> -->
-    <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem All</ng-template>
-    <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem
-        Partial</ng-template>
-    <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="update($event)" let-value>Mark as Delivery
-        Order</ng-template>
-    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="update($event)" let-value>Unmark as
-        Delivery Order</ng-template>
-    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="update($event)" let-value>Set Order
-        Delivered</ng-template>
-    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="update($event)" let-value>Copy to New
-        Transaction</ng-template>
+    <!-- <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem All</ng-template> -->
+    <!-- <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem
+        Partial</ng-template> -->
+    <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="markDeliveryOrder($event)" let-value>
+        Mark as Delivery Order
+    </ng-template>
+    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="markDeliveryOrder($event)"
+        let-value>Unmark as Delivery Order</ng-template>
+    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="setOrderDelivered($event)" let-value>
+        Set Order Delivered
+    </ng-template>
+    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="update(content, $event)" let-value>
+        Copy to New Transaction</ng-template>
 </context-menu>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title" *ngIf="updateTrans.isViewOnly != true">Update Transaction</h4>
+        <h4 class="modal-title" id="modal-basic-title" *ngIf="updateTrans.isViewOnly == true">View Transaction Receipt</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <app-update-transaction [updateTransaction]="updateTrans" (formData)="updatedRecord($event)"></app-update-transaction>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)" *ngIf="updateTrans.isViewOnly != true">Update</button>
+    </div>
+</ng-template>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
+    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="'Set'"></app-confirm-dialog>

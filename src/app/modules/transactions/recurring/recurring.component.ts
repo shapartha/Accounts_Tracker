@@ -183,11 +183,27 @@ export class RecurringComponent implements OnInit {
   }
 
   saveOrUpdate(item: any) {
-    item.newRecDesc = item.rec_trans_desc;
-    item.newRecTransExecDate = item.rec_trans_last_executed;
-    item.newRecAmt = item.rec_trans_amount;
-    this.process(item, 1);
-    this.modalRef.close('Save clicked');
+    if (item.is_valid == true) {
+      item.newRecDesc = item.rec_trans_desc;
+      item.newRecTransExecDate = item.rec_trans_last_executed;
+      item.newRecAmt = item.rec_trans_amount;
+      if (item.newRecDesc == undefined || item.newRecDesc?.length! < 3) {
+        this.utilService.showAlert("Description must be atleast 3 characters");
+        return;
+      }
+      if (item.newRecTransExecDate == undefined || item.newRecTransExecDate == null) {
+        this.utilService.showAlert("Date is invalid or blank");
+        return;
+      }
+      if (item.newRecAmt == undefined || item.newRecAmt == 0) {
+        this.utilService.showAlert("Amount is invalid or blank");
+        return;
+      }
+      this.process(item, 1);
+      this.modalRef.close('Save clicked');
+    } else {
+      this.utilService.showAlert('One or more form fields are invalid');
+    }
   }
 
   modifiedRecord: any = {};
@@ -197,5 +213,6 @@ export class RecurringComponent implements OnInit {
     this.modifiedRecord.rec_trans_amount = this.utilService.roundUpAmount(event.amount);
     this.modifiedRecord.rec_trans_desc = event.description;
     this.modifiedRecord.rec_trans_last_executed = event.transDate;
+    this.modifiedRecord.is_valid = event.valid;
   }
 }

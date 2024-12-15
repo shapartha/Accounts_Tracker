@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="confirmDialog" data-backdrop="static" data-keyboard="false" tabindex="-1"
+<div class="modal fade modal-lg" id="confirmDialog" data-backdrop="static" data-keyboard="false" tabindex="-1"
     aria-labelledby="confirmDialogLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -12,7 +12,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeConfirmDialog">Close</button>
-                <button type="button" class="btn btn-primary" (click)="submit()">Confirm</button>
+                <button type="button" class="btn btn-primary" (click)="submit()">{{ modalMainButton }}</button>
             </div>
         </div>
     </div>

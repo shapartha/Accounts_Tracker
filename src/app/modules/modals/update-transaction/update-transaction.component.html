@@ -1,0 +1,47 @@
+<div class="container mt-2" id="update-transaction-section">
+    <form [formGroup]="form">
+        <div class="row" *ngIf="updateTransaction.isViewOnly != true">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Amount</mat-label>
+                <input type="text" matInput name="transAmt" formControlName="amount" required>
+                <mat-error *ngIf="form.get('amount')?.value == null || form.get('amount')?.value == undefined">
+                    Valid amount required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Description</mat-label>
+                <input type="text" matInput required placeholder="Enter Description" name="transDesc"
+                    formControlName="transDesc">
+                <mat-error>
+                    Valid description required.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Transaction Date</mat-label>
+                <input matInput [matDatepicker]="picker" required name="transDate" formControlName="transDate">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>
+                    Valid date required.
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline" class="mt-3 w-100">
+                <mat-label>View/Replace Transaction Receipt: </mat-label>
+                <div *ngIf="updateTransaction.isViewOnly != true">
+                    <mat-toolbar>
+                        <input matInput [value]="fileName" readonly />
+                        <button class="btn btn-dark" (click)="fileUpload.click()">Select</button>
+                    </mat-toolbar>
+                    <input type="file" id="fileInput" (change)="selectFile($event)" name="fileInput" #fileUpload />
+                </div>
+                <img id="upload-preview" *ngIf="form.get('imageId')?.value != null" [src]="newPreviewUrl || form.get('previewUrl')?.value"
+                    alt="receipt image loading ..." />
+                <div *ngIf="fileUploadMessage != ''" class="message">
+                    {{ fileUploadMessage }}
+                </div>
+            </mat-form-field>
+        </div>
+    </form>
+</div>

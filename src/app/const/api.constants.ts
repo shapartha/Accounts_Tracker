@@ -13,6 +13,10 @@ export class ApiConstants {
     static API_GET_ALL_RECUR_TRANS: string = "getRecTransByUser";
     static API_UPDATE_RECUR_TRANS: string = "updateRecTrans";
     static API_DELETE_RECUR_TRANS: string = "deleteRecTrans";
+    static API_DELETE_TRANSACTION: string = "deleteTrans";
+    static API_UPDATE_ACCOUNT: string = "updateAccount";
+    static API_UPDATE_TRANSACTION: string = "updateTrans";
+    static API_GET_RECEIPT: string = "getReceiptImage";
     static API_GET_TODAY_SCHEDULE_TRANS: string = "getScheduledTransToday";
     static API_GET_TODAY_RECUR_TRANS: string = "getPendingRecTrans";
     static API_COMPLETE_RECUR_TRANS: string = "completeRecurringTransactionProcess";

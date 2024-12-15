@@ -1,19 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ApiConstants } from 'app/const/api.constants';
 import { AppConstants } from 'app/const/app.constants';
 import { Account } from 'app/models/account';
+import { ConfirmData } from 'app/models/confirm';
 import { Transaction } from 'app/models/transaction';
+import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
+import { UpdateTransactionComponent } from 'app/modules/modals/update-transaction/update-transaction.component';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 
 @Component({
   selector: 'app-all-transactions',
   standalone: true,
-  imports: [CommonModule, MatIconModule, ContextMenuModule],
+  imports: [CommonModule, MatIconModule, ContextMenuModule, ConfirmDialogComponent, UpdateTransactionComponent],
   templateUrl: './all-transactions.component.html',
   styleUrl: './all-transactions.component.scss'
 })
@@ -33,8 +37,16 @@ export class AllTransactionsComponent implements OnInit {
   transactionHeader: string = 'All Transactions';
   pageLoaded = false;
   showAmount = '';
+  canClose: boolean = false;
+  modalTitle: string = '';
+  modalBody: string = '';
+  confirmData: ConfirmData = {} as any;
+  selectedRecord: any;
+  modalRef: any;
+  updateTrans: any;
+  modifiedRecord: any = {};
 
-  constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService) {
+  constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService, private modalService: NgbModal) {
     this.route.queryParams.subscribe({
       next: (params) => {
         if (params['text'] != null) {
@@ -108,16 +120,135 @@ export class AllTransactionsComponent implements OnInit {
     this.fetchTransactions(this.inputParams, this.apiFuncName);
   }
 
-  update(event: any) {
-    console.log(event);
+  update(content: TemplateRef<any>, data: any, isViewOnly = false) {
+    if (isViewOnly == true) {
+      this.updateTrans = data;
+    } else {
+      this.updateTrans = data.value;
+    }
+    this.updateTrans.isViewOnly = isViewOnly;
+    this.modalRef = this.modalService.open(content,
+      {
+        ariaLabelledBy: 'modal-basic-title',
+        backdrop: 'static',
+        keyboard: false,
+        fullscreen: 'md',
+        scrollable: true,
+        size: 'lg'
+      });
+  }
+
+  delete(e: any) {
+    this.selectedRecord = e.value;
+    this.modalTitle = "Delete " + this.selectedRecord.description;
+    this.modalBody = "You are about to delete this transaction. Do you want to continue ?";
+    this.confirmData = {
+      type: 'DELETE',
+      value: false
+    };
+    this.canClose = false;
+    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
+    confirmBtn.click();
+  }
+
+  confirm(evt: ConfirmData) {
+    if (evt.type == 'SET-DELIVERED' && evt.value == true) {
+      let _updTrans = {
+        is_delivered: true,
+        trans_id: this.selectedRecord.id
+      };
+      this.updateTransaction(_updTrans, true);
+    } else if (evt.type == 'DELETE' && evt.value == true) {
+      if (this.selectedRecord.is_mf == true || this.selectedRecord.is_equity == true) {
+        this.utilService.showAlert("Transactions can't be deleted. Please Redeem/Sell units to perform transactions", "Close");
+        return;
+      }
+      this.apiService.deleteTransaction([{ trans_id: this.selectedRecord.id }]).subscribe({
+        next: (data: any) => {
+          if (data[0].success === true) {
+            if (this.selectedRecord.transType.toUpperCase() == "DEBIT") {
+              this.selectedRecord.acc_balance = parseFloat(this.selectedRecord.acc_balance) + this.utilService.formatStringValueToAmount(this.selectedRecord.amount);
+            } else {
+              this.selectedRecord.acc_balance = parseFloat(this.selectedRecord.acc_balance) - this.utilService.formatStringValueToAmount(this.selectedRecord.amount);
+            }
+            let _acc = {
+              account_id: this.selectedRecord.acc_id,
+              account_name: this.selectedRecord.acc_name,
+              balance: this.selectedRecord.acc_balance.toString(),
+              user_id: this.selectedRecord.user_id,
+              category_id: this.selectedRecord.cat_id
+            };
+            this.apiService.updateAccount([_acc]).subscribe({
+              next: (data: any) => {
+                if (data[0].success === true) {
+                  this.utilService.showAlert("Transaction " + this.selectedRecord.description + " deleted successfully", "success");
+                  this.canClose = true;
+                  if (this.inputAccountData != null && this.inputAccountData.id != null) {
+                    this.showAmount = this.utilService.formatAmountWithComma(this.selectedRecord.acc_balance.toString());
+                  }
+                  this.fetchTransactions(this.inputParams, this.apiFuncName);
+                } else {
+                  this.utilService.showAlert("Some Error occurred updating the account details.");
+                }
+              }, error: (err) => {
+                console.error(err);
+                this.utilService.showAlert(err);
+              }
+            });
+          } else {
+            this.utilService.showAlert("An error occurred | " + data[0].response + ":" + data[0].responseDescription);
+          }
+        }, error: (err) => {
+          console.error(err);
+          this.utilService.showAlert(err);
+        }
+      });
+    }
+  }
+
+  markDeliveryOrder(e: any) {
+    let item = e.value;
+    let _updTrans = {
+      is_delivery_order: ((item.is_delivery_order == undefined || item.is_delivery_order == 0) ? true : false),
+      trans_id: item.id
+    };
+    this.updateTransaction(_updTrans);
+  }
+
+  setOrderDelivered(e: any) {
+    this.selectedRecord = e.value;
+    this.modalTitle = "Set this order as Delivered ?";
+    this.modalBody = "Are you sure you want to set this order as DELIVERED ?";
+    this.confirmData = {
+      type: 'SET-DELIVERED',
+      value: false
+    };
+    this.canClose = false;
+    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
+    confirmBtn.click();
+  }
+
+  updateTransaction(_obj_: any, viaConfirm = false) {
+    this.apiService.updateTransaction([_obj_]).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success === true) {
+          this.utilService.showAlert("Transaction Updated Successfully.", "success");
+          if (viaConfirm) {
+            this.canClose = true;
+          }
+          this.fetchTransactions(this.inputParams, this.apiFuncName);
+        } else {
+          this.utilService.showAlert("Transaction Update Failed. Failure: " + JSON.stringify(resp[0]));
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert("Transaction Update Failed. Error: " + JSON.stringify(err), "Close");
+      }
+    });
   }
 
   showDeleteCopy(value: any) {
     return value['is_mf'] != true && value['is_equity'] != true;
-  }
-
-  showRedeem(value: any) {
-    return value['is_mf'] == true || value['is_equity'] == true;
   }
 
   showMarkDelivery(value: any) {
@@ -179,6 +310,82 @@ export class AllTransactionsComponent implements OnInit {
       }, error: (err) => {
         console.error(err);
         this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  updatedRecord(event: any) {
+    this.modifiedRecord.trans_id = event.transId;
+    this.modifiedRecord.trans_desc = event.transDesc;
+    this.modifiedRecord.trans_date = this.utilService.convertDate(event.transDate);
+    this.modifiedRecord.preview_url = event.previewUrl;
+    this.modifiedRecord.user_id = this.utilService.appUserId;
+    this.modifiedRecord.is_valid = event.valid;
+    this.modifiedRecord.imageUpdated = event.imageUpdated;
+    this.modifiedRecord.fileBitmap = event.fileBitmap;
+  }
+
+  saveOrUpdate(item: any) {
+    if (item.is_valid == true) {
+      if (item.trans_desc == undefined || item.trans_desc?.length! < 3) {
+        this.utilService.showAlert("Description must be atleast 3 characters");
+        return;
+      }
+      if (item.trans_date == undefined || item.trans_date == null) {
+        this.utilService.showAlert("Date is invalid or blank");
+        return;
+      }
+      if (item.imageUpdated == true) {
+        this.upload(item);
+      } else {
+        let _updTrans = {
+          trans_desc: item.trans_desc,
+          trans_id: item.trans_id,
+          user_id: item.user_id,
+          trans_date: item.trans_date
+        };
+        this.updateTransFn(_updTrans, item);
+      }
+    } else {
+      this.utilService.showAlert('One or more form fields are invalid');
+    }
+  }
+
+  updateTransFn(_obj_: any, _data_: any) {
+    this.apiService.updateTransaction([_obj_]).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success === true) {
+          this.modalRef.close('Save clicked');
+          this.utilService.showAlert("Transaction Updated Successfully", 'success');
+          this.fetchTransactions(this.inputParams, this.apiFuncName);
+        } else {
+          this.utilService.showAlert("Transaction Update Failed. Failure: " + JSON.stringify(resp[0]));
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert("Transaction Update Failed. Error: " + JSON.stringify(err));
+      }
+    });
+  }
+
+  upload(item: any) {
+    let _inpObj = {
+      bitmap_data: item.fileBitmap,
+      created_at: this.utilService.getDate()
+    }
+    this.apiService.uploadReceiptImage(_inpObj).subscribe({
+      next: (data: any) => {
+        let _updTrans = {
+          trans_desc: item.trans_desc,
+          trans_id: item.trans_id,
+          user_id: item.user_id,
+          trans_date: item.trans_date,
+          trans_receipt_image_id: data.dataArray[0].receipt_id
+        };
+        this.updateTransFn(_updTrans, item);
+      }, error: (err) => {
+        console.error("Error -> " + JSON.stringify(err));
+        this.utilService.showAlert("Image Upload Failed due to Error");
       }
     });
   }
