@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ApiConstants } from 'app/const/api.constants';
@@ -46,7 +46,7 @@ export class AllTransactionsComponent implements OnInit {
   updateTrans: any;
   modifiedRecord: any = {};
 
-  constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService, private modalService: NgbModal) {
+  constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService, private modalService: NgbModal, private router: Router) {
     this.route.queryParams.subscribe({
       next: (params) => {
         if (params['text'] != null) {
@@ -388,5 +388,14 @@ export class AllTransactionsComponent implements OnInit {
         this.utilService.showAlert("Image Upload Failed due to Error");
       }
     });
+  }
+
+  copy(item: any) {
+    let objToSend: NavigationExtras = {
+      queryParams: item.value,
+      skipLocationChange: false,
+      fragment: 'top'
+    };
+    this.router.navigate(['add-transaction'], { state: objToSend });
   }
 }

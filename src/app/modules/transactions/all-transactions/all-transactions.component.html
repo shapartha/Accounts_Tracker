@@ -58,7 +58,7 @@
     <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="setOrderDelivered($event)" let-value>
         Set Order Delivered
     </ng-template>
-    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="update(content, $event)" let-value>
+    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="copy($event)" let-value>
         Copy to New Transaction</ng-template>
 </context-menu>
 

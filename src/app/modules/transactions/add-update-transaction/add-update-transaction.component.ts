@@ -48,19 +48,40 @@ export class AddUpdateTransactionComponent implements OnInit {
   fileType: any;
 
   constructor(private fb: FormBuilder, private router: Router, private apiService: ApiService, private utilService: UtilService, private imageCompress: NgxImageCompressService) {
-    this.form = this.fb.group({
-      amount: [],
-      description: ['', Validators.minLength(3)],
-      transDate: [this.utilService.getDate()],
-      isTransferTrans: [false],
-      transType: ['DEBIT'],
-      fromAccDetails: [],
-      toAccDetails: [],
-      mfSchemeCode: [],
-      mfNav: [],
-      isRecurringTrans: [false],
-      reccDate: []
-    });
+    this.form = this.fb.group({});
+    if (this.router.getCurrentNavigation()?.extras.state != null) {
+      let objQueryParams = this.router.getCurrentNavigation()!.extras.state;
+      if (objQueryParams != undefined) {
+        objQueryParams = objQueryParams['queryParams'];
+        this.form = this.fb.group({
+          amount: [this.utilService.formatStringValueToAmount(objQueryParams!['amount'])],
+          description: [objQueryParams!['description'], Validators.minLength(3)],
+          transDate: [this.utilService.getDate(objQueryParams!['date'])],
+          isTransferTrans: [false],
+          transType: [objQueryParams!['transType']],
+          fromAccDetails: [objQueryParams!['acc_id']],
+          toAccDetails: [],
+          mfSchemeCode: [],
+          mfNav: [],
+          isRecurringTrans: [false],
+          reccDate: []
+        });
+      }
+    } else {
+      this.form = this.fb.group({
+        amount: [],
+        description: ['', Validators.minLength(3)],
+        transDate: [this.utilService.getDate()],
+        isTransferTrans: [false],
+        transType: ['DEBIT'],
+        fromAccDetails: [],
+        toAccDetails: [],
+        mfSchemeCode: [],
+        mfNav: [],
+        isRecurringTrans: [false],
+        reccDate: []
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -98,6 +119,12 @@ export class AddUpdateTransactionComponent implements OnInit {
         });
         this.mainAccList = this.fromAcc.map(obj => ({ ...obj }));
         this.toAcc = this.fromAcc.map(obj => ({ ...obj }));
+        setTimeout(() => {
+          if (this.form.get('fromAccDetails')?.value != null) {
+            let selectedAcc = this.mainAccList.filter((_acc: any) => _acc.id === this.form.get('fromAccDetails')?.value)[0];
+            this.fromAccBalance = this.utilService.formatAmountWithComma(selectedAcc.balance!);
+          }
+        }, 300);
       },
       error: (err) => {
         this.utilService.showAlert(err);
