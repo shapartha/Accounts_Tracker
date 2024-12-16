@@ -8,6 +8,7 @@ import { LogoutComponent } from './modules/logout/logout.component';
 import { AllRecurringComponent } from './modules/transactions/all-recurring/all-recurring.component';
 import { AllScheduledComponent } from './modules/transactions/all-scheduled/all-scheduled.component';
 import { AddUpdateAccountComponent } from './modules/accounts/add-update-account/add-update-account.component';
+import { AddUpdateCategoryComponent } from './modules/categories/add-update-category/add-update-category.component';
 
 export const routes: Routes = [
     {
@@ -35,6 +36,10 @@ export const routes: Routes = [
     {
         path: 'add-account',
         component: AddUpdateAccountComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'add-category',
+        component: AddUpdateCategoryComponent, canActivate : [AuthGuard]
     },
     {
         path: 'home',

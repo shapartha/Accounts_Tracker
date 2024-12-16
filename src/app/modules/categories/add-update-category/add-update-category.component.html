@@ -1,0 +1,19 @@
+<div class="container mt-2" id="add-update-category-section">
+    <h3 *ngIf="isUpdate != true">Add New Category</h3>
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Category Name: </mat-label>
+                <input type="text" matInput placeholder="Category Name" name="categoryName" required
+                    formControlName="categoryName">
+                <mat-error>
+                    Valid category name required.
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="text-center mt-3" *ngIf="isUpdate != true">
+            <button class="btn btn-primary me-2" (click)="save()" [disabled]="!form.valid">Save</button>
+            <button class="btn btn-success" (click)="handleRoute('home')">Cancel</button>
+        </div>
+    </form>
+</div>

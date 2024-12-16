@@ -14,11 +14,12 @@ import { ConfirmDialogComponent } from '../modals/confirm-dialog/confirm-dialog.
 import { ConfirmData } from 'app/models/confirm';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddUpdateAccountComponent } from "../accounts/add-update-account/add-update-account.component";
+import { AddUpdateCategoryComponent } from '../categories/add-update-category/add-update-category.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent],
+  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent, AddUpdateCategoryComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -71,7 +72,8 @@ export class HomeComponent implements OnInit {
             _category.id = data.dataArray[i].category_id;
             _category.image = this.linkPath + 'assets/images/categories/' + data.dataArray[i].image;
             _category.amount = this.utilService.formatAmountWithComma((Math.round(Number(data.dataArray[i].balance) * 100) / 100).toFixed(2));
-
+            _category.accounts = [];
+            this.categories.push(_category);
             let inputParams2 = {
               category_id: _category.id,
               user_id: this.utilService.appUserId
@@ -79,7 +81,8 @@ export class HomeComponent implements OnInit {
             this.apiService.getAccountsByCategory(inputParams2).subscribe({
               next: (val) => {
                 if (val.success) {
-                  _category.accounts = [];
+                  let __category = this.categories.find(cat => cat.id == _category.id)!;
+                  __category.accounts = [];
                   for (var j = 0; j < val.dataArray.length; j++) {
                     categoryAmt += parseFloat(val.dataArray[j].balance);
                     let _account: Account = {} as any;
@@ -93,10 +96,9 @@ export class HomeComponent implements OnInit {
                     _account.user_id = Number(val.dataArray[j].user_id);
                     _account.is_equity = Boolean(Number(val.dataArray[j].is_equity));
                     _account.is_mf = Boolean(Number(val.dataArray[j].is_mf));
-                    _category.accounts.push(_account);
+                    __category.accounts.push(_account);
                   }
-                  _category.amount = this.utilService.formatAmountWithComma((Math.round(categoryAmt * 100) / 100).toFixed(2));
-                  this.categories.push(_category);
+                  __category.amount = this.utilService.formatAmountWithComma((Math.round(categoryAmt * 100) / 100).toFixed(2));
                 }
               }, error: (err) => {
                 console.error(err);
@@ -145,14 +147,21 @@ export class HomeComponent implements OnInit {
   }
 
   updatedRecord(event: any) {
-    this.modifiedRecord.accountId = event.accountId;
-    this.modifiedRecord.accountName = event.accountName;
-    this.modifiedRecord.userId = this.utilService.appUserId;
-    this.modifiedRecord.category = event.category;
-    this.modifiedRecord.balance = event.balance;
-    this.modifiedRecord.isMf = event.isMf;
-    this.modifiedRecord.isEquity = event.isEquity;
-    this.modifiedRecord.is_valid = event.valid;
+    if (this.updateObject.itemType == 'CATEGORY') {
+      this.modifiedRecord.categoryId = event.categoryId;
+      this.modifiedRecord.categoryName = event.categoryName;
+      this.modifiedRecord.userId = this.utilService.appUserId;
+      this.modifiedRecord.is_valid = event.valid;
+    } else {
+      this.modifiedRecord.accountId = event.accountId;
+      this.modifiedRecord.accountName = event.accountName;
+      this.modifiedRecord.userId = this.utilService.appUserId;
+      this.modifiedRecord.category = event.category;
+      this.modifiedRecord.balance = event.balance;
+      this.modifiedRecord.isMf = event.isMf;
+      this.modifiedRecord.isEquity = event.isEquity;
+      this.modifiedRecord.is_valid = event.valid;
+    }
   }
 
   saveOrUpdate(item: any) {
@@ -160,67 +169,101 @@ export class HomeComponent implements OnInit {
       this.utilService.showAlert("Nothing to update here since NO changes are made");
       return;
     } else if (item.is_valid == true) {
-      if (item.accountName == undefined || item.accountName?.length! < 3) {
-        this.utilService.showAlert("Account name must be atleast 3 characters");
-        return;
+      if (this.updateObject.itemType == 'CATEGORY') {
+        this.updateCategory(item);
+      } else {
+        this.updateAccount(item);
       }
-      if (item.category == undefined || item.category == '') {
-        this.utilService.showAlert("Select a valid Category for the account");
-        return;
-      }
-      if (item.balance == undefined || item.balance == null) {
-        this.utilService.showAlert("Please enter the current balance. If no current balance, enter '0'");
-        return;
-      }
-      let _acc = {
-        account_id: item.accountId,
-        account_name: item.accountName,
-        balance: item.balance.toString(),
-        user_id: this.utilService.appUserId,
-        category_id: item.category,
-        is_mf: (item.isMf ? 1 : 0),
-        is_equity: (item.isEquity ? 1 : 0)
-      };
-      this.apiService.updateAccount([_acc]).subscribe({
-        next: (resp: any) => {
-          if (resp[0].success === true) {
-            if (this.utilService.formatStringValueToAmount(this.updateObject.balance) !== item.balance) {
-              let _diffAmt = item.balance - this.utilService.formatStringValueToAmount(this.updateObject.balance);
-              let _inpData = {
-                trans_amount: Math.abs(_diffAmt).toString(),
-                account_id: item.accountId,
-                trans_date: this.utilService.convertDate(),
-                trans_desc: "Adjustments",
-                trans_type: (_diffAmt < 0 ? "DEBIT" : "CREDIT"),
-                user_id: this.utilService.appUserId.toString()
-              }
-              this.apiService.saveTransactionOnly([_inpData]).subscribe({
-                next: (resp: any) => {
-                  if (resp[0].response == "200") {
-                    this.modalRef.close('Save clicked');
-                    this.utilService.showAlert('Account updated successfully', 'success');
-                    this.refresh();
-                  } else {
-                    this.utilService.showAlert("Some error occurred while saving transaction. Please contact admin");
-                  }
-                }, error: (err) => {
-                  console.error(err);
-                  this.utilService.showAlert('Some error occurred while saving transaction. Please contact admin');
-                }
-              });
-            } else {
-              this.modalRef.close('Save clicked');
-              this.utilService.showAlert('Account updated successfully', 'success');
-              this.refresh();
-            }
-          } else {
-            this.utilService.showAlert("Some Error occurred updating the account details");
-          }
-        }
-      });
     } else {
       this.utilService.showAlert('One or more form fields are invalid');
     }
+  }
+
+  updateCategory(item: any) {
+    if (item.categoryName == undefined || item.categoryName?.length < 3) {
+      this.utilService.showAlert("Category name must be atleast 3 characters");
+      return;
+    }
+    let _category = {
+      category_id: item.categoryId,
+      category_name: item.categoryName,
+      user_id: this.utilService.appUserId
+    };
+    this.apiService.updateCategory([_category]).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success === true) {
+          this.modalRef.close('Save clicked');
+          this.utilService.showAlert('Category updated successfully', 'success');
+          this.refresh();
+        } else {
+          this.utilService.showAlert(resp[0].responseDescription);
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert('Some error occurred while saving category. Please contact admin');
+      }
+    });
+  }
+
+  updateAccount(item: any) {
+    if (item.accountName == undefined || item.accountName?.length < 3) {
+      this.utilService.showAlert("Account name must be atleast 3 characters");
+      return;
+    }
+    if (item.category == undefined || item.category == '') {
+      this.utilService.showAlert("Select a valid Category for the account");
+      return;
+    }
+    if (item.balance == undefined || item.balance == null) {
+      this.utilService.showAlert("Please enter the current balance. If no current balance, enter '0'");
+      return;
+    }
+    let _acc = {
+      account_id: item.accountId,
+      account_name: item.accountName,
+      balance: item.balance.toString(),
+      user_id: this.utilService.appUserId,
+      category_id: item.category,
+      is_mf: (item.isMf ? 1 : 0),
+      is_equity: (item.isEquity ? 1 : 0)
+    };
+    this.apiService.updateAccount([_acc]).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success === true) {
+          if (this.utilService.formatStringValueToAmount(this.updateObject.balance) !== item.balance) {
+            let _diffAmt = item.balance - this.utilService.formatStringValueToAmount(this.updateObject.balance);
+            let _inpData = {
+              trans_amount: Math.abs(_diffAmt).toString(),
+              account_id: item.accountId,
+              trans_date: this.utilService.convertDate(),
+              trans_desc: "Adjustments",
+              trans_type: (_diffAmt < 0 ? "DEBIT" : "CREDIT"),
+              user_id: this.utilService.appUserId.toString()
+            }
+            this.apiService.saveTransactionOnly([_inpData]).subscribe({
+              next: (resp: any) => {
+                if (resp[0].response == "200") {
+                  this.modalRef.close('Save clicked');
+                  this.utilService.showAlert('Account updated successfully', 'success');
+                  this.refresh();
+                } else {
+                  this.utilService.showAlert("Some error occurred while saving transaction. Please contact admin");
+                }
+              }, error: (err) => {
+                console.error(err);
+                this.utilService.showAlert('Some error occurred while saving transaction. Please contact admin');
+              }
+            });
+          } else {
+            this.modalRef.close('Save clicked');
+            this.utilService.showAlert('Account updated successfully', 'success');
+            this.refresh();
+          }
+        } else {
+          this.utilService.showAlert("Some Error occurred updating the account details");
+        }
+      }
+    });
   }
 
   delete(e: any) {

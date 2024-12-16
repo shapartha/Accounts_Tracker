@@ -150,6 +150,16 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  saveCategory(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_SAVE_CATEGORY;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateCategory(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_UPDATE_CATEGORY;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   updateTransaction(apiFuncParams: any) {
     const apiFuncName = ApiConstants.API_UPDATE_TRANSACTION;
     return this.postApiCall(apiFuncName, apiFuncParams);

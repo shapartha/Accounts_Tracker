@@ -13,6 +13,7 @@ export class ApiConstants {
     static API_SAVE_TRANSACTION: string = "addTransactionProcess";
     static API_SAVE_TRANSACTION_ONLY: string = "storeTrans";
     static API_SAVE_ACCOUNT: string = "storeAccount";
+    static API_SAVE_CATEGORY: string = "storeCategory";
     static API_GET_ALL_RECUR_TRANS: string = "getRecTransByUser";
     static API_UPDATE_RECUR_TRANS: string = "updateRecTrans";
     static API_DELETE_RECUR_TRANS: string = "deleteRecTrans";
@@ -20,6 +21,7 @@ export class ApiConstants {
     static API_DELETE_CATEGORY: string = "deleteCategory";
     static API_DELETE_ACCOUNT: string = "deleteAccount";
     static API_UPDATE_ACCOUNT: string = "updateAccount";
+    static API_UPDATE_CATEGORY: string = "updateCategory";
     static API_UPDATE_TRANSACTION: string = "updateTrans";
     static API_GET_RECEIPT: string = "getReceiptImage";
     static API_GET_TODAY_SCHEDULE_TRANS: string = "getScheduledTransToday";
