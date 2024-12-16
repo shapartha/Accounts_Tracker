@@ -45,6 +45,7 @@ export class AllTransactionsComponent implements OnInit {
   modalRef: any;
   updateTrans: any;
   modifiedRecord: any = {};
+  modalBtnName: string = '';
 
   constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService, private modalService: NgbModal, private router: Router) {
     this.route.queryParams.subscribe({
@@ -142,6 +143,7 @@ export class AllTransactionsComponent implements OnInit {
     this.selectedRecord = e.value;
     this.modalTitle = "Delete " + this.selectedRecord.description;
     this.modalBody = "You are about to delete this transaction. Do you want to continue ?";
+    this.modalBtnName = 'Delete';
     this.confirmData = {
       type: 'DELETE',
       value: false
@@ -219,6 +221,7 @@ export class AllTransactionsComponent implements OnInit {
     this.selectedRecord = e.value;
     this.modalTitle = "Set this order as Delivered ?";
     this.modalBody = "Are you sure you want to set this order as DELIVERED ?";
+    this.modalBtnName = 'Set';
     this.confirmData = {
       type: 'SET-DELIVERED',
       value: false
@@ -323,10 +326,14 @@ export class AllTransactionsComponent implements OnInit {
     this.modifiedRecord.is_valid = event.valid;
     this.modifiedRecord.imageUpdated = event.imageUpdated;
     this.modifiedRecord.fileBitmap = event.fileBitmap;
+    this.modifiedRecord.is_valid = event.valid;
   }
 
   saveOrUpdate(item: any) {
-    if (item.is_valid == true) {
+    if (item.is_valid == null) {
+      this.utilService.showAlert("Nothing to update here since NO changes are made");
+      return;
+    } else if (item.is_valid == true) {
       if (item.trans_desc == undefined || item.trans_desc?.length! < 3) {
         this.utilService.showAlert("Description must be atleast 3 characters");
         return;

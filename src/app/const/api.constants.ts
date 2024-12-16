@@ -1,6 +1,7 @@
 export class ApiConstants {
     static API_GET_CATEGORY: string = "getCategoryUserId";
     static API_GET_ACCOUNTS_BY_CATEGORY: string = "getAccountsByCategory";
+    static API_GET_ACCOUNTS_BY_NAME: string = "getAccountByName";
     static API_GET_ALL_TRANS: string = "getTransByUser";
     static API_GET_TRANS_BY_ACCOUNT: string = "getTransByAccount";
     static API_SEARCH_TRANSACTION: string = "searchTransactions";
@@ -10,10 +11,14 @@ export class ApiConstants {
     static API_GET_MF_SCHEMES_BY_ACCOUNT: string = "getMfMappingByAccount";
     static API_UPLOAD_RECEIPT: string = "storeReceipt";
     static API_SAVE_TRANSACTION: string = "addTransactionProcess";
+    static API_SAVE_TRANSACTION_ONLY: string = "storeTrans";
+    static API_SAVE_ACCOUNT: string = "storeAccount";
     static API_GET_ALL_RECUR_TRANS: string = "getRecTransByUser";
     static API_UPDATE_RECUR_TRANS: string = "updateRecTrans";
     static API_DELETE_RECUR_TRANS: string = "deleteRecTrans";
     static API_DELETE_TRANSACTION: string = "deleteTrans";
+    static API_DELETE_CATEGORY: string = "deleteCategory";
+    static API_DELETE_ACCOUNT: string = "deleteAccount";
     static API_UPDATE_ACCOUNT: string = "updateAccount";
     static API_UPDATE_TRANSACTION: string = "updateTrans";
     static API_GET_RECEIPT: string = "getReceiptImage";

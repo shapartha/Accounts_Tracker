@@ -285,7 +285,7 @@ export class AddUpdateTransactionComponent implements OnInit {
 
   uploadWithoutImage() {
     if (this.form.get('isTransferTrans')?.value == true) {
-      this.invokeSaveTransactionApi(this.saveTransaction, true);
+      this.invokeSaveTransactionApi(this.saveTransaction);
       this.invokeSaveTransactionApi(this.saveTransactionTrans);
     } else {
       this.invokeSaveTransactionApi(this.saveTransaction);
@@ -338,7 +338,7 @@ export class AddUpdateTransactionComponent implements OnInit {
     }
   }
 
-  invokeSaveTransactionApi(_inpData: any, isTrans: boolean = false) {
+  invokeSaveTransactionApi(_inpData: any) {
     let _formattedDateStr = _inpData.date.split("T")[0];
     _inpData.date = _formattedDateStr;
     this.apiService.saveTransaction(_inpData).subscribe({

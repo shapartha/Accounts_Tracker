@@ -4,7 +4,7 @@
     <h3>Categories</h3>
     <div class="row">
         @for (category of categories; track category) {
-        <div class="col-md-2">
+        <div class="col-md-2" [contextMenu]="oneContextMenu" [contextMenuValue]="category">
             <div class="card category-box" (click)="setCategory(category.id)">
                 <img [src]="category.image" class="card-img-top" alt="{{ category.name }}">
                 <div class="category-header">{{ category.name }}</div>
@@ -23,7 +23,7 @@
         <div class="col-md-12">
             <mat-selection-list #accounts [multiple]="false" (selectionChange)="onAccountSelected($event)">
                 @for (account of selectedCategory.accounts; track account) {
-                <mat-list-option [value]="account" togglePosition="before">
+                <mat-list-option [value]="account" togglePosition="before" [contextMenu]="oneContextMenu" [contextMenuValue]="account">
                     {{ account.name }}
                     <span class="float-end"
                         [ngClass]="(utilService.formatStringValueToAmount(account.balance) < 0) ? 'negative-val': 'positive-val'">{{
@@ -34,3 +34,33 @@
         </div>
     </div>
 </div>
+
+<context-menu #oneContextMenu [menuClass]="'app-home-context-menu'">
+    <ng-template contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
+    <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
+    <!-- <ng-template contextMenuItem (execute)="update($event)" let-value>Generate Bill</ng-template> -->
+</context-menu>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Update {{ updateObject.itemType }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <app-add-update-account *ngIf="updateObject.itemType == 'ACCOUNT'" [isUpdate]="true" [updateAccount]="updateObject" (formData)="updatedRecord($event)"></app-add-update-account>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)">Update</button>
+    </div>
+</ng-template>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
+    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="modalBtnName"></app-confirm-dialog>

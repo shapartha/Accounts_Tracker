@@ -52,6 +52,11 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
+  getAccountsByName(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_ACCOUNTS_BY_NAME;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   getTransactions(apiFuncParams: any, apiName: string) {
     return this.invokeApiCall(apiName, apiFuncParams);
   }
@@ -68,6 +73,11 @@ export class ApiService {
 
   saveTransaction(apiFuncParams: any) {
     const apiFuncName = ApiConstants.API_SAVE_TRANSACTION;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveTransactionOnly(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_SAVE_TRANSACTION_ONLY;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
@@ -117,6 +127,21 @@ export class ApiService {
 
   deleteTransaction(apiFuncParams: any) {
     const apiFuncName = ApiConstants.API_DELETE_TRANSACTION;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteAccount(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_DELETE_ACCOUNT;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteCategory(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_DELETE_CATEGORY;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveAccount(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_SAVE_ACCOUNT;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
