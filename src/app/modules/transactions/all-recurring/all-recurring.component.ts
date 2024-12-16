@@ -31,10 +31,10 @@ export class AllRecurringComponent {
   selectedRecord: any;
 
   ngOnInit(): void {
-    this.fetchAllScheduledTransactions();
+    this.fetchAllRecurringTransactions();
   }
 
-  fetchAllScheduledTransactions() {
+  fetchAllRecurringTransactions() {
     this.recurring_trans = [];
     this.apiService.getAllRecurringTrans({ user_id: this.utilService.appUserId }).subscribe({
       next: (getAllRecurTransResp) => {
@@ -94,7 +94,7 @@ export class AllRecurringComponent {
         if (updRecTransResp[0].success === true) {
           this.utilService.showAlert("Recurring Transaction updated successfully.", 'success');
           this.modalRef.close('Save clicked');
-          this.fetchAllScheduledTransactions();
+          this.fetchAllRecurringTransactions();
         }
       }, error: (err) => {
         console.error(err);
@@ -191,7 +191,7 @@ export class AllRecurringComponent {
     this.apiService.updateRecTrans([_updTrans]).subscribe({
       next: (updRecTransResp: any) => {
         if (updRecTransResp[0].success === true) {
-          this.fetchAllScheduledTransactions();
+          this.fetchAllRecurringTransactions();
           this.utilService.showAlert("Recurring Transaction " + (data.is_paused == "1" ? "resumed" : "paused") + " successfully.", 'success');
         } else {
           this.utilService.showAlert("An error occurred -> " + JSON.stringify(updRecTransResp));
@@ -217,7 +217,7 @@ export class AllRecurringComponent {
           if (deleteRecTransResp[0].success === true) {
             this.utilService.showAlert("Recurring Transaction : " + this.selectedRecord.rec_trans_desc + " deleted successfully", 'success');
             this.canClose = true;
-            this.fetchAllScheduledTransactions();
+            this.fetchAllRecurringTransactions();
           } else {
             this.utilService.showAlert("An error occurred | " + deleteRecTransResp[0].response + ":" + deleteRecTransResp[0].responseDescription);
           }

@@ -5,7 +5,7 @@
     </div>
     <div>
         @for (trans of scheduled_trans; track trans; let i = $index) {
-        <div class="card">
+        <div class="card" [contextMenu]="oneContextMenu" [contextMenuValue]="trans">
             <div class="card-body" [ngClass]="trans.trans_type == 'DEBIT' ? 'bg-info-subtle': 'bg-warning-subtle'">
                 <h5> {{ trans.trans_desc }}</h5>
                 <div class="card-text row">
@@ -18,3 +18,33 @@
         }
     </div>
 </div>
+
+<context-menu #oneContextMenu [menuClass]="'app-scheduled-trans-context-menu'">
+    <ng-template contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
+    <ng-template contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
+</context-menu>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Update Scheduled Transaction - {{ updateTrans.rec_trans_desc }}
+        </h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                //Template to come here
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
+        <!-- <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)">Update</button> -->
+    </div>
+</ng-template>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
+    [confirmObj]="confirmData" [canClose]="canClose"></app-confirm-dialog>
