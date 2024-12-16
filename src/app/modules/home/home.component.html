@@ -31,7 +31,7 @@
                         account.balance }}</span>
                 </mat-list-option>
                 }
-                @if (selectedCategory.accounts == null || selectedCategory.accounts.length == 0) {
+                @if (selectedCategory.id != null && (selectedCategory.accounts == null || selectedCategory.accounts.length == 0)) {
                 <div class="no-acc-header">
                     No accounts available for the selected category yet. Please create an account under this category first
                 </div>
