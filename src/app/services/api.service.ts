@@ -185,6 +185,26 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  getMfSchemesByAccountScheme(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_MF_SCHEMES_BY_ACCOUNT_SCHEME;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveMfMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_MF_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateMfMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_UPDATE_MF_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveMfTrans(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_MF_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   appendMandatoryParams(): string {
     let _apiJsonParams = "&apiKey=" + ApiConstants.API_KEY;
     _apiJsonParams += "&apiToken=" + this.utilService.appToken;

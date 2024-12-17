@@ -32,6 +32,13 @@ export class ApiConstants {
     static API_UPDATE_SCHEDULED_TRANS: string = "updateScheduledTrans";
     static API_UPDATE_BILL_DUE_DATE: string = "generateDueDateForBills";
     static API_GET_ALL_MF: string = "getAllMf";
+    static API_GET_MF_SCHEMES_BY_ACCOUNT_SCHEME: string = "getMfMappingByAccountScheme";
+    static API_UPDATE_MF_MAPPING: string = "updateMfMapping";
+    static API_SAVE_MF_MAPPING: string = "storeMfMapping";
+    static API_UPDATE_EQ_MAPPING: string = "updateStockMapping";
+    static API_SAVE_MF_TRANS: string = "storeMfTrans";
+    static API_UPDATE_MF_TRANS: string = "updateMfTrans";
+    static API_DELETE_MF_MAPPING: string = "deleteMfMapping";
     
     static SERVER_URL: string = "https://shapartha.online/accountstracker/api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";

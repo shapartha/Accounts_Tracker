@@ -199,4 +199,21 @@ export class UtilService {
     }
     return [this.padLeadingZero(day), this.padLeadingZero(month), d.getFullYear()].join('-');
   }
+
+  calculateMfInvestedAmount(transAmt: number, transDate: string | Date) {
+    try {
+      if (typeof transDate === 'string') {
+        transDate = new Date(transDate);
+      }
+      let cutOffDt: Date = new Date('2020-07-01');
+      if (transDate >= cutOffDt) {
+        return 0.99995 * transAmt;
+      } else {
+        return transAmt;
+      }
+    } catch (e: any) {
+      this.showAlert(e);
+      return transAmt;
+    }
+  }
 }

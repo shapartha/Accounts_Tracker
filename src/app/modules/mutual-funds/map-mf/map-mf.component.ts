@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
+import { SaveTransaction } from 'app/models/transaction';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { firstValueFrom } from 'rxjs';
@@ -40,6 +41,12 @@ export class MapMfComponent implements OnInit {
   ngOnInit(): void {
     this.loadAccounts();
     this.loadMutualFunds();
+    this.form.get('invAmount')?.valueChanges.subscribe(() => {
+      this.onChangeAmountUnits();
+    });
+    this.form.get('units')?.valueChanges.subscribe(() => {
+      this.onChangeAmountUnits();
+    });
   }
 
   loadAccounts() {
@@ -95,8 +102,142 @@ export class MapMfComponent implements OnInit {
     }
   }
 
-  mapMutualFund() {
-    throw new Error('Method not implemented.');
+  async mapMutualFund() {
+    let data = this.form.getRawValue();
+    if (data.accountId == undefined || data.accountId == null) {
+      this.utilService.showAlert("Account is not selected or invalid");
+      return;
+    }
+    if (data.invAmount == undefined || data.invAmount == null || data.invAmount == 0) {
+      this.utilService.showAlert("Invested Amount is blank or invalid");
+      return;
+    }
+    if (data.units == undefined || data.units == null || data.units == 0) {
+      this.utilService.showAlert("No. of Units is blank or invalid");
+      return;
+    }
+    if (data.purchaseDate == undefined || data.purchaseDate == null) {
+      this.utilService.showAlert("Purchase Date is blank or invalid");
+      return;
+    }
+    if (data.schemeCode == undefined || data.schemeCode == null || data.nav == undefined || data.nav == null) {
+      this.utilService.showAlert("Mutual Fund is not selected or invalid");
+      return;
+    }
+    let inpObj = {
+      scheme_code: data.schemeCode,
+      scheme_name: this.mutualFunds.filter((mf: any) => mf.scheme_code === data.schemeCode)[0].scheme_name,
+      units: this.utilService.roundUpAmount(data.units, 4),
+      purchase_date: this.utilService.convertDate(data.purchaseDate),
+      nav_date: this.utilService.convertDate(data.navDate),
+      user_id: this.utilService.appUserId,
+      nav_amt: this.utilService.roundUpAmt(data.nav),
+      avg_nav: this.utilService.roundUpAmt(data.avgNav),
+      account_id: data.accountId,
+      inv_amt: this.utilService.roundUpAmt(this.utilService.calculateMfInvestedAmount(data.invAmount, data.purchaseDate))
+    };
+    this.apiService.getMfSchemesByAccountScheme(inpObj).subscribe({
+      next: (checkExistMfMapRes: any) => {
+        if (checkExistMfMapRes.success === true && checkExistMfMapRes.dataArray == undefined) {
+          this.apiService.saveMfMapping([inpObj]).subscribe({
+            next: (saveMfMapResp: any) => {
+              if (saveMfMapResp[0].success !== true) {
+                this.utilService.showAlert(saveMfMapResp[0]);
+              } else {
+                this.saveMfTransObject(inpObj, checkExistMfMapRes.dataArray);
+              }
+            }, error: (err) => {
+              console.error(err);
+              this.utilService.showAlert(err);
+            }
+          });
+        } else {
+          this.saveMfTransObject(inpObj);
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+
+  }
+
+  saveMfTransObject(inpObj: any, existingMfData?: any[]) {
+    let _mfTransObj_ = {
+      scheme_code: inpObj.scheme_code,
+      account_id: inpObj.account_id,
+      trans_date: inpObj.nav_date,
+      units: inpObj.units,
+      nav: inpObj.avg_nav,
+      amount: inpObj.inv_amt,
+      trans_type: 'CREDIT',
+      balance_units: inpObj.units
+    };
+    this.apiService.saveMfTrans([_mfTransObj_]).subscribe({
+      next: (mfTransResp: any) => {
+        if (mfTransResp[0].success !== true) {
+          this.utilService.showAlert(mfTransResp[0]);
+        } else {
+          if (existingMfData !== undefined) {
+            this.updateMfMapping(inpObj, existingMfData);
+          } else {
+            this.saveTransaction(inpObj);
+          }
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  updateMfMapping(inpObj: any, existingMfData: any[]) {
+    let _updMfMapObj_ = {
+      scheme_name: inpObj.scheme_name,
+      nav_amt: inpObj.nav_amt,
+      units: Number(inpObj.units) + Number(existingMfData[0].units),
+      inv_amt: Number(inpObj.inv_amt) + Number(existingMfData[0].inv_amt),
+      nav_date: inpObj.nav_date,
+      avg_nav: 0,
+      account_id: inpObj.account_id,
+      scheme_code: inpObj.scheme_code
+    };
+    _updMfMapObj_.avg_nav = Number((_updMfMapObj_.inv_amt / _updMfMapObj_.units).toFixed(4));
+    this.apiService.updateMfMapping([_updMfMapObj_]).subscribe({
+      next: (updMfMapResp: any) => {
+        if (updMfMapResp[0].success !== true) {
+          this.utilService.showAlert(updMfMapResp[0]);
+        } else {
+          this.saveTransaction(inpObj);
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  saveTransaction(inpObj: any) {
+    let trans: SaveTransaction = {};
+    trans.acc_id = inpObj.account_id;
+    trans.amount = inpObj.inv_amt.toString();
+    trans.date = inpObj.purchase_date;
+    trans.desc = inpObj.scheme_name + " Mapped to Account: " + this.accList.filter((_acc: any) => _acc.account_id === inpObj.account_id)[0].account_name;
+    trans.type = "CREDIT";
+    trans.user_id = this.utilService.appUserId.toString();
+    this.apiService.saveTransaction(trans).subscribe({
+      next: (addTransResp: any) => {
+        if (addTransResp.success !== true) {
+          this.utilService.showAlert(addTransResp);
+        } else {
+          this.utilService.showAlert("Mutual Fund Mapped !!!", 'success');
+          this.form.reset();
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
   }
 
   handleRoute(path = '') {
