@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SaveTransaction } from 'app/models/transaction';
@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-add-update-transaction',
@@ -25,6 +26,10 @@ import { NgxImageCompressService } from 'ngx-image-compress';
   styleUrl: './add-update-transaction.component.scss'
 })
 export class AddUpdateTransactionComponent implements OnInit {
+
+  @Input() isUpdateScheduledTrans = false;
+  @Input() updateScheduledTrans: any;
+  @Output() formData: EventEmitter<any> = new EventEmitter();
 
   form: FormGroup;
   isMf: boolean = false;
@@ -47,7 +52,7 @@ export class AddUpdateTransactionComponent implements OnInit {
   fileBitmap: any;
   fileType: any;
 
-  constructor(private fb: FormBuilder, private router: Router, private apiService: ApiService, private utilService: UtilService, private imageCompress: NgxImageCompressService) {
+  constructor(private fb: FormBuilder, private router: Router, private apiService: ApiService, private domSanitizer: DomSanitizer, private utilService: UtilService, private imageCompress: NgxImageCompressService) {
     this.form = this.fb.group({});
     if (this.router.getCurrentNavigation()?.extras.state != null) {
       let objQueryParams = this.router.getCurrentNavigation()!.extras.state;
@@ -64,7 +69,8 @@ export class AddUpdateTransactionComponent implements OnInit {
           mfSchemeCode: [],
           mfNav: [],
           isRecurringTrans: [false],
-          reccDate: []
+          reccDate: [],
+          id: []
         });
       }
     } else {
@@ -79,12 +85,41 @@ export class AddUpdateTransactionComponent implements OnInit {
         mfSchemeCode: [],
         mfNav: [],
         isRecurringTrans: [false],
-        reccDate: []
+        reccDate: [],
+        id: []
       });
     }
   }
 
   ngOnInit(): void {
+    if (this.isUpdateScheduledTrans) {
+      if (this.updateScheduledTrans.trans_receipt_image_id != null && this.updateScheduledTrans.trans_receipt_image_id != undefined && this.updateScheduledTrans.trans_receipt_image_id != 0) {
+        this.apiService.getReceiptImage({ "receipt_uid": this.updateScheduledTrans.trans_receipt_image_id }).subscribe({
+          next: (resp: any) => {
+            let _bitmap_data = resp.dataArray[0].bitmap_data;
+            this.currentFile = _bitmap_data;
+            this.previewUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(_bitmap_data);
+          }, error: (err) => {
+            console.error(err);
+            this.utilService.showAlert("Error retrieving receipt image : " + JSON.stringify(err));
+          }
+        });
+      }
+      this.form = this.fb.group({
+        amount: [this.utilService.formatStringValueToAmount(this.updateScheduledTrans.trans_amount)],
+        description: [this.updateScheduledTrans.trans_desc, Validators.minLength(3)],
+        transDate: [this.utilService.getDate(this.updateScheduledTrans.trans_date)],
+        isTransferTrans: [{ value: false, disabled: true }],
+        transType: [{ value: this.updateScheduledTrans.trans_type, disabled: true }],
+        fromAccDetails: [this.updateScheduledTrans.account_id],
+        toAccDetails: [],
+        mfSchemeCode: [this.updateScheduledTrans.scheme_code],
+        mfNav: [this.updateScheduledTrans.mf_nav],
+        isRecurringTrans: [{ value: (this.updateScheduledTrans.rec_date != null && this.updateScheduledTrans.rec_date != "") ? true : false, disabled: true }],
+        reccDate: [this.updateScheduledTrans.rec_date],
+        id: [this.updateScheduledTrans.trans_id]
+      });
+    }
     this.form.get('isTransferTrans')?.valueChanges.subscribe(data => {
       this.onChangeTransferTrans(data);
     });
@@ -95,6 +130,12 @@ export class AddUpdateTransactionComponent implements OnInit {
       this.monthDays.push(i);
     }
     this.loadAccounts();
+
+    this.formData.emit(this.form.value);
+    this.form.valueChanges.subscribe(val => {
+      val['valid'] = this.form.valid;
+      this.formData.emit(val);
+    });
   }
 
   loadAccounts() {
@@ -123,6 +164,7 @@ export class AddUpdateTransactionComponent implements OnInit {
           if (this.form.get('fromAccDetails')?.value != null) {
             let selectedAcc = this.mainAccList.filter((_acc: any) => _acc.id === this.form.get('fromAccDetails')?.value)[0];
             this.fromAccBalance = this.utilService.formatAmountWithComma(selectedAcc.balance!);
+            this.onChangeFromAccount({ value: this.form.get('fromAccDetails')?.value });
           }
         }, 300);
       },

@@ -6,11 +6,12 @@ import { ConfirmData } from 'app/models/confirm';
 import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
+import { AddUpdateTransactionComponent } from '../add-update-transaction/add-update-transaction.component';
 
 @Component({
   selector: 'app-all-scheduled',
   standalone: true,
-  imports: [CommonModule, ContextMenuModule, ConfirmDialogComponent],
+  imports: [CommonModule, ContextMenuModule, ConfirmDialogComponent, AddUpdateTransactionComponent],
   templateUrl: './all-scheduled.component.html',
   styleUrl: './all-scheduled.component.scss'
 })
@@ -138,47 +139,53 @@ export class AllScheduledComponent {
   }
 
   updatedRecord(event: any) {
-    // this.modifiedRecord.rec_trans_id = event.id;
-    // this.modifiedRecord.rec_trans_amount = this.utilService.roundUpAmount(event.amount);
-    // this.modifiedRecord.rec_trans_desc = event.description;
-    // this.modifiedRecord.rec_trans_last_executed = this.utilService.convertDate(event.transDate);
-    // this.modifiedRecord.rec_account_id = event.accountId;
-    // this.modifiedRecord.rec_trans_date = event.reccDate;
-    // this.modifiedRecord.rec_trans_executed = event.hasExecuted;
-    // this.modifiedRecord.rec_mf_scheme_name = event.mfSchemeCode;
-    // this.modifiedRecord.rec_is_mf = event.isMf;
-    // this.modifiedRecord.user_id = this.utilService.appUserId;
-    // this.modifiedRecord.is_valid = event.valid;
+    this.modifiedRecord.trans_id = event.id;
+    this.modifiedRecord.trans_amount = this.utilService.roundUpAmount(event.amount);
+    this.modifiedRecord.trans_desc = event.description;
+    this.modifiedRecord.trans_date = this.utilService.convertDate(event.transDate);
+    this.modifiedRecord.account_id = event.fromAccDetails;
+    this.modifiedRecord.rec_date = event.reccDate;
+    this.modifiedRecord.isRecc = event.isRecurringTrans;
+    this.modifiedRecord.scheme_code = event.mfSchemeCode;
+    this.modifiedRecord.mf_nav = event.mfNav;
+    this.modifiedRecord.user_id = this.utilService.appUserId;
+    this.modifiedRecord.isValid = event.valid;
   }
 
   saveOrUpdate(item: any) {
-    if (item.is_valid == true) {
-      // item.rec_trans_executed = (item.rec_trans_executed == true) ? 'true' : 'false';
-      // if (item.rec_trans_desc == undefined || item.rec_trans_desc?.length! < 3) {
-      //   this.utilService.showAlert("Description must be atleast 3 characters");
-      //   return;
-      // }
-      // if (item.rec_trans_last_executed == undefined || item.rec_trans_last_executed == null) {
-      //   this.utilService.showAlert("Last Executed Date is invalid or blank.");
-      //   return;
-      // }
-      // if (item.rec_trans_amount == undefined || item.rec_trans_amount == null) {
-      //   this.utilService.showAlert("Amount is invalid or blank.");
-      //   return;
-      // }
-      // if (item.rec_account_id == undefined || item.rec_account_id == null) {
-      //   this.utilService.showAlert("Account is invalid or not selected.");
-      //   return;
-      // }
-      // if (item.rec_trans_date == undefined || item.rec_trans_date == null) {
-      //   this.utilService.showAlert("Recurring Date is invalid or not selected.");
-      //   return;
-      // }
-      // if (item.rec_is_mf === true && (item.rec_mf_scheme_name == undefined || item.rec_mf_scheme_name == null)) {
-      //   this.utilService.showAlert("Mutual Fund Scheme is invalid or not selected.");
-      //   return;
-      // }
-      // this.updateRecurringTransaction(item);
+    if (item.isValid == true) {
+      if (item.trans_desc == undefined || item.trans_desc?.length! < 3) {
+        this.utilService.showAlert("Description must be atleast 3 characters");
+        return;
+      }
+      if (item.trans_date == undefined || item.trans_date == null) {
+        this.utilService.showAlert("Date is invalid or blank.");
+        return;
+      }
+      if (item.trans_amount == undefined || item.trans_amount == null) {
+        this.utilService.showAlert("Amount is invalid or blank.");
+        return;
+      }
+      if (item.account_id == undefined || item.account_id == null) {
+        this.utilService.showAlert("Account is invalid or not selected.");
+        return;
+      }
+      if (item.isRecc == true && (item.rec_date == undefined || item.rec_date == null)) {
+        this.utilService.showAlert("Recurring Date is invalid or not selected.");
+        return;
+      }
+      this.apiService.updateScheduledTrans([item]).subscribe({
+        next: (resp: any) => {
+          if (resp[0].success === true) {
+            this.utilService.showAlert("Scheduled Transaction updated successfully", 'success');
+            this.modalRef.close('Save clicked');
+            this.fetchAllScheduledTransactions();
+          }
+        }, error: (err) => {
+          console.error(err);
+          this.utilService.showAlert(err);
+        }
+      });
     } else {
       this.utilService.showAlert('One or more form fields are invalid');
     }

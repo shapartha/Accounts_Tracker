@@ -165,6 +165,11 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  updateScheduledTrans(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_UPDATE_SCHEDULED_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   getReceiptImage(apiFuncParams: any) {
     const apiFuncName = ApiConstants.API_GET_RECEIPT;
     return this.postApiCall(apiFuncName, apiFuncParams);

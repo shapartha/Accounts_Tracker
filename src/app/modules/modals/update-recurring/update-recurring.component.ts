@@ -1,4 +1,3 @@
-import { transition } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -106,7 +105,7 @@ export class UpdateRecurringComponent implements OnInit {
     this.form.valueChanges.subscribe(val => {
       val['valid'] = this.form.valid;
       this.formData.emit(val);
-    })
+    });
   }
 
   populateMfSchemes(_accId: any) {

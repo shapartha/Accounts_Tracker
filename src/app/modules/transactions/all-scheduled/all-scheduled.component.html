@@ -26,20 +26,20 @@
 
 <ng-template #content let-modal>
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Update Scheduled Transaction - {{ updateTrans.rec_trans_desc }}
+        <h4 class="modal-title" id="modal-basic-title">Update Scheduled Transaction - {{ updateTrans.trans_desc }}
         </h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
         <form>
             <div class="mb-3">
-                //Template to come here
+                <app-add-update-transaction [isUpdateScheduledTrans]="true" [updateScheduledTrans]="updateTrans" (formData)="updatedRecord($event)"></app-add-update-transaction>
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
-        <!-- <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)">Update</button> -->
+        <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)">Update</button>
     </div>
 </ng-template>
 
