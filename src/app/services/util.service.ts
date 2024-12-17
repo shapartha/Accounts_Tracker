@@ -73,9 +73,13 @@ export class UtilService {
 
   removeAlert() {
     const alertBoxElem = document.querySelector('.show-alert') as HTMLElement;
-    alertBoxElem.style.display = 'none';
-    const alertElem = alertBoxElem.querySelector('div') as HTMLElement;
-    alertElem.innerHTML = '';
+    if (alertBoxElem != null) {
+      alertBoxElem.style.display = 'none';
+      const alertElem = alertBoxElem.querySelector('div') as HTMLElement;
+      if (alertElem != null) {
+        alertElem.innerHTML = '';
+      }
+    }
   }
 
   showAlert(msg: string | object, type = 'danger', actionTxt?: string, timeoutDuration = AppConstants.SNACKBAR_CLOSE_TIMEOUT_DURATION) {

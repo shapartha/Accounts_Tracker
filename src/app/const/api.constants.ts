@@ -31,7 +31,13 @@ export class ApiConstants {
     static API_PROCESS_SCHEDULED_TRANS: string = "processScheduledTransaction";
     static API_UPDATE_SCHEDULED_TRANS: string = "updateScheduledTrans";
     static API_UPDATE_BILL_DUE_DATE: string = "generateDueDateForBills";
+    static API_GET_ALL_MF: string = "getAllMf";
     
     static SERVER_URL: string = "https://shapartha.online/accountstracker/api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
+
+    static API_FETCH_MF_NAV: string = "https://api.mfapi.in/mf/";
+    static API_FETCH_MF_CODE: string = this.API_FETCH_MF_NAV + "search?q=";
+    static API_FETCH_STOCK_CMP: string = "https://priceapi.moneycontrol.com/pricefeed/bse/equitycash/";
+    static API_FETCH_STOCK_LIVE_DATA: string = "https://priceapi.moneycontrol.com/pricefeed/notapplicable/inidicesindia/";
 }

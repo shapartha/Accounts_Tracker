@@ -27,66 +27,66 @@ export class ApiService {
     });
   }
 
-  getToken(apiFuncParams: any): Observable<any> {
+  getToken(apiFuncParams: any = {}): Observable<any> {
     const apiFuncName = ApiConstants.API_GET_TOKEN;
     return this.invokeApiCall(apiFuncName, apiFuncParams, false);
   }
 
-  loginUser(apiFuncParams: any) {
+  loginUser(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_USER_LOGIN;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getCategory(apiFuncParams: any): Observable<any> {
+  getCategory(apiFuncParams: any = {}): Observable<any> {
     const apiFuncName = ApiConstants.API_GET_CATEGORY;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getAllAccounts(apiFuncParams: any) {
+  getAllAccounts(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_ALL_ACCOUNTS;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getAccountsByCategory(apiFuncParams: any) {
+  getAccountsByCategory(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_ACCOUNTS_BY_CATEGORY;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getAccountsByName(apiFuncParams: any) {
+  getAccountsByName(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_ACCOUNTS_BY_NAME;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getTransactions(apiFuncParams: any, apiName: string) {
+  getTransactions(apiFuncParams: any = {}, apiName: string) {
     return this.invokeApiCall(apiName, apiFuncParams);
   }
 
-  getMfSchemesByAccount(apiFuncParams: any) {
+  getMfSchemesByAccount(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_MF_SCHEMES_BY_ACCOUNT;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  uploadReceiptImage(apiFuncParams: any): Observable<any> {
+  uploadReceiptImage(apiFuncParams: any = {}): Observable<any> {
     const apiFuncName = ApiConstants.API_UPLOAD_RECEIPT;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  saveTransaction(apiFuncParams: any) {
+  saveTransaction(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SAVE_TRANSACTION;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  saveTransactionOnly(apiFuncParams: any) {
+  saveTransactionOnly(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SAVE_TRANSACTION_ONLY;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  getRecurringTransToday(apiFuncParams: any) {
+  getRecurringTransToday(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_TODAY_RECUR_TRANS;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getScheduledTransToday(apiFuncParams: any) {
+  getScheduledTransToday(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_TODAY_SCHEDULE_TRANS;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
@@ -95,88 +95,93 @@ export class ApiService {
   * 
   * @param apiFuncParams ops_mode : 1 - PROCESS, 2 - DELETE, 3 - POSTPONE
   */
-  processScheduledTrans(apiFuncParams: any) {
+  processScheduledTrans(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_PROCESS_SCHEDULED_TRANS;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  getAllScheduledTrans(apiFuncParams: any) {
+  getAllScheduledTrans(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_ALL_SCHEDULED_TRANS;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  getAllRecurringTrans(apiFuncParams: any) {
+  getAllRecurringTrans(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_ALL_RECUR_TRANS;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  completeRecurTrans(apiFuncParams: any) {
+  completeRecurTrans(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_COMPLETE_RECUR_TRANS;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  updateRecTrans(apiFuncParams: any) {
+  updateRecTrans(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_UPDATE_RECUR_TRANS;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  deleteRecTrans(apiFuncParams: any) {
+  deleteRecTrans(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_DELETE_RECUR_TRANS;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  deleteTransaction(apiFuncParams: any) {
+  deleteTransaction(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_DELETE_TRANSACTION;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  deleteAccount(apiFuncParams: any) {
+  deleteAccount(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_DELETE_ACCOUNT;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  deleteCategory(apiFuncParams: any) {
+  deleteCategory(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_DELETE_CATEGORY;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  saveAccount(apiFuncParams: any) {
+  saveAccount(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SAVE_ACCOUNT;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  updateAccount(apiFuncParams: any) {
+  updateAccount(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_UPDATE_ACCOUNT;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  saveCategory(apiFuncParams: any) {
+  saveCategory(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SAVE_CATEGORY;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  updateCategory(apiFuncParams: any) {
+  updateCategory(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_UPDATE_CATEGORY;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  updateTransaction(apiFuncParams: any) {
+  updateTransaction(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_UPDATE_TRANSACTION;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  updateScheduledTrans(apiFuncParams: any) {
+  updateScheduledTrans(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_UPDATE_SCHEDULED_TRANS;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  getReceiptImage(apiFuncParams: any) {
+  getReceiptImage(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_RECEIPT;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  updateBillDueDate(apiFuncParams: any) {
+  updateBillDueDate(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_UPDATE_BILL_DUE_DATE;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getAllMutualFunds(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_ALL_MF;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
@@ -197,5 +202,10 @@ export class ApiService {
     };
     return this.http.post(serverUrl, "apiFunctionName=" + encodeURIComponent(apiFuncName) + "&apiFunctionParams=" + encodeURIComponent(JSON.stringify(apiFuncParams)) + (appendParams == true ? this.appendMandatoryParams() : ''),
       { 'headers': headers });
+  }
+
+  fetchMfNav(schemeCode: any) {
+    const serverUrl = ApiConstants.API_FETCH_MF_NAV + schemeCode;
+    return this.invokeApiCall('', '', false, serverUrl);
   }
 }

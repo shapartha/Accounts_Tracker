@@ -1,0 +1,75 @@
+<div class="container mt-2" id="map-mutual-fund-section">
+    <h3>Map Mutual Fund to Account</h3>
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Account: </mat-label>
+                <mat-select formControlName="accountId" required name="accountId">
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of accList"
+                        value="{{item.account_id}}">{{item.account_name}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid account required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Amount Invested: </mat-label>
+                <input type="number" min="0" matInput placeholder="Amount Invested" name="invAmount" required
+                    formControlName="invAmount" (keyup)="onChangeAmountUnits()">
+                <mat-error *ngIf="form.get('invAmount')?.value == null || form.get('invAmount')?.value == undefined">
+                    Valid amount required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Units: </mat-label>
+                <input type="number" min="0" matInput placeholder="No. of Units" name="units" required
+                    formControlName="units" (keyup)="onChangeAmountUnits()">
+                <mat-error *ngIf="form.get('units')?.value == null || form.get('units')?.value == undefined">
+                    Valid units required
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Purchase Date: </mat-label>
+                <input matInput [matDatepicker]="picker" required name="purchaseDate" formControlName="purchaseDate">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>
+                    Valid date required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Mutual Fund Scheme: </mat-label>
+                <mat-select formControlName="schemeCode" name="schemeCode" (selectionChange)="onChangeMF($event)"
+                    required>
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of mutualFunds"
+                        value="{{item.scheme_code}}">{{item.scheme_name}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid mutual fund required
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row" *ngIf="form.get('schemeCode')?.valid">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>NAV: </mat-label>
+                <input type="number" min="0" matInput placeholder="NAV" name="nav" formControlName="nav">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>NAV Date: </mat-label>
+                <input type="text" matInput placeholder="NAV Date" name="navDate" formControlName="navDate">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Avg NAV: </mat-label>
+                <input type="number" min="0" matInput placeholder="Avg NAV" name="avgNav" formControlName="avgNav">
+            </mat-form-field>
+        </div>
+        <div class="text-center mt-3">
+            <button class="btn btn-primary me-2" (click)="mapMutualFund()" [disabled]="!form.valid">Save</button>
+            <button class="btn btn-danger" (click)="handleRoute()">Cancel</button>
+        </div>
+    </form>
+</div>

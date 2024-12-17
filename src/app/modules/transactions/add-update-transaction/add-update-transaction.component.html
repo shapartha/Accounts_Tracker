@@ -130,8 +130,8 @@
         </div>
         <div class="text-center mt-3" *ngIf="!isUpdateScheduledTrans">
             <button class="btn btn-primary me-2" (click)="saveTrans(true)" [disabled]="!form.valid">Save</button>
-            <button class="btn btn-danger me-2" (click)="saveTrans()" [disabled]="!form.valid">Save & Add More</button>
-            <button class="btn btn-success" (click)="handleRoute('home')">Cancel</button>
+            <button class="btn btn-success me-2" (click)="saveTrans()" [disabled]="!form.valid">Save & Add More</button>
+            <button class="btn btn-danger" (click)="handleRoute('home')">Cancel</button>
         </div>
     </form>
 </div>

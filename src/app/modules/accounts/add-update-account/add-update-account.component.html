@@ -37,7 +37,7 @@
         </div>
         <div class="text-center mt-3" *ngIf="isUpdate != true">
             <button class="btn btn-primary me-2" (click)="saveTrans()" [disabled]="!form.valid">Save</button>
-            <button class="btn btn-success" (click)="handleRoute('home')">Cancel</button>
+            <button class="btn btn-danger" (click)="handleRoute('home')">Cancel</button>
         </div>
     </form>
 </div>

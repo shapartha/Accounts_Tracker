@@ -9,6 +9,7 @@ import { AllRecurringComponent } from './modules/transactions/all-recurring/all-
 import { AllScheduledComponent } from './modules/transactions/all-scheduled/all-scheduled.component';
 import { AddUpdateAccountComponent } from './modules/accounts/add-update-account/add-update-account.component';
 import { AddUpdateCategoryComponent } from './modules/categories/add-update-category/add-update-category.component';
+import { MapMfComponent } from './modules/mutual-funds/map-mf/map-mf.component';
 
 export const routes: Routes = [
     {
@@ -44,6 +45,10 @@ export const routes: Routes = [
     {
         path: 'home',
         component: HomeComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'map-mf',
+        component: MapMfComponent, canActivate : [AuthGuard]
     },
     {
         path: 'logout',
