@@ -15,6 +15,8 @@ import { ConfirmData } from 'app/models/confirm';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddUpdateAccountComponent } from "../accounts/add-update-account/add-update-account.component";
 import { AddUpdateCategoryComponent } from '../categories/add-update-category/add-update-category.component';
+import { SaveTransaction } from 'app/models/transaction';
+import { AppConstants } from 'app/const/app.constants';
 
 @Component({
   selector: 'app-home',
@@ -128,6 +130,38 @@ export class HomeComponent implements OnInit {
 
   showDeleteCopy(value: any) {
     return value['is_mf'] != true && value['is_equity'] != true;
+  }
+
+  showGenerateBill(value: any) {
+    return value['category_name'] != null && value['category_name'].toUpperCase().indexOf('CREDIT CARD') != -1;
+  }
+
+  generateBill(e: any) {
+    let data = e.value;
+    let _inpData: SaveTransaction = {};
+    _inpData.acc_id = data.id;
+    _inpData.amount = Math.abs(this.utilService.formatStringValueToAmount(data.balance)).toFixed(2);
+    let _transDate = new Date();
+    _inpData.date = this.utilService.convertDate(_transDate);
+    _inpData.desc = "Bill Generated for Credit Card - " + data.name;
+    _inpData.type = "CREDIT";
+    _inpData.user_id = this.utilService.appUserId.toString();
+
+    /**
+     * Generate Scheduled Transaction for the bill amount below
+     */
+
+    let _inpData_: SaveTransaction = {};
+    _inpData_.acc_id = AppConstants.BILLPAY_ACCID;
+    _inpData_.amount = Math.abs(this.utilService.formatStringValueToAmount(data.balance)).toFixed(2);
+    let _transDate_ = new Date();
+    _transDate_.setDate(_transDate_.getDate() + 1);
+    _inpData_.date = this.utilService.convertDate(_transDate_);
+    _inpData_.desc = "Bill Payment for Credit Card - " + data.name;
+    _inpData_.type = "DEBIT";
+    _inpData_.user_id = this.utilService.appUserId.toString();
+
+    this.invokeSaveTransactionProcessApi(_inpData, _inpData_);
   }
 
   update(content: TemplateRef<any>, data: any) {
@@ -316,5 +350,47 @@ export class HomeComponent implements OnInit {
         });
       }
     }
+  }
+
+  invokeSaveTransactionProcessApi(_inpData: any, _inpData_: any) {
+    this.apiService.saveTransaction(_inpData).subscribe({
+      next: (resp: any) => {
+        if (resp.success === true) {
+          this.apiService.saveTransaction(_inpData_).subscribe({
+            next: (resp: any) => {
+              if (resp.success === true) {
+                let _billDueDateUpdObj = {
+                  trans_desc: "Bill Payment for Credit Card",
+                  trans_date: this.utilService.convertDate()
+                }
+                this.apiService.updateBillDueDate(_billDueDateUpdObj).subscribe({
+                  next: (x: any) => {
+                    if (x.success === true) {
+                      this.refresh();
+                      this.utilService.showAlert("Bill Generated Successfully", "success");
+                    } else {
+                      this.utilService.showAlert("Some error occurred while generating bill. Please try again");
+                    }
+                  }, error: (err: any) => {
+                    console.error("Error -> " + err);
+                    this.utilService.showAlert("Error Occurred while generating bill ! Please try again");
+                  }
+                });
+              } else {
+                this.utilService.showAlert("Some error occurred while generating bill. Please try again");
+              }
+            }, error: (err: any) => {
+              console.error("Error -> " + err);
+              this.utilService.showAlert("Error Occurred while generating bill ! Please try again");
+            }
+          });
+        } else {
+          this.utilService.showAlert("Some error occurred while generating bill. Please try again");
+        }
+      }, error: (err: any) => {
+        console.error("Error -> " + err);
+        this.utilService.showAlert("Error Occurred while generating bill ! Please try again");
+      }
+    });
   }
 }

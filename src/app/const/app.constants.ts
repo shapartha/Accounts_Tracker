@@ -1,6 +1,7 @@
 export class AppConstants {
     static SNACKBAR_CLOSE_TIMEOUT_DURATION: number = 5000;
     static RUPEE_SYMBOL: string = "₹";
+    static BILLPAY_ACCID: string = "768213039";
     static MONTH: any = {
         1: "Jan",
         2: "Feb",

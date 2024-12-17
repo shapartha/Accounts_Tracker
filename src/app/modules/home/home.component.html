@@ -44,7 +44,7 @@
 <context-menu #oneContextMenu [menuClass]="'app-home-context-menu'">
     <ng-template contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
     <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
-    <!-- <ng-template contextMenuItem (execute)="update($event)" let-value>Generate Bill</ng-template> -->
+    <ng-template [visible]="showGenerateBill" contextMenuItem (execute)="generateBill($event)" let-value>Generate Bill</ng-template>
 </context-menu>
 
 <ng-template #content let-modal>

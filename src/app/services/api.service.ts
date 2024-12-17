@@ -175,6 +175,11 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  updateBillDueDate(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_UPDATE_BILL_DUE_DATE;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   appendMandatoryParams(): string {
     let _apiJsonParams = "&apiKey=" + ApiConstants.API_KEY;
     _apiJsonParams += "&apiToken=" + this.utilService.appToken;

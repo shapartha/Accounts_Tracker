@@ -30,6 +30,7 @@ export class ApiConstants {
     static API_GET_ALL_SCHEDULED_TRANS: string = "getAllScheduledTrans";
     static API_PROCESS_SCHEDULED_TRANS: string = "processScheduledTransaction";
     static API_UPDATE_SCHEDULED_TRANS: string = "updateScheduledTrans";
+    static API_UPDATE_BILL_DUE_DATE: string = "generateDueDateForBills";
     
     static SERVER_URL: string = "https://shapartha.online/accountstracker/api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
