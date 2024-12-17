@@ -10,6 +10,7 @@ import { AllScheduledComponent } from './modules/transactions/all-scheduled/all-
 import { AddUpdateAccountComponent } from './modules/accounts/add-update-account/add-update-account.component';
 import { AddUpdateCategoryComponent } from './modules/categories/add-update-category/add-update-category.component';
 import { MapMfComponent } from './modules/mutual-funds/map-mf/map-mf.component';
+import { MapStockComponent } from './modules/stocks/map-stock/map-stock.component';
 
 export const routes: Routes = [
     {
@@ -49,6 +50,10 @@ export const routes: Routes = [
     {
         path: 'map-mf',
         component: MapMfComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'map-stock',
+        component: MapStockComponent, canActivate : [AuthGuard]
     },
     {
         path: 'logout',

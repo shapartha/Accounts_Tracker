@@ -1,0 +1,75 @@
+<div class="container mt-2" id="map-stock-section">
+    <h3>Map Stocks to Account</h3>
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Account: </mat-label>
+                <mat-select formControlName="accountId" required name="accountId">
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of accList"
+                        value="{{item.account_id}}">{{item.account_name}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid account required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>No. Of Shares: </mat-label>
+                <input type="number" min="0" matInput placeholder="No. Of Shares" name="noOfShares" required
+                    formControlName="noOfShares" (keyup)="onChangePriceNumber()">
+                <mat-error *ngIf="form.get('noOfShares')?.value == null || form.get('noOfShares')?.value == undefined">
+                    Valid number of shared required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Purchase Price: </mat-label>
+                <input type="number" min="0" matInput placeholder="Purchase Price" name="purchasePrice" required
+                    formControlName="purchasePrice" (keyup)="onChangePriceNumber()">
+                <mat-error
+                    *ngIf="form.get('purchasePrice')?.value == null || form.get('purchasePrice')?.value == undefined">
+                    Valid per share price required
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Purchase Date: </mat-label>
+                <input matInput [matDatepicker]="picker" required name="purchaseDate" formControlName="purchaseDate">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>
+                    Valid date required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Stock Name: </mat-label>
+                <mat-select formControlName="stockSymbol" name="stockSymbol" (selectionChange)="onChangeEQ($event)" required>
+                    <mat-option value="">None</mat-option>
+                    <mat-option *ngFor="let item of stocks"
+                        value="{{item.stock_symbol}}">{{item.stock_name}}</mat-option>
+                </mat-select>
+                <mat-error>
+                    Valid company stock required
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row" *ngIf="form.get('stockSymbol')?.valid">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Amount Invested: </mat-label>
+                <input type="number" min="0" matInput placeholder="Amount Invested" name="invAmount" formControlName="invAmount">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Current Market Price: </mat-label>
+                <input type="text" matInput placeholder="Current Market Price" name="cmp" formControlName="cmp">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Last Traded On: </mat-label>
+                <input type="text" matInput placeholder="Last Traded On" name="lastMarketDate" formControlName="lastMarketDate">
+            </mat-form-field>
+        </div>
+        <div class="text-center mt-3">
+            <button class="btn btn-primary me-2" (click)="mapStock()" [disabled]="!form.valid">Save</button>
+            <button class="btn btn-danger" (click)="handleRoute()">Cancel</button>
+        </div>
+    </form>
+</div>

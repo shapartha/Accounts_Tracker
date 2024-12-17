@@ -205,6 +205,16 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  getAllStocks(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_ALL_STOCKS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveStockMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_STOCK_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   appendMandatoryParams(): string {
     let _apiJsonParams = "&apiKey=" + ApiConstants.API_KEY;
     _apiJsonParams += "&apiToken=" + this.utilService.appToken;
@@ -226,6 +236,11 @@ export class ApiService {
 
   fetchMfNav(schemeCode: any) {
     const serverUrl = ApiConstants.API_FETCH_MF_NAV + schemeCode;
+    return this.invokeApiCall('', '', false, serverUrl);
+  }
+
+  fetchStockCMP(stockSymbol: any) {
+    const serverUrl = ApiConstants.API_FETCH_STOCK_CMP + stockSymbol;
     return this.invokeApiCall('', '', false, serverUrl);
   }
 }

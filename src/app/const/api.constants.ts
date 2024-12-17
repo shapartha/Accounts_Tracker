@@ -39,6 +39,19 @@ export class ApiConstants {
     static API_SAVE_MF_TRANS: string = "storeMfTrans";
     static API_UPDATE_MF_TRANS: string = "updateMfTrans";
     static API_DELETE_MF_MAPPING: string = "deleteMfMapping";
+    static API_GET_ALL_STOCKS: string = "getAllStocks";
+    static API_SAVE_STOCK_MAPPING: string = "storeStockMapping";
+    static API_DELETE_STOCK: string = "deleteStock";
+    static API_SAVE_STOCK: string = "storeStock";
+    static API_SAVE_MF: string = "storeMf";
+    static API_DELETE_MF: string = "deleteMf";
+    static API_SCHEMA_BACKUP: string = "getSchemaBackup";
+    static API_GET_ALL_MAIL_FILTER_MAPPING: string = "getAllMailFilterMappings";
+    static API_GET_MAIL_FILTER_MAPPING_BY_FILTER: string = "getMailFilterMappingByFilter";
+    static API_GET_MAIL_FILTER_MAPPING_BY_ACC: string = "getMailFilterMappingByAccId";
+    static API_UPDATE_MAIL_FILTER_MAPPING: string = "updateMailFilterMapping";
+    static API_DELETE_MAIL_FILTER_MAPPING: string = "deleteMailFilterMapping";
+    static API_SAVE_MAIL_FILTER_MAPPING: string = "storeMailFilterMapping";
     
     static SERVER_URL: string = "https://shapartha.online/accountstracker/api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
