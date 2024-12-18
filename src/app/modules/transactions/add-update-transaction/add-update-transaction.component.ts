@@ -388,14 +388,14 @@ export class AddUpdateTransactionComponent implements OnInit {
         if (resp.success === true) {
           if (_inpData.type == "CREDIT") {
             if (this.form.get('isTransferTrans')?.value == true) {
-              let newBalance = this.utilService.formatStringValueToAmount(this.toAccBalance) + parseFloat(this.form.get('amount')?.value);
+              let newBalance = this.utilService.formatStringValueToAmount(this.toAccBalance) + parseFloat(_inpData.amount);
               this.toAccBalance = this.utilService.formatAmountWithComma(newBalance);
             } else {
-              let newBalance = this.utilService.formatStringValueToAmount(this.fromAccBalance) + parseFloat(this.form.get('amount')?.value);
+              let newBalance = this.utilService.formatStringValueToAmount(this.fromAccBalance) + parseFloat(_inpData.amount);
               this.fromAccBalance = this.utilService.formatAmountWithComma(newBalance);
             }
           } else {
-            let newBalance = this.utilService.formatStringValueToAmount(this.fromAccBalance) - parseFloat(this.form.get('amount')?.value);
+            let newBalance = this.utilService.formatStringValueToAmount(this.fromAccBalance) - parseFloat(_inpData.amount);
             this.fromAccBalance = this.utilService.formatAmountWithComma(newBalance);
           }
           this.utilService.showAlert("Transaction Saved Successfully", "success");
