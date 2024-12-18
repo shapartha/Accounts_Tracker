@@ -3,7 +3,12 @@
     <mat-tab-group animationDuration="300ms">
         <mat-tab label="Jobs / Schedulers">
             <ng-template matTabContent>
-                Content 3
+                <div class="d-grid gap-2 col-6 mx-auto m-5">
+                    <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater()">Mutual Funds Updater</button>
+                    <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater(true)">Stocks Updater</button>
+                    <button type="button" class="btn btn-secondary">DB/Schema Backup</button>
+                    <button type="button" class="btn btn-danger">Monthly Routines</button>
+                </div>
             </ng-template>
         </mat-tab>
         <mat-tab label="Pending Deliveries">
@@ -13,7 +18,7 @@
         </mat-tab>
         <mat-tab label="Mail Filter Mappings">
             <ng-template matTabContent>
-                Content 2
+                <app-manage-mail-filters (confirmObject)="retrieveConfirmObject($event)" [deleteClicked]="invokeDeleted"></app-manage-mail-filters>
             </ng-template>
         </mat-tab>
     </mat-tab-group>

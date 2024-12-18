@@ -57,6 +57,11 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
+  getAccountById(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_ACCOUNT_BY_ID;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   getTransactions(apiFuncParams: any = {}, apiName: string) {
     return this.invokeApiCall(apiName, apiFuncParams);
   }
@@ -246,8 +251,12 @@ export class ApiService {
   }
 
   getDeliveryTrans(apiFuncParams: any) {
-      const apiFuncName = ApiConstants.API_GET_DELIVERY_TRANS;
-      return this.invokeApiCall(apiFuncName, apiFuncParams);
+    const apiFuncName = ApiConstants.API_GET_DELIVERY_TRANS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  invokeMfStockUpdater(stocksUpdate: boolean) {
+    return this.http.get<any>(ApiConstants.SERVER_PATH_URL + "mf-stock-updater/?stocksUpdate=" + stocksUpdate);
   }
 
   appendMandatoryParams(): string {

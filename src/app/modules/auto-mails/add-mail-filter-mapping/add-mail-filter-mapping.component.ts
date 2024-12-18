@@ -19,15 +19,34 @@ export class AddMailFilterMappingComponent implements OnInit {
 
   form: FormGroup;
   accList: any[] = [];
+  isUpdate: boolean = false;
 
   constructor(private fb: FormBuilder, private apiService: ApiService, public utilService: UtilService, private router: Router) {
-    this.form = this.fb.group({
-      account_id: [],
-      filterName: [],
-      functionName: [],
-      debitConditions: [],
-      creditConditions: []
-    });
+    this.form = this.fb.group({});
+    if (this.router.getCurrentNavigation()?.extras.state != null) {
+      let objQueryParams = this.router.getCurrentNavigation()!.extras.state;
+      if (objQueryParams != undefined) {
+        objQueryParams = objQueryParams['queryParams'];
+        this.form = this.fb.group({
+          filterName: [objQueryParams!['filter']],
+          functionName: [objQueryParams!['filter_function']],
+          account_id: [objQueryParams!['acc_id']],
+          debitConditions: [objQueryParams!['debit_conditions_json']],
+          creditConditions: [objQueryParams!['credit_conditions_json']],
+          mapping_id: [objQueryParams!['mapping_id']]
+        });
+        this.isUpdate = true;
+      }
+    } else {
+      this.form = this.fb.group({
+        account_id: [],
+        filterName: [],
+        functionName: [],
+        debitConditions: [],
+        creditConditions: [],
+        mapping_id: []
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -57,7 +76,8 @@ export class AddMailFilterMappingComponent implements OnInit {
         acc_id: dataObj.account_id,
         filter_function: dataObj.functionName,
         debit_conditions_json: dataObj.debitConditions,
-        credit_conditions_json: dataObj.creditConditions
+        credit_conditions_json: dataObj.creditConditions,
+        mapping_id: dataObj.mapping_id
       }
       if (dataObj.debitConditions == undefined || dataObj.debitConditions == null || dataObj.debitConditions.trim() == "") {
         delete _inp.debit_conditions_json;
@@ -65,19 +85,40 @@ export class AddMailFilterMappingComponent implements OnInit {
       if (dataObj.creditConditions == undefined || dataObj.creditConditions == null || dataObj.creditConditions.trim() == "") {
         delete _inp.credit_conditions_json;
       }
-      this.apiService.saveMailFilterMapping([_inp]).subscribe({
-        next: (saveFilterMappingResp: any) => {
-          if (saveFilterMappingResp[0].success && saveFilterMappingResp[0].response == '200') {
-            this.utilService.showAlert("Filter condition mapped successfully", 'success');
-            this.form.reset();
-          } else {
-            this.utilService.showAlert("Unable to save filter mapping");
+      if (!this.isUpdate) {
+        delete _inp.mapping_id;
+        this.apiService.saveMailFilterMapping([_inp]).subscribe({
+          next: (saveFilterMappingResp: any) => {
+            if (saveFilterMappingResp[0].success && saveFilterMappingResp[0].response == '200') {
+              this.utilService.showAlert("Filter condition mapped successfully", 'success');
+              this.form.reset();
+            } else {
+              this.utilService.showAlert("Unable to save filter mapping");
+            }
           }
-        }
-      });
-
+        });
+      } else {
+        this.apiService.updateMailFilterMapping([_inp]).subscribe({
+          next: (updateFilterMappingResp: any) => {
+            if (updateFilterMappingResp[0].success && updateFilterMappingResp[0].response == '200') {
+              this.utilService.showAlert("Filter condition updated successfully", 'success');
+              this.form.reset();
+            } else {
+              this.utilService.showAlert("Unable to update filter mapping");
+            }
+          }
+        });
+      }
     } else {
       this.utilService.showAlert("Conditions are not properly formatted in JSON");
+    }
+  }
+
+  updateMapping() {
+    if (this.isUpdate) {
+      this.saveMapping();
+    } else {
+      this.utilService.showAlert("Update is not allowed");
     }
   }
 

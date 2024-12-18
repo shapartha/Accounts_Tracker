@@ -1,5 +1,6 @@
 <div class="container mt-2" id="add-mail-filter-section">
-    <h3>Add New Mail Filter Mapping</h3>
+    <h3 *ngIf="!isUpdate">Add New Mail Filter Mapping</h3>
+    <h3 *ngIf="isUpdate">Update Mail Filter Mapping</h3>
     <form [formGroup]="form">
         <div class="row">
             <mat-form-field appearance="outline" class="col-md-4 mt-3">
@@ -38,7 +39,8 @@
             </mat-form-field>
         </div>
         <div class="text-center mt-3">
-            <button class="btn btn-primary me-2" (click)="saveMapping()" [disabled]="!form.valid">Save</button>
+            <button class="btn btn-primary me-2" (click)="saveMapping()" [disabled]="!form.valid" *ngIf="!isUpdate">Save</button>
+            <button class="btn btn-primary me-2" (click)="updateMapping()" [disabled]="!form.valid" *ngIf="isUpdate">Update</button>
             <button class="btn btn-danger" (click)="handleRoute()">Cancel</button>
         </div>
     </form>
