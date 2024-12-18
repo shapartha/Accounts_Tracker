@@ -52,6 +52,7 @@ export class ApiConstants {
     static API_UPDATE_MAIL_FILTER_MAPPING: string = "updateMailFilterMapping";
     static API_DELETE_MAIL_FILTER_MAPPING: string = "deleteMailFilterMapping";
     static API_SAVE_MAIL_FILTER_MAPPING: string = "storeMailFilterMapping";
+    static API_GET_DELIVERY_TRANS: string = "getDeliveryTrans";
     
     static SERVER_URL: string = "https://shapartha.online/accountstracker/api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";

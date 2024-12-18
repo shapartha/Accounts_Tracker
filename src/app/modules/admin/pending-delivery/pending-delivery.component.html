@@ -1,0 +1,24 @@
+<div style="margin: 20px;">
+    @for (transaction of pendingDeliveries; track transaction) {
+    <div [contextMenu]="oneContextMenu" [contextMenuValue]="transaction">
+        <div class="row">
+            <div class="col-sm-12 font-weight-bold" style="font-size: 16px;">{{ transaction.description }}</div>
+        </div>
+        <div class="row transaction-item">
+            <div class="col-sm-4">{{ transaction.acc_name }}</div>
+            <div class="col-sm-4 text-center">{{ transaction.date }}</div>
+            <div class="col-sm-4 text-end" style="font-size: 16px;" [ngClass]="getClassVal(transaction)"> {{ transaction.amount }} </div>
+        </div>
+    </div>
+    }
+    <div *ngIf="pendingDeliveries == null || pendingDeliveries.length == 0" class="no-trans-header">
+        No deliveries are pending right now
+    </div>
+</div>
+
+<context-menu #oneContextMenu [menuClass]="'app-pending-delivery-menu'">
+    <ng-template contextMenuItem (execute)="markDeliveryOrder($event)" let-value>Unmark as Delivery Order</ng-template>
+    <ng-template contextMenuItem (execute)="setOrderDelivered($event)" let-value>
+        Set Order Delivered
+    </ng-template>
+</context-menu>

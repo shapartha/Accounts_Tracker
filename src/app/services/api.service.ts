@@ -215,6 +215,41 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  getAllMailFilterMappings(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_ALL_MAIL_FILTER_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getMailFilterMappingByFilter(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_MAIL_FILTER_MAPPING_BY_FILTER;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getMailFilterMappingByAccId(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_MAIL_FILTER_MAPPING_BY_ACC;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveMailFilterMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_MAIL_FILTER_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateMailFilterMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_UPDATE_MAIL_FILTER_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteMailFilterMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_MAIL_FILTER_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getDeliveryTrans(apiFuncParams: any) {
+      const apiFuncName = ApiConstants.API_GET_DELIVERY_TRANS;
+      return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   appendMandatoryParams(): string {
     let _apiJsonParams = "&apiKey=" + ApiConstants.API_KEY;
     _apiJsonParams += "&apiToken=" + this.utilService.appToken;

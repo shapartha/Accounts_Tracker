@@ -216,4 +216,17 @@ export class UtilService {
       return transAmt;
     }
   }
+
+  validationJsonString(data: string): boolean {
+    let chkResult = false;
+    if (data == undefined || data == null || data.trim() == "") {
+      chkResult = true;
+    } else {
+      try {
+        JSON.parse(data);
+        chkResult = true;
+      } catch (_e) { }
+    }
+    return chkResult;
+  }
 }
