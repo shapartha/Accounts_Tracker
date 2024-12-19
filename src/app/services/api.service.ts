@@ -256,7 +256,9 @@ export class ApiService {
   }
 
   invokeMfStockUpdater(stocksUpdate: boolean) {
-    return this.http.get<any>(ApiConstants.SERVER_PATH_URL + "mf-stock-updater/?stocksUpdate=" + stocksUpdate);
+    let apiUrl = ApiConstants.SERVER_PATH_URL;
+    apiUrl = apiUrl.replaceAll('https', 'http');
+    return this.http.get<any>(apiUrl + "mf-stock-updater/?stocksUpdate=" + stocksUpdate);
   }
 
   appendMandatoryParams(): string {

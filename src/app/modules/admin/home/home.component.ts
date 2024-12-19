@@ -6,6 +6,7 @@ import { ConfirmData } from 'app/models/confirm';
 import { ManageMailFiltersComponent } from "../manage-mail-filters/manage-mail-filters.component";
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-admin-home',

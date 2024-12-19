@@ -1,5 +1,5 @@
 <div class="container mt-2" id="home-section">
-    <app-scheduled (refreshParent)="refresh($event)"></app-scheduled>
+    <app-scheduled [refreshIt]="refreshScheduled" (refreshParent)="refresh($event)"></app-scheduled>
     <app-recurring (refreshParent)="refresh($event)"></app-recurring>
     <h3>Categories</h3>
     <div class="row">

@@ -38,6 +38,7 @@ export class HomeComponent implements OnInit {
   updateObject: any;
   modalRef: any;
   modifiedRecord: any = {};
+  refreshScheduled: boolean = false;
 
   constructor(private apiService: ApiService, public utilService: UtilService, private router: Router, private modalService: NgbModal) { }
 
@@ -367,6 +368,7 @@ export class HomeComponent implements OnInit {
                   next: (x: any) => {
                     if (x.success === true) {
                       this.refresh();
+                      this.refreshScheduled = true;
                       this.utilService.showAlert("Bill Generated Successfully", "success");
                     } else {
                       this.utilService.showAlert("Some error occurred while generating bill. Please try again");

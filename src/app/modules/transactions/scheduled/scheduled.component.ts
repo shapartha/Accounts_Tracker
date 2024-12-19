@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCarouselModule, NgbCarousel, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService } from 'app/services/api.service';
@@ -13,11 +13,19 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './scheduled.component.html',
   styleUrl: './scheduled.component.scss'
 })
-export class ScheduledComponent {
+export class ScheduledComponent implements OnInit, OnChanges {
   pending_scheduled_trans: any[] = [];
+  @Input() refreshIt: boolean = false;
   @Output() refreshParent: EventEmitter<any> = new EventEmitter();
 
   constructor(private apiService: ApiService, public utilService: UtilService) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['refreshIt'].isFirstChange() && changes['refreshIt'].currentValue == true) {
+      this.fetchScheduledTransToday();
+      this.refreshIt = false;
+    }
+  }
 
   ngOnInit() {
     setTimeout(() => {
