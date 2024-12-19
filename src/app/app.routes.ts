@@ -13,6 +13,7 @@ import { MapMfComponent } from './modules/mutual-funds/map-mf/map-mf.component';
 import { MapStockComponent } from './modules/stocks/map-stock/map-stock.component';
 import { AddMailFilterMappingComponent } from './modules/auto-mails/add-mail-filter-mapping/add-mail-filter-mapping.component';
 import { AdminHomeComponent } from './modules/admin/home/home.component';
+import { MutualFundsComponent } from './modules/mutual-funds/mutual-funds.component';
 
 export const routes: Routes = [
     {
@@ -64,6 +65,10 @@ export const routes: Routes = [
     {
         path: 'admin/manage-home',
         component: AdminHomeComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'manage-mutual-funds',
+        component: MutualFundsComponent, canActivate : [AuthGuard]
     },
     {
         path: 'logout',

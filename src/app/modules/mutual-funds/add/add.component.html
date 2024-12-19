@@ -1,0 +1,32 @@
+<div style="margin: 20px;">
+    <h3>Add Mutual Fund</h3>
+    <form [formGroup]="form" (keydown)="preventEnter($event)">
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Scheme Code</mat-label>
+                <input type="text" matInput placeholder="Enter Scheme Code" name="schemeCode" formControlName="schemeCode" (change)="onChangeSchemeCode($event)"
+                    required>
+                <mat-error *ngIf="form.get('schemeCode')?.value == null || form.get('schemeCode')?.value == undefined">
+                    Scheme code required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-4 mt-3">
+                <mat-label>Scheme Name</mat-label>
+                <input type="text" matInput formControlName="schemeName" placeholder="Enter Scheme Name" aria-label="Enter Scheme Name"
+                    (keydown.enter)="getSchemeCode()" name="schemeName" required [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectedMfName($event)">
+                    <mat-option *ngFor="let option of filteredMfList | async" [value]="option.name">
+                        {{option.name}}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.get('schemeName')?.value == null || form.get('schemeName')?.value == undefined">
+                    Scheme name required
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="text-center mt-3">
+            <button class="btn btn-primary me-2" (click)="saveMutualFund()" [disabled]="!form.valid">Save</button>
+            <button class="btn btn-danger" (click)="handleRoute()">Cancel</button>
+        </div>
+    </form>
+</div>

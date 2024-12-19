@@ -255,6 +255,16 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
+  saveMutualFund(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_MF;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteMutualFund(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_MF;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   invokeMfStockUpdater(userId: string | number, categoryId: string | number, stocksUpdate: boolean) {
     let apiUrl = ApiConstants.SERVER_PATH_URL;
     apiUrl = apiUrl.replaceAll('https', 'http');
@@ -265,6 +275,11 @@ export class ApiService {
     let apiUrl = ApiConstants.SERVER_PATH_URL;
     apiUrl = apiUrl.replaceAll('https', 'http');
     return this.http.get<any>(apiUrl + "routine-services/?userId=" + userId);
+  }
+
+  fetchMfCode(schemeName: any) {
+    const apiFuncName = ApiConstants.API_GET_DELIVERY_TRANS;
+    return this.http.get<any>(ApiConstants.API_FETCH_MF_CODE + schemeName);
   }
 
   appendMandatoryParams(): string {

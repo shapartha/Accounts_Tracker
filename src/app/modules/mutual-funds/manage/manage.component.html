@@ -1,0 +1,18 @@
+<div style="margin: 20px;">
+    @for (mutualFund of mutualFunds; track mutualFund) {
+    <div [contextMenu]="oneContextMenu" [contextMenuValue]="mutualFund" class="p-2">
+        <div class="row mail-filter-item">
+            <div class="col-sm-3 schemeCode">{{ mutualFund.scheme_code }}</div>
+            <div class="col-sm-9 font-weight-bold"> {{ mutualFund.scheme_name }} </div>
+        </div>
+    </div>
+    }
+    <div *ngIf="mutualFunds == null || mutualFunds.length == 0" class="no-mf-header">
+        No mutual funds available !!
+    </div>
+</div>
+
+<context-menu #oneContextMenu [menuClass]="'app-manage-mf-menu'">
+    <ng-template contextMenuItem (execute)="update($event)" let-value>Update</ng-template>
+    <ng-template contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
+</context-menu>

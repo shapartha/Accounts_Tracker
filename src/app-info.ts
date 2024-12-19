@@ -1,4 +1,4 @@
 export const AppInfo = {
-    version: 'v10.4.0',
-    buildDate: '19-12-2024 17:22',
+    version: 'v10.5.0',
+    buildDate: '20-12-2024 00:14',
 }

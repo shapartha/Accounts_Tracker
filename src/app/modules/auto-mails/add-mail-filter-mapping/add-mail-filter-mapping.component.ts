@@ -75,8 +75,8 @@ export class AddMailFilterMappingComponent implements OnInit {
         filter: dataObj.filterName,
         acc_id: dataObj.account_id,
         filter_function: dataObj.functionName,
-        debit_conditions_json: dataObj.debitConditions,
-        credit_conditions_json: dataObj.creditConditions,
+        debit_conditions_json: dataObj.debitConditions?.replaceAll("'", "\\\'"),
+        credit_conditions_json: dataObj.creditConditions?.replaceAll("'", "\\\'"),
         mapping_id: dataObj.mapping_id
       }
       if (dataObj.debitConditions == undefined || dataObj.debitConditions == null || dataObj.debitConditions.trim() == "") {
