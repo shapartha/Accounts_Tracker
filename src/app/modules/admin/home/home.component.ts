@@ -39,6 +39,8 @@ export class AdminHomeComponent {
       setTimeout(() => {
         this.invokeDeleted = false;
       }, 1000);
+    } else if (evt.type == 'MONTHLY-ROUTINES' && evt.value == true) {
+      this.reinitializeMonthlyRoutines();
     }
   }
 
@@ -52,13 +54,81 @@ export class AdminHomeComponent {
   }
 
   invokeMfStockUpdater(stocksUpdate = false) {
-    this.apiService.invokeMfStockUpdater(stocksUpdate).subscribe({
-      next: (_: any) => {
-        this.utilService.showAlert((stocksUpdate == true ? "Stocks" : "Mutual Funds") + " refresh completed", 'success');
+    let accList = [];
+    let categoryId = '';
+    this.apiService.getAllAccounts({ user_id: this.utilService.appUserId }).subscribe({
+      next: (fetchAccResp: any) => {
+        if (fetchAccResp.success === true) {
+          if (stocksUpdate) {
+            accList = fetchAccResp.dataArray.filter((_acc: any) => _acc.is_equity === '1');
+          } else {
+            accList = fetchAccResp.dataArray.filter((_acc: any) => _acc.is_mf === '1');
+          }
+          if (accList != null && accList.length > 0) {
+            categoryId = accList[0].category_id;
+            this.invokeExternalApi(stocksUpdate, categoryId);
+          } else {
+            if (stocksUpdate) {
+              this.utilService.showAlert("No stock accounts found in the system");
+            } else {
+              this.utilService.showAlert("No mutual fund accounts found in the system");
+            }
+          }
+        } else {
+          this.utilService.showAlert("No accounts found in the system");
+        }
       }, error: (err) => {
         console.error(err);
         this.utilService.showAlert(err);
       }
     });
+  }
+
+  invokeExternalApi(stocksUpdate: boolean, categoryId: string | number) {
+    this.apiService.invokeMfStockUpdater(this.utilService.appUserId, categoryId, stocksUpdate).subscribe({
+      next: (response: any) => {
+        if (response.code == '200') {
+          this.utilService.showAlert((stocksUpdate == true ? "Stocks" : "Mutual Funds") + " refresh completed", 'success');
+        } else {
+          this.utilService.showAlert(response.message);
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  reinitializeMonthlyRoutines() {
+    this.apiService.invokeMonthlyRoutines(this.utilService.appUserId).subscribe({
+      next: (response: any) => {
+        if (response.code == '200') {
+          this.utilService.showAlert("Monthly routines refresh completed", 'success');
+          this.canClose = true;
+        } else {
+          this.utilService.showAlert(response.message);
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  invokeMonthlyRoutines() {
+    this.modalTitle = "Re-Initialize the monthly routines ?";
+    this.modalBody = "You're about to re-initialize the monthly recurring transactions. This will set all the recurring transactions as 'NOT PROCESSED' for current month. Do you want to continue ?";
+    this.modalBtnName = 'Sure';
+    this.confirmData = {
+      type: 'MONTHLY-ROUTINES',
+      value: false
+    };
+    this.canClose = false;
+    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
+    confirmBtn.click();
+  }
+
+  invokeBackup() {
+    this.utilService.showAlert("Coming back soon ... ! Due to the current system infrastructure limitations, this feature (DB/Schema Backup) is unavailable.", 'warning');
   }
 }

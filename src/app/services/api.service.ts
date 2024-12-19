@@ -255,10 +255,16 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  invokeMfStockUpdater(stocksUpdate: boolean) {
+  invokeMfStockUpdater(userId: string | number, categoryId: string | number, stocksUpdate: boolean) {
     let apiUrl = ApiConstants.SERVER_PATH_URL;
     apiUrl = apiUrl.replaceAll('https', 'http');
-    return this.http.get<any>(apiUrl + "mf-stock-updater/?stocksUpdate=" + stocksUpdate);
+    return this.http.get<any>(apiUrl + "mf-stock-updater/?stocksUpdate=" + stocksUpdate + "&userId=" + userId + "&categoryId=" + categoryId);
+  }
+
+  invokeMonthlyRoutines(userId: string | number) {
+    let apiUrl = ApiConstants.SERVER_PATH_URL;
+    apiUrl = apiUrl.replaceAll('https', 'http');
+    return this.http.get<any>(apiUrl + "routine-services/?userId=" + userId);
   }
 
   appendMandatoryParams(): string {

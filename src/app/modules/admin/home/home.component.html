@@ -6,8 +6,8 @@
                 <div class="d-grid gap-2 col-6 mx-auto m-5">
                     <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater()">Mutual Funds Updater</button>
                     <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater(true)">Stocks Updater</button>
-                    <button type="button" class="btn btn-secondary">DB/Schema Backup</button>
-                    <button type="button" class="btn btn-danger">Monthly Routines</button>
+                    <button type="button" class="btn btn-secondary" (click)="invokeBackup()">DB/Schema Backup</button>
+                    <button type="button" class="btn btn-danger" (click)="invokeMonthlyRoutines()">Monthly Routines</button>
                 </div>
             </ng-template>
         </mat-tab>
