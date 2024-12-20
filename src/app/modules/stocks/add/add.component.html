@@ -1,0 +1,36 @@
+<div style="margin: 20px;">
+    <h4>{{ headerLabel }}</h4>
+    <form [formGroup]="form">
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-3 mt-3">
+                <mat-label>Stock Symbol: </mat-label>
+                <input type="text" matInput placeholder="Enter Stock Symbol" name="stock_symbol" formControlName="stock_symbol"
+                    (change)="onChangeStockSymbol($event)" required>
+                <mat-error *ngIf="form.get('stock_symbol')?.value == null || form.get('stock_symbol')?.value == undefined">
+                    Stock symbol required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-9 mt-3">
+                <mat-label>Stock Name: </mat-label>
+                <input type="text" matInput placeholder="Enter Stock Name" name="stock_name" formControlName="stock_name" required>
+                <mat-error *ngIf="form.get('stock_name')?.value == null || form.get('stock_name')?.value == undefined">
+                    Stock name required
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-6 mt-3">
+                <mat-label>Current Market Price: </mat-label>
+                <input type="text" matInput name="current_market_price" formControlName="current_market_price" readonly class="text-center">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-6 mt-3">
+                <mat-label>Last Update On: </mat-label>
+                <input type="text" matInput name="last_market_date" formControlName="last_market_date" readonly class="text-center">
+            </mat-form-field>
+        </div>
+        <div class="text-center mt-3">
+            <button class="btn btn-primary me-2" (click)="saveStock()" [disabled]="!form.valid">Save</button>
+            <button class="btn btn-danger" (click)="handleRoute()">Cancel</button>
+        </div>
+    </form>
+</div>

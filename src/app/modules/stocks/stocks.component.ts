@@ -1,21 +1,21 @@
 import { Component } from '@angular/core';
-import { ManageMutualFundsComponent } from "./manage/manage.component";
-import { AddMutualFundsComponent } from "./add/add.component";
+import { FormControl } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ConfirmDialogComponent } from "../modals/confirm-dialog/confirm-dialog.component";
 import { ConfirmData } from 'app/models/confirm';
 import { UtilService } from 'app/services/util.service';
-import { FormControl } from '@angular/forms';
+import { ConfirmDialogComponent } from '../modals/confirm-dialog/confirm-dialog.component';
+import { AddStocksComponent } from "./add/add.component";
+import { ManageStocksComponent } from "./manage/manage.component";
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-mutual-funds',
+  selector: 'app-stocks',
   standalone: true,
-  imports: [ManageMutualFundsComponent, AddMutualFundsComponent, MatTabsModule, ConfirmDialogComponent, CommonModule],
-  templateUrl: './mutual-funds.component.html',
-  styleUrl: './mutual-funds.component.scss'
+  imports: [MatTabsModule, ConfirmDialogComponent, AddStocksComponent, ManageStocksComponent, CommonModule],
+  templateUrl: './stocks.component.html',
+  styleUrl: './stocks.component.scss'
 })
-export class MutualFundsComponent {
+export class StocksComponent {
 
   modalTitle: string = '';
   modalBody: string = '';
@@ -28,11 +28,10 @@ export class MutualFundsComponent {
   updateData: any;
   invokeRefresh: boolean = false;
 
-
   constructor(public utilService: UtilService) { }
 
   confirm(evt: ConfirmData) {
-    if (evt.type == 'DELETE-MF' && evt.value == true) {
+    if (evt.type == 'DELETE-STOCK' && evt.value == true) {
       this.invokeDeleted = true;
       setTimeout(() => {
         this.invokeDeleted = false;
@@ -62,7 +61,7 @@ export class MutualFundsComponent {
     }, 400);
   }
 
-  refreshMFs() {
+  refreshStocks() {
     this.invokeRefresh = true;
     setTimeout(() => {
       this.invokeRefresh = false;

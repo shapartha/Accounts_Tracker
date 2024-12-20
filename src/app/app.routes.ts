@@ -14,6 +14,7 @@ import { MapStockComponent } from './modules/stocks/map-stock/map-stock.componen
 import { AddMailFilterMappingComponent } from './modules/auto-mails/add-mail-filter-mapping/add-mail-filter-mapping.component';
 import { AdminHomeComponent } from './modules/admin/home/home.component';
 import { MutualFundsComponent } from './modules/mutual-funds/mutual-funds.component';
+import { StocksComponent } from './modules/stocks/stocks.component';
 
 export const routes: Routes = [
     {
@@ -69,6 +70,10 @@ export const routes: Routes = [
     {
         path: 'manage-mutual-funds',
         component: MutualFundsComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'manage-stocks',
+        component: StocksComponent, canActivate : [AuthGuard]
     },
     {
         path: 'logout',

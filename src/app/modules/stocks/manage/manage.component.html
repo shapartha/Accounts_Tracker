@@ -1,0 +1,20 @@
+<div style="margin: 20px;">
+    @for (stock of stocks; track stock) {
+    <div [contextMenu]="oneContextMenu" [contextMenuValue]="stock" class="p-2 card">
+        <div class="row mail-filter-item">
+            <div class="col-sm-2 stockSymbol">{{ stock.stock_symbol }}</div>
+            <div class="col-sm-6 font-weight-bold"> {{ stock.stock_name }} </div>
+            <div class="col-sm-2 adj-w-50">{{ stock.current_market_price }}</div>
+            <div class="col-sm-2 adj-w-50">{{ utilService.formatDate(stock.last_market_date) }}</div>
+        </div>
+    </div>
+    }
+    <div *ngIf="stocks == null || stocks.length == 0" class="no-stocks-header">
+        No stocks available !!
+    </div>
+</div>
+
+<context-menu #oneContextMenu [menuClass]="'app-manage-stocks-menu'">
+    <ng-template contextMenuItem (execute)="update($event)" let-value>Update</ng-template>
+    <ng-template contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
+</context-menu>

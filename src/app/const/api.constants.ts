@@ -44,6 +44,7 @@ export class ApiConstants {
     static API_SAVE_STOCK_MAPPING: string = "storeStockMapping";
     static API_DELETE_STOCK: string = "deleteStock";
     static API_SAVE_STOCK: string = "storeStock";
+    static API_UPDATE_STOCK: string = "updateStock";
     static API_SAVE_MF: string = "storeMf";
     static API_UPDATE_MF: string = "updateMf";
     static API_DELETE_MF: string = "deleteMf";

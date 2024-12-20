@@ -7,7 +7,6 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { Observable, startWith, map, of } from 'rxjs';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-mf',
@@ -42,7 +41,7 @@ export class AddMutualFundsComponent implements OnInit, OnChanges {
     return this.mfList.filter(option => option.name.toLowerCase().includes(filterValue));
   }
 
-  constructor(private fb: FormBuilder, private apiService: ApiService, public utilService: UtilService, private router: Router) {
+  constructor(private fb: FormBuilder, private apiService: ApiService, public utilService: UtilService) {
     this.form = this.fb.group({
       schemeCode: [],
       schemeName: [],
@@ -75,6 +74,11 @@ export class AddMutualFundsComponent implements OnInit, OnChanges {
             navDate: fetchLatestMfNavResp.data[0].date
           });
         } else {
+          this.form.patchValue({
+            schemeName: '',
+            navAmount: '',
+            navDate: ''
+          });
           this.utilService.showAlert(fetchLatestMfNavResp);
         }
       }, error: (err) => {
@@ -155,8 +159,8 @@ export class AddMutualFundsComponent implements OnInit, OnChanges {
     });
   }
 
-  handleRoute(path = '') {
-    this.router.navigate([path]);
+  handleRoute() {
+    this.switchTab.emit({ refresh: true, tabId: 0 });
   }
 
   preventEnter(e: any) {

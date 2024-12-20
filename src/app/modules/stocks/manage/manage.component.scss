@@ -1,0 +1,14 @@
+.no-stocks-header {
+    padding: 10px;
+    text-align: center;
+}
+
+.stockSymbol {
+    color: rgb(187, 61, 3);
+}
+
+@media (max-width: 575px) {
+    .adj-w-50 {
+        width: 50% !important;
+    }
+}

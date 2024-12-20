@@ -270,6 +270,21 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  saveStock(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_STOCK;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateStock(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_UPDATE_STOCK;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteStock(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_STOCK;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   invokeMfStockUpdater(userId: string | number, categoryId: string | number, stocksUpdate: boolean) {
     let apiUrl = ApiConstants.SERVER_PATH_URL;
     apiUrl = apiUrl.replaceAll('https', 'http');
