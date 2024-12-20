@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,14 +16,21 @@ import { Router } from '@angular/router';
   templateUrl: './add.component.html',
   styleUrl: './add.component.scss'
 })
-export class AddMutualFundsComponent implements OnInit {
+export class AddMutualFundsComponent implements OnInit, OnChanges {
 
   form: FormGroup;
   filteredMfList: Observable<any[]>;
   mfList: any[] = [];
   @Output() switchTab = new EventEmitter<any>();
+  @Input() updateRecord: any;
+  headerLabel: string = '';
 
   ngOnInit(): void {
+    if (this.updateRecord != null) {
+      this.headerLabel = 'Update Mutual Fund';
+    } else {
+      this.headerLabel = 'Add Mutual Fund';
+    }
     this.filteredMfList = this.form.get('schemeName')!.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value))
@@ -38,16 +45,35 @@ export class AddMutualFundsComponent implements OnInit {
   constructor(private fb: FormBuilder, private apiService: ApiService, public utilService: UtilService, private router: Router) {
     this.form = this.fb.group({
       schemeCode: [],
-      schemeName: []
+      schemeName: [],
+      navAmount: [],
+      navDate: []
     });
     this.filteredMfList = of([]);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['updateRecord'].currentValue != null) {
+      let formVals = changes['updateRecord'].currentValue;
+      this.form.setValue({
+        schemeCode: formVals.scheme_code,
+        schemeName: formVals.scheme_name,
+        navAmount: formVals.nav_amount,
+        navDate: formVals.nav_date
+      });
+      this.onChangeSchemeCode({ target: { value: formVals.scheme_code } });
+    }
   }
 
   onChangeSchemeCode(e: any) {
     this.apiService.fetchMfNav(e.target.value).subscribe({
       next: (fetchLatestMfNavResp: any) => {
         if (fetchLatestMfNavResp.status === 'SUCCESS') {
-          this.form.get('schemeName')?.setValue(fetchLatestMfNavResp.meta.scheme_name);
+          this.form.patchValue({
+            schemeName: fetchLatestMfNavResp.meta.scheme_name,
+            navAmount: fetchLatestMfNavResp.data[0].nav,
+            navDate: fetchLatestMfNavResp.data[0].date
+          });
         } else {
           this.utilService.showAlert(fetchLatestMfNavResp);
         }
@@ -78,6 +104,7 @@ export class AddMutualFundsComponent implements OnInit {
   selectedMfName(e: MatAutocompleteSelectedEvent) {
     let selectedMf = this.mfList.filter(_val => _val.name === e.option.value)[0].code;
     this.form.get('schemeCode')?.setValue(selectedMf);
+    this.onChangeSchemeCode({ target: { value: selectedMf } });
   }
 
   saveMutualFund() {
@@ -87,16 +114,39 @@ export class AddMutualFundsComponent implements OnInit {
     }
     let inputs = {
       scheme_code: this.form.value.schemeCode,
-      scheme_name: this.form.value.schemeName
+      scheme_name: this.form.value.schemeName,
+      nav_amount: this.form.value.navAmount,
+      nav_date: this.form.value.navDate
     }
-    this.apiService.saveMutualFund([inputs]).subscribe({
-      next: (saveMfResp: any) => {
-        if (saveMfResp[0].success === true) {
-          this.utilService.showAlert("Mutual Fund Added Successfully", 'success');
+    if (this.headerLabel == 'Update Mutual Fund') {
+      this.updateMutualFund(inputs);
+    } else {
+      this.apiService.saveMutualFund([inputs]).subscribe({
+        next: (saveMfResp: any) => {
+          if (saveMfResp != null && saveMfResp[0] != null && saveMfResp[0].success === true) {
+            this.utilService.showAlert("Mutual Fund Added Successfully", 'success');
+            this.form.reset();
+            this.switchTab.emit({ refresh: true, tabId: 0 });
+          } else {
+            this.utilService.showAlert(saveMfResp);
+          }
+        }, error: (err) => {
+          console.error(err);
+          this.utilService.showAlert(err);
+        }
+      });
+    }
+  }
+
+  updateMutualFund(inputs: any) {
+    this.apiService.updateMutualFund([inputs]).subscribe({
+      next: (editMfResp: any) => {
+        if (editMfResp != null && editMfResp[0] != null && editMfResp[0].success === true) {
+          this.utilService.showAlert("Mutual Fund Updated Successfully", 'success');
           this.form.reset();
-          this.switchTab.emit({ refresh: true });
+          this.switchTab.emit({ refresh: true, tabId: 0 });
         } else {
-          this.utilService.showAlert(saveMfResp[0]);
+          this.utilService.showAlert(editMfResp);
         }
       }, error: (err) => {
         console.error(err);

@@ -24,6 +24,8 @@ export class MutualFundsComponent {
   selected: any;
   invokeDeleted: boolean = false;
   selectedTab = new FormControl(0);
+  updateData: any;
+  invokeRefresh: boolean = false;
 
 
   constructor(public utilService: UtilService) { }
@@ -48,7 +50,21 @@ export class MutualFundsComponent {
 
   switchTab(e: any) {
     if (e.refresh == true) {
-      this.selectedTab.setValue(0);
+      this.selectedTab.setValue(e.tabId);
     }
+  }
+
+  toUpdateRecord(e: any) {
+    this.updateData = e;
+    setTimeout(() => {
+      this.updateData = null;
+    }, 400);
+  }
+
+  refreshMFs() {
+    this.invokeRefresh = true;
+    setTimeout(() => {
+      this.invokeRefresh = false;
+    }, 400);
   }
 }

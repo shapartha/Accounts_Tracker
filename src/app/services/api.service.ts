@@ -260,6 +260,11 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  updateMutualFund(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_UPDATE_MF;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   deleteMutualFund(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_DELETE_MF;
     return this.postApiCall(apiFuncName, apiFuncParams);

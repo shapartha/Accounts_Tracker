@@ -4,6 +4,7 @@ import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ConfirmData } from 'app/models/confirm';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-manage-mutual-funds',
@@ -19,6 +20,9 @@ export class ManageMutualFundsComponent implements OnInit, OnChanges {
 
   @Output() confirmObject = new EventEmitter<any>();
   @Input() deleteClicked: boolean = false;
+  @Input() refreshClicked: boolean = false;
+  @Output() switchTab = new EventEmitter<any>();
+  @Output() updateData = new EventEmitter<any>();
 
   constructor(private apiService: ApiService, public utilService: UtilService) { }
 
@@ -27,8 +31,11 @@ export class ManageMutualFundsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['deleteClicked'].isFirstChange() && changes['deleteClicked'].currentValue == true) {
+    if (!changes['deleteClicked']?.isFirstChange() && changes['deleteClicked']?.currentValue == true) {
       this.deleteMutualFund(this.selectedRecord.scheme_code);
+    }
+    if (!changes['refreshClicked']?.isFirstChange() && changes['refreshClicked']?.currentValue == true) {
+      this.refreshAllNav();
     }
   }
 
@@ -50,8 +57,10 @@ export class ManageMutualFundsComponent implements OnInit, OnChanges {
     });
   }
 
-  update($event: { event: MouseEvent | KeyboardEvent; value?: any; }) {
-    throw new Error('Method not implemented.');
+  update(e: any) {
+    let item = e.value;
+    this.switchTab.emit({ refresh: true, tabId: 1 });
+    this.updateData.emit(item);
   }
 
   delete(e: any) {
@@ -94,5 +103,31 @@ export class ManageMutualFundsComponent implements OnInit, OnChanges {
         this.utilService.showAlert(err);
       }
     });
+  }
+
+  async refreshAllNav() {
+    if (this.mutualFunds.length > 0) {
+      for (var i = 0; i < this.mutualFunds.length; i++) {
+        let element = this.mutualFunds[i];
+        let schemeCode = element.scheme_code;
+        const mfApiResponse = await firstValueFrom(this.apiService.fetchMfNav(schemeCode));
+        if (mfApiResponse.status.toUpperCase() === "SUCCESS") {
+          element['nav_amount'] = mfApiResponse.data[0].nav;
+          element['nav_date'] = mfApiResponse.data[0].date;
+        }
+      }
+      this.apiService.updateMutualFund(this.mutualFunds).subscribe({
+        next: (editMfResp: any) => {
+          if (editMfResp != null && editMfResp[0] != null && editMfResp[0].success === true) {
+            this.utilService.showAlert("Mutual Funds Updated Successfully", 'success');
+          } else {
+            this.utilService.showAlert(editMfResp);
+          }
+        }, error: (err) => {
+          console.error(err);
+          this.utilService.showAlert(err);
+        }
+      });
+    }
   }
 }

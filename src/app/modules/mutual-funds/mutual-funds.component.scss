@@ -1,3 +1,9 @@
 #manage-mutual-funds-section {
     padding-bottom: 40px;
 }
+
+@media (max-width: 575px) {
+    #manage-mutual-funds-section>h3>button>span {
+        display: none;
+    }
+}

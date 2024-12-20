@@ -1,17 +1,17 @@
 <div style="margin: 20px;">
-    <h3>Add Mutual Fund</h3>
+    <h4>{{ headerLabel }}</h4>
     <form [formGroup]="form" (keydown)="preventEnter($event)">
         <div class="row">
-            <mat-form-field appearance="outline" class="col-md-4 mt-3">
-                <mat-label>Scheme Code</mat-label>
+            <mat-form-field appearance="outline" class="col-md-3 mt-3">
+                <mat-label>Scheme Code: </mat-label>
                 <input type="text" matInput placeholder="Enter Scheme Code" name="schemeCode" formControlName="schemeCode" (change)="onChangeSchemeCode($event)"
                     required>
                 <mat-error *ngIf="form.get('schemeCode')?.value == null || form.get('schemeCode')?.value == undefined">
                     Scheme code required
                 </mat-error>
             </mat-form-field>
-            <mat-form-field appearance="outline" class="col-md-4 mt-3">
-                <mat-label>Scheme Name</mat-label>
+            <mat-form-field appearance="outline" class="col-md-9 mt-3">
+                <mat-label>Scheme Name: </mat-label>
                 <input type="text" matInput formControlName="schemeName" placeholder="Enter Scheme Name" aria-label="Enter Scheme Name"
                     (keydown.enter)="getSchemeCode()" name="schemeName" required [matAutocomplete]="auto">
                 <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectedMfName($event)">
@@ -22,6 +22,16 @@
                 <mat-error *ngIf="form.get('schemeName')?.value == null || form.get('schemeName')?.value == undefined">
                     Scheme name required
                 </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline" class="col-md-6 mt-3">
+                <mat-label>NAV Amount: </mat-label>
+                <input type="text" matInput name="navAmount" formControlName="navAmount" readonly class="text-center">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-6 mt-3">
+                <mat-label>NAV Date: </mat-label>
+                <input type="text" matInput name="navDate" formControlName="navDate" readonly class="text-center">
             </mat-form-field>
         </div>
         <div class="text-center mt-3">

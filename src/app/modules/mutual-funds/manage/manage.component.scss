@@ -6,3 +6,9 @@
 .schemeCode {
     color: rgb(0 139 139);
 }
+
+@media (max-width: 575px) {
+    .adj-w-50 {
+        width: 50% !important;
+    }
+}

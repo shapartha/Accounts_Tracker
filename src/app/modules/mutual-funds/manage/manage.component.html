@@ -1,9 +1,11 @@
 <div style="margin: 20px;">
     @for (mutualFund of mutualFunds; track mutualFund) {
-    <div [contextMenu]="oneContextMenu" [contextMenuValue]="mutualFund" class="p-2">
+    <div [contextMenu]="oneContextMenu" [contextMenuValue]="mutualFund" class="p-2 card">
         <div class="row mail-filter-item">
-            <div class="col-sm-3 schemeCode">{{ mutualFund.scheme_code }}</div>
-            <div class="col-sm-9 font-weight-bold"> {{ mutualFund.scheme_name }} </div>
+            <div class="col-sm-2 schemeCode">{{ mutualFund.scheme_code }}</div>
+            <div class="col-sm-6 font-weight-bold"> {{ mutualFund.scheme_name }} </div>
+            <div class="col-sm-2 adj-w-50">{{ mutualFund.nav_amount }}</div>
+            <div class="col-sm-2 adj-w-50">{{ mutualFund.nav_date }}</div>
         </div>
     </div>
     }

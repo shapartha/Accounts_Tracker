@@ -45,6 +45,7 @@ export class ApiConstants {
     static API_DELETE_STOCK: string = "deleteStock";
     static API_SAVE_STOCK: string = "storeStock";
     static API_SAVE_MF: string = "storeMf";
+    static API_UPDATE_MF: string = "updateMf";
     static API_DELETE_MF: string = "deleteMf";
     static API_SCHEMA_BACKUP: string = "getSchemaBackup";
     static API_GET_ALL_MAIL_FILTER_MAPPING: string = "getAllMailFilterMappings";

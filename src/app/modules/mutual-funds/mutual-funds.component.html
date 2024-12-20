@@ -1,14 +1,15 @@
 <div class="container mt-2" id="manage-mutual-funds-section">
-    <h3>Manage Mutual Funds</h3>
+    <h3>Manage Mutual Funds <button class="float-end btn btn-success" (click)="refreshMFs()"><i class="bi bi-repeat"></i><span> Refresh</span></button></h3>
     <mat-tab-group animationDuration="300ms" [selectedIndex]="selectedTab.value" (selectedIndexChange)="selectedTab.setValue($event)">
         <mat-tab label="Dashboard">
             <ng-template matTabContent>
-                <app-manage-mutual-funds (confirmObject)="retrieveConfirmObject($event)" [deleteClicked]="invokeDeleted"></app-manage-mutual-funds>
+                <app-manage-mutual-funds (switchTab)="switchTab($event)" (confirmObject)="retrieveConfirmObject($event)" (updateData)="toUpdateRecord($event)"
+                    [deleteClicked]="invokeDeleted" [refreshClicked]="invokeRefresh"></app-manage-mutual-funds>
             </ng-template>
         </mat-tab>
         <mat-tab label="Add New">
             <ng-template matTabContent>
-                <app-add-mf (switchTab)="switchTab($event)"></app-add-mf>
+                <app-add-mf (switchTab)="switchTab($event)" [updateRecord]="updateData"></app-add-mf>
             </ng-template>
         </mat-tab>
     </mat-tab-group>
