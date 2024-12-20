@@ -1,0 +1,9 @@
+#manage-stocks-section {
+    padding-bottom: 40px;
+}
+
+@media (max-width: 575px) {
+    #manage-stocks-section>h3>button>span {
+        display: none;
+    }
+}

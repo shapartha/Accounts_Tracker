@@ -1,4 +1,4 @@
-<div class="container mt-2" id="manage-mutual-funds-section">
+<div class="container mt-2" id="manage-stocks-section">
     <h3>Manage Stocks <button *ngIf="selectedTab.value == 0" class="float-end btn btn-success" (click)="refreshStocks()"><i class="bi bi-repeat"></i><span> Refresh</span></button></h3>
     <mat-tab-group animationDuration="300ms" [selectedIndex]="selectedTab.value" (selectedIndexChange)="selectedTab.setValue($event)" class="w-100">
         <mat-tab label="Dashboard">
