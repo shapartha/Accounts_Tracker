@@ -56,6 +56,8 @@ export class ApiConstants {
     static API_DELETE_MAIL_FILTER_MAPPING: string = "deleteMailFilterMapping";
     static API_SAVE_MAIL_FILTER_MAPPING: string = "storeMailFilterMapping";
     static API_GET_DELIVERY_TRANS: string = "getDeliveryTrans";
+    static API_MF_STOCKS_UPDATER: string = "mfStocksUpdater";
+    static API_MONTHLY_ROUTINES: string = "monthlyRoutines";
     
     static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";

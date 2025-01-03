@@ -1,15 +1,17 @@
 <div *ngIf="pending_rec_trans.length > 0">
     <h3>Recurring Transactions for Today</h3>
-    <ngb-carousel #carousel [interval]="slideInterval" [pauseOnHover]="pauseOnHover" [pauseOnFocus]="pauseOnFocus"
-        [showNavigationArrows]="false" (slide)="onSlide($event)">
+    <ngb-carousel #carousel [interval]="slideInterval" [pauseOnHover]="pauseOnHover" [pauseOnFocus]="pauseOnFocus" [showNavigationArrows]="false"
+        (slide)="onSlide($event)">
         @for (trans of pending_rec_trans; track trans; let i = $index) {
         <ng-template ngbSlide>
             <div class="card">
                 <h5 class="card-header bg-dark">{{ trans.rec_trans_desc }}</h5>
-                <div
-                    [classList]="'card-body' + (trans.rec_trans_type == 'DEBIT' ? ' bg-danger-subtle' : ' bg-success-subtle')">
-                    <h5 class="" [classList]="getMoneyVal(trans, 'card-title ', 'negative-val', 'positive-val')">
-                        {{ utilService.formatAmountWithComma(trans.rec_trans_amount) }}</h5>
+                <div [classList]="'card-body' + (trans.rec_trans_type == 'DEBIT' ? ' bg-danger-subtle' : ' bg-success-subtle')">
+                    <div class="row">
+                        <h5 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">
+                            {{ utilService.formatAmountWithComma(trans.rec_trans_amount) }}</h5>
+                        <h6 class="col-md-6">{{ trans.scheme_name }}</h6>
+                    </div>
                     <div class="card-text row">
                         <p class="col-md-4">{{ trans.account_name }}</p>
                         <p class="col-md-4 text-center">Due On {{
@@ -22,8 +24,7 @@
                     <div class="btn-group" role="group" aria-label="Action Buttons">
                         <button type="button" class="btn btn-success" (click)="process(trans)">Process</button>
                         <button type="button" class="btn btn-secondary" (click)="skip(trans)">Skip</button>
-                        <button type="button" class="btn btn-secondary" *ngIf="trans.is_paused == '0'"
-                            (click)="pause(trans)">Pause</button>
+                        <button type="button" class="btn btn-secondary" *ngIf="trans.is_paused == '0'" (click)="pause(trans)">Pause</button>
                         <button type="button" class="btn btn-warning" (click)="update(content, trans)">Update</button>
                     </div>
                 </div>

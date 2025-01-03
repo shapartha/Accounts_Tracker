@@ -7,11 +7,15 @@
         @for (trans of scheduled_trans; track trans; let i = $index) {
         <div class="card" [contextMenu]="oneContextMenu" [contextMenuValue]="trans">
             <div class="card-body" [ngClass]="trans.trans_type == 'DEBIT' ? 'bg-info-subtle': 'bg-warning-subtle'">
-                <h5> {{ trans.trans_desc }}</h5>
+                <div class="row">
+                    <h5 class="col-md-6"> {{ trans.trans_desc }}</h5>
+                    <h6 class="col-md-6"> {{ trans.scheme_name }} </h6>
+                </div>
                 <div class="card-text row">
                     <span class="col-md-4">{{ trans.account_name }}</span>
                     <span class="col-md-4 text-center">{{ trans.trans_date }}</span>
-                    <span class="col-md-4 text-end font-weight-bold" [ngClass]="trans.trans_type == 'DEBIT' ? 'negative-val': 'positive-val'" style="font-size: 1rem;">{{ trans.trans_amount }}</span>
+                    <span class="col-md-4 text-end font-weight-bold" [ngClass]="trans.trans_type == 'DEBIT' ? 'negative-val': 'positive-val'"
+                        style="font-size: 1rem;">{{ trans.trans_amount }}</span>
                 </div>
             </div>
         </div>
@@ -33,7 +37,8 @@
     <div class="modal-body">
         <form>
             <div class="mb-3">
-                <app-add-update-transaction [isUpdateScheduledTrans]="true" [updateScheduledTrans]="updateTrans" (formData)="updatedRecord($event)"></app-add-update-transaction>
+                <app-add-update-transaction [isUpdateScheduledTrans]="true" [updateScheduledTrans]="updateTrans"
+                    (formData)="updatedRecord($event)"></app-add-update-transaction>
             </div>
         </form>
     </div>
@@ -46,5 +51,5 @@
 <button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
     modal</button>
 
-<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
-    [confirmObj]="confirmData" [canClose]="canClose"></app-confirm-dialog>
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData"
+    [canClose]="canClose"></app-confirm-dialog>

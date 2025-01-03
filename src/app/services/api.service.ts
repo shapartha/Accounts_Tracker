@@ -285,16 +285,14 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
-  invokeMfStockUpdater(userId: string | number, categoryId: string | number, stocksUpdate: boolean) {
-    let apiUrl = ApiConstants.SERVER_PATH_URL;
-    apiUrl = apiUrl.replaceAll('https', 'http');
-    return this.http.get<any>(apiUrl + "mf-stock-updater/?stocksUpdate=" + stocksUpdate + "&userId=" + userId + "&categoryId=" + categoryId);
+  invokeMfStockUpdater(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_MF_STOCKS_UPDATER;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  invokeMonthlyRoutines(userId: string | number) {
-    let apiUrl = ApiConstants.SERVER_PATH_URL;
-    apiUrl = apiUrl.replaceAll('https', 'http');
-    return this.http.get<any>(apiUrl + "routine-services/?userId=" + userId);
+  invokeMonthlyRoutines(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_MONTHLY_ROUTINES;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
   fetchMfCode(schemeName: any) {

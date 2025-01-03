@@ -6,7 +6,6 @@ import { ConfirmData } from 'app/models/confirm';
 import { ManageMailFiltersComponent } from "../manage-mail-filters/manage-mail-filters.component";
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-admin-home',
@@ -85,12 +84,17 @@ export class AdminHomeComponent {
   }
 
   invokeExternalApi(stocksUpdate: boolean, categoryId: string | number) {
-    this.apiService.invokeMfStockUpdater(this.utilService.appUserId, categoryId, stocksUpdate).subscribe({
+    let inputs = {
+      stocks_update: stocksUpdate,
+      user_id: this.utilService.appUserId,
+      category_id: categoryId
+    }
+    this.apiService.invokeMfStockUpdater(inputs).subscribe({
       next: (response: any) => {
-        if (response.code == '200') {
+        if (response.success == true) {
           this.utilService.showAlert((stocksUpdate == true ? "Stocks" : "Mutual Funds") + " refresh completed", 'success');
         } else {
-          this.utilService.showAlert(response.message);
+          this.utilService.showAlert(response.responseDescription);
         }
       }, error: (err) => {
         console.error(err);
@@ -100,13 +104,16 @@ export class AdminHomeComponent {
   }
 
   reinitializeMonthlyRoutines() {
-    this.apiService.invokeMonthlyRoutines(this.utilService.appUserId).subscribe({
+    let inputs = {
+      user_id: this.utilService.appUserId
+    };
+    this.apiService.invokeMonthlyRoutines(inputs).subscribe({
       next: (response: any) => {
-        if (response.code == '200') {
+        if (response.success == true) {
           this.utilService.showAlert("Monthly routines refresh completed", 'success');
           this.canClose = true;
         } else {
-          this.utilService.showAlert(response.message);
+          this.utilService.showAlert(response.responseDescription);
         }
       }, error: (err) => {
         console.error(err);

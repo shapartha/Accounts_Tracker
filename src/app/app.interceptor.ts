@@ -8,11 +8,17 @@ export class AppInterceptor implements HttpInterceptor {
 
     constructor(private utilService: UtilService) { }
 
+    isExecuting: any[] = [];
+
     intercept(httpRequest: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         this.utilService.showLoadSpinner();
+        this.isExecuting.push(httpRequest.url);
         return next.handle(httpRequest).pipe(
             finalize(() => {
-                this.utilService.hideLoadSpinner();
+                this.isExecuting.splice(this.isExecuting.findIndex(r => r == httpRequest.url), 1);
+                if (this.isExecuting.length == 0) {
+                    this.utilService.hideLoadSpinner();
+                }
             }),
             catchError(err => {
                 if (err.status == 0) {
