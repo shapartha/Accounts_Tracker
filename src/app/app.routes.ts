@@ -15,6 +15,7 @@ import { AddMailFilterMappingComponent } from './modules/auto-mails/add-mail-fil
 import { AdminHomeComponent } from './modules/admin/home/home.component';
 import { MutualFundsComponent } from './modules/mutual-funds/mutual-funds.component';
 import { StocksComponent } from './modules/stocks/stocks.component';
+import { MfAccountComponent } from './modules/accounts/mfaccount/mfaccount.component';
 
 export const routes: Routes = [
     {
@@ -74,6 +75,10 @@ export const routes: Routes = [
     {
         path: 'manage-stocks',
         component: StocksComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'mf-dashboard',
+        component: MfAccountComponent, canActivate: [AuthGuard]
     },
     {
         path: 'logout',

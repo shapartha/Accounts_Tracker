@@ -1,6 +1,6 @@
 <div class="container mt-2" id="all-transactions-section">
-    <h3>{{ transactionHeader }}</h3>
-    <h4 *ngIf="inputAccountData != null && inputAccountData.id != null">Balance: <span
+    <h3 *ngIf="accountId == null">{{ transactionHeader }}</h3>
+    <h4 *ngIf="accountId == null && inputAccountData != null && inputAccountData.id != null">Balance: <span
             class="float-end font-weight-bold "
             [ngClass]="utilService.formatStringValueToAmount(showAmount) < 0 ? 'negative-val': 'positive-val'">{{
             showAmount }}</span></h4>
@@ -46,10 +46,6 @@
 <context-menu #oneContextMenu [menuClass]="'app-trans-context-menu'">
     <ng-template contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
     <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
-    <!-- <ng-template contextMenuItem (execute)="update($event)" let-value>Generate Bill</ng-template> -->
-    <!-- <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem All</ng-template> -->
-    <!-- <ng-template [visible]="showRedeem" contextMenuItem (execute)="update($event)" let-value>Redeem
-        Partial</ng-template> -->
     <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="markDeliveryOrder($event)" let-value>
         Mark as Delivery Order
     </ng-template>

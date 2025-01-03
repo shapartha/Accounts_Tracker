@@ -1,0 +1,24 @@
+<form [formGroup]="form">
+    <div class="row">
+        <mat-form-field appearance="outline" class="col-sm-6 mt-3">
+            <mat-label>Amount</mat-label>
+            <input type="number" matInput placeholder="Enter Amount to Redeem" name="rdmAmt" min="1" (keyup)="onChangeRedeemVal()" formControlName="rdmAmt">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-sm-6 mt-3">
+            <mat-label>Units</mat-label>
+            <input type="number" matInput placeholder="Enter No of Units" name="rdmUnits" formControlName="rdmUnits">
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline" class="col-sm-6 mt-3">
+            <mat-label>NAV Date</mat-label>
+            <input matInput [matDatepicker]="picker" name="rdmDate" formControlName="rdmDte" [max]="blockFutureDates">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-sm-6 mt-3">
+            <mat-label>NAV Amount</mat-label>
+            <input type="number" matInput placeholder="Enter NAV" name="rdmNav" min="1" formControlName="rdmNav">
+        </mat-form-field>
+    </div>
+</form>

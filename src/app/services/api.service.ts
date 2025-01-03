@@ -285,6 +285,31 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  getMfTransByAccSchemeAsc(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_MF_TRANS_BY_ACC_SCHEME_ASC;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getMfTransByAccScheme(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_MF_TRANS_BY_ACC_SCHEME;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getMfTransByAcc(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_MF_TRANS_BY_ACC;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateMfTrans(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_UPDATE_MF_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteMfMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_MF_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   invokeMfStockUpdater(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_MF_STOCKS_UPDATER;
     return this.invokeApiCall(apiFuncName, apiFuncParams);

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -47,6 +47,8 @@ export class AllTransactionsComponent implements OnInit {
   modifiedRecord: any = {};
   modalBtnName: string = '';
 
+  @Input() accountId = null;
+
   constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService, private modalService: NgbModal, private router: Router) {
     this.route.queryParams.subscribe({
       next: (params) => {
@@ -69,10 +71,16 @@ export class AllTransactionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageLoaded = true;
-    if (history.state != null) {
-      this.inputAccountData = history.state as Account;
+    if (this.accountId != null) {
+      this.inputAccountData = {
+        id: this.accountId
+      } as Account;
     } else {
-      this.inputAccountData = {} as Account;
+      if (history.state != null) {
+        this.inputAccountData = history.state as Account;
+      } else {
+        this.inputAccountData = {} as Account;
+      }
     }
     this.inputParams = {
       user_id: this.utilService.appUserId,

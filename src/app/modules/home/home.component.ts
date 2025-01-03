@@ -121,7 +121,11 @@ export class HomeComponent implements OnInit {
 
   onAccountSelected(event: MatSelectionListChange) {
     const selectedAccount: Account = event.options[0].value;
-    this.router.navigate(['all-transactions'], { state: selectedAccount });
+    if (selectedAccount.is_mf == '1') {
+      this.router.navigate(['mf-dashboard'], { queryParams: selectedAccount });
+    } else {
+      this.router.navigate(['all-transactions'], { state: selectedAccount });
+    }
   }
 
   refresh(event: any = null) {

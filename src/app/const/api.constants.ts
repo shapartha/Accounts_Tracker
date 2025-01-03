@@ -58,6 +58,9 @@ export class ApiConstants {
     static API_GET_DELIVERY_TRANS: string = "getDeliveryTrans";
     static API_MF_STOCKS_UPDATER: string = "mfStocksUpdater";
     static API_MONTHLY_ROUTINES: string = "monthlyRoutines";
+    static API_GET_MF_TRANS_BY_ACC_SCHEME_ASC: string = "getMfTransByAccountSchemeAscending";
+    static API_GET_MF_TRANS_BY_ACC_SCHEME: string = "getMfTransByAccountScheme";
+    static API_GET_MF_TRANS_BY_ACC: string = "getMfTransByAccount";
     
     static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";
