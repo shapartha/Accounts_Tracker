@@ -16,6 +16,7 @@ import { AdminHomeComponent } from './modules/admin/home/home.component';
 import { MutualFundsComponent } from './modules/mutual-funds/mutual-funds.component';
 import { StocksComponent } from './modules/stocks/stocks.component';
 import { MfAccountComponent } from './modules/accounts/mfaccount/mfaccount.component';
+import { EqAccountComponent } from './modules/accounts/eqaccount/eqaccount.component';
 
 export const routes: Routes = [
     {
@@ -79,6 +80,10 @@ export const routes: Routes = [
     {
         path: 'mf-dashboard',
         component: MfAccountComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: 'eq-dashboard',
+        component: EqAccountComponent, canActivate: [AuthGuard]
     },
     {
         path: 'logout',

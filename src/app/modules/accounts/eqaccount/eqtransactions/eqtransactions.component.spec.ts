@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MfTransactionsComponent } from './mftransactions.component';
+import { EqTransactionsComponent } from './eqtransactions.component';
 
-describe('MftransactionsComponent', () => {
-  let component: MfTransactionsComponent;
-  let fixture: ComponentFixture<MfTransactionsComponent>;
+describe('EqtransactionsComponent', () => {
+  let component: EqTransactionsComponent;
+  let fixture: ComponentFixture<EqTransactionsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MfTransactionsComponent]
+      imports: [EqTransactionsComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(MfTransactionsComponent);
+    fixture = TestBed.createComponent(EqTransactionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

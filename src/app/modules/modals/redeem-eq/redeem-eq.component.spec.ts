@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MfTransactionsComponent } from './mftransactions.component';
+import { RedeemEqComponent } from './redeem-eq.component';
 
-describe('MftransactionsComponent', () => {
-  let component: MfTransactionsComponent;
-  let fixture: ComponentFixture<MfTransactionsComponent>;
+describe('RedeemEqComponent', () => {
+  let component: RedeemEqComponent;
+  let fixture: ComponentFixture<RedeemEqComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MfTransactionsComponent]
+      imports: [RedeemEqComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(MfTransactionsComponent);
+    fixture = TestBed.createComponent(RedeemEqComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

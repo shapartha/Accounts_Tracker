@@ -220,6 +220,11 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  updateStockMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_UPDATE_STOCK_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   getAllMailFilterMappings(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_GET_ALL_MAIL_FILTER_MAPPING;
     return this.postApiCall(apiFuncName, apiFuncParams);
@@ -308,6 +313,16 @@ export class ApiService {
   deleteMfMapping(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_DELETE_MF_MAPPING;
     return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getEqMappingByAccount(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_STOCK_MAPPING_BY_ACC;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getEqMappingByAccountSymbol(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_STOCK_MAPPING_BY_ACC_SYM;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
   invokeMfStockUpdater(apiFuncParams: any = {}) {

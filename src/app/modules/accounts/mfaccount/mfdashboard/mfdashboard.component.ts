@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { Account } from 'app/models/account';
@@ -7,6 +7,7 @@ import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { XIRRService } from 'app/services/xirr.service';
 import { RedeemMfComponent } from "../../../modals/redeem-mf/redeem-mf.component";
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-mfdashboard',
@@ -18,6 +19,7 @@ import { RedeemMfComponent } from "../../../modals/redeem-mf/redeem-mf.component
 export class MfDashboardComponent implements OnInit {
 
   @Input() accountDetails: Account = {};
+  @Output() changedAccountDetails: EventEmitter<Account> = new EventEmitter();
   mfMappings: any[] = [];
   overallXirr: number = 0.00;
   dialogTitle = '';
@@ -34,6 +36,12 @@ export class MfDashboardComponent implements OnInit {
     } else {
       this.populateDashboard();
     }
+
+    this.utilService.refreshMfData.asObservable().subscribe(val => {
+      if (val == true) {
+        this.refreshMfData();
+      }
+    })
   }
 
   getMoneyVal(value: any, existingClass: string, negativeClass: string, positiveClass: string) {
@@ -309,7 +317,7 @@ export class MfDashboardComponent implements OnInit {
                                     next: (deleteMfMapResp: any) => {
                                       if (deleteMfMapResp[0].success === true) {
                                         this.modalRef.close('Save clicked');
-                                        this.utilService.showAlert("Full Redemption Successful");
+                                        this.utilService.showAlert("Full Redemption Successful", 'success');
                                         this.populateDashboard();
                                       } else {
                                         this.utilService.showAlert(deleteMfMapResp[0]);
@@ -348,6 +356,101 @@ export class MfDashboardComponent implements OnInit {
           this.utilService.showAlert(err);
         }
       });
+    }
+  }
+
+  refreshMfData() {
+    this.utilService.refreshMfData.next(false);
+    if (this.mfMappings.length <= 0) {
+      this.utilService.showAlert("No Mutual Funds are mapped with this account");
+    }
+    let investmentValuation = 0;
+    var counter = 0;
+    this.mfMappings.forEach(element => {
+      this.apiService.fetchMfNav(element.scheme_code).subscribe({
+        next: (resp: any) => {
+          var _mappedMf_ = this.mfMappings.filter(mfMap => mfMap.scheme_code === element.scheme_code)[0];
+          _mappedMf_.scheme_name = resp.meta.scheme_name;
+          _mappedMf_.nav_amt = this.utilService.roundUpAmount(resp.data[0].nav);
+          _mappedMf_.nav_date = this.utilService.formatDate(resp.data[0].date);
+          _mappedMf_.curr_amt = this.utilService.formatAmountWithComma(this.utilService.roundUpAmount(resp.data[0].nav * _mappedMf_.units));
+          investmentValuation += this.utilService.formatStringValueToAmount(_mappedMf_.curr_amt);
+          counter++;
+          if (counter === this.mfMappings.length) {
+            this.updateMfMapping(investmentValuation);
+          }
+        }, error: (err: any) => {
+          this.utilService.showAlert(err);
+        }
+      });
+    });
+  }
+
+  validateMfMappingResponse(data: any) {
+    let _resp = true;
+    data.forEach((element: any) => {
+      if (element.response !== '200' && !!_resp) {
+        _resp = false;
+      }
+    });
+    return _resp;
+  }
+
+  async updateMfMapping(investmentValuation: number) {
+    let _updObj_: any[] = [];
+    this.mfMappings.forEach(element => {
+      let _indObj_ = {
+        account_id: element.account_id,
+        avg_nav: element.avg_nav,
+        inv_amt: element.inv_amt,
+        units: element.units,
+        nav_amt: element.nav_amt,
+        nav_date: this.utilService.convertDate(element.nav_date),
+        scheme_code: element.scheme_code
+      }
+      _updObj_.push(_indObj_);
+    });
+    let investmentChange = Number(this.utilService.roundUpAmount(investmentValuation - this.utilService.formatStringValueToAmount(this.accountDetails.balance)));
+    if (investmentChange != 0) {
+      let apiRespData = await firstValueFrom(this.apiService.updateMfMapping(_updObj_));
+      if (this.validateMfMappingResponse(apiRespData)) {
+        let _acc = {
+          account_id: this.accountDetails.id,
+          balance: this.utilService.roundUpAmt(investmentValuation),
+          user_id: this.utilService.appUserId
+        };
+        this.apiService.updateAccount([_acc]).subscribe({
+          next: (accApiRespData: any) => {
+            if (accApiRespData[0].success === true) {
+              let accDets = {} as Account;
+              Object.assign(accDets, this.accountDetails);
+              accDets.balance = this.utilService.formatAmountWithComma(_acc.balance.toFixed(2));
+              this.changedAccountDetails.emit(accDets);
+              let _inpData = {
+                trans_amount: Math.abs(investmentChange).toString(),
+                account_id: this.accountDetails.id,
+                trans_date: this.utilService.convertDate(),
+                trans_desc: "Periodic Profit/Loss",
+                trans_type: (investmentChange < 0) ? "DEBIT" : "CREDIT",
+                user_id: this.utilService.appUserId.toString()
+              }
+              this.apiService.saveTransactionOnly([_inpData]).subscribe({
+                next: _x => {
+                  this.populateXIRR();
+                }, error: err => {
+                  this.utilService.showAlert(err);
+                }
+              });
+            } else {
+              this.utilService.showAlert(accApiRespData);
+            }
+          }, error: (err: any) => {
+            this.utilService.showAlert(err);
+          }
+        });
+      } else {
+        this.utilService.showAlert("Validation of MF Mapping Update Response Failed !");
+      }
     }
   }
 }

@@ -1,21 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Account } from 'app/models/account';
-import { UtilService } from 'app/services/util.service';
-import { AllTransactionsComponent } from "../../transactions/all-transactions/all-transactions.component";
 import { ActivatedRoute } from '@angular/router';
-import { MfDashboardComponent } from './mfdashboard/mfdashboard.component';
+import { Account } from 'app/models/account';
+import { AllTransactionsComponent } from 'app/modules/transactions/all-transactions/all-transactions.component';
+import { UtilService } from 'app/services/util.service';
+import { EqDashboardComponent } from './eqdashboard/eqdashboard.component';
 import { FormControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-mfaccount',
+  selector: 'app-eqaccount',
   standalone: true,
-  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, MfDashboardComponent],
-  templateUrl: './mfaccount.component.html',
-  styleUrl: './mfaccount.component.scss'
+  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, EqDashboardComponent],
+  templateUrl: './eqaccount.component.html',
+  styleUrl: './eqaccount.component.scss'
 })
-export class MfAccountComponent implements OnInit {
+export class EqAccountComponent implements OnInit {
 
   inputAccountData: any;
   transactionHeader: string = '';
@@ -41,8 +41,8 @@ export class MfAccountComponent implements OnInit {
     }
   }
 
-  refreshMfData() {
-    this.utilService.refreshMfData.next(true);
+  refreshEqData() {
+    this.utilService.refreshEqData.next(true);
   }
 
   updatedAccDetails(acc: Account) {

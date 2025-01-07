@@ -36,7 +36,7 @@ export class ApiConstants {
     static API_GET_MF_SCHEMES_BY_ACCOUNT_SCHEME: string = "getMfMappingByAccountScheme";
     static API_UPDATE_MF_MAPPING: string = "updateMfMapping";
     static API_SAVE_MF_MAPPING: string = "storeMfMapping";
-    static API_UPDATE_EQ_MAPPING: string = "updateStockMapping";
+    static API_UPDATE_STOCK_MAPPING: string = "updateStockMapping";
     static API_SAVE_MF_TRANS: string = "storeMfTrans";
     static API_UPDATE_MF_TRANS: string = "updateMfTrans";
     static API_DELETE_MF_MAPPING: string = "deleteMfMapping";
@@ -61,6 +61,8 @@ export class ApiConstants {
     static API_GET_MF_TRANS_BY_ACC_SCHEME_ASC: string = "getMfTransByAccountSchemeAscending";
     static API_GET_MF_TRANS_BY_ACC_SCHEME: string = "getMfTransByAccountScheme";
     static API_GET_MF_TRANS_BY_ACC: string = "getMfTransByAccount";
+    static API_GET_STOCK_MAPPING_BY_ACC: string = "getStockMappingByAccount";
+    static API_GET_STOCK_MAPPING_BY_ACC_SYM: string = "getStockMappingByAccountSymbol";
     
     static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";

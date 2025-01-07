@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppConstants } from 'app/const/app.constants';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class UtilService {
 
   constructor(private snackBar: MatSnackBar, private spinner: NgxSpinnerService) { }
+
+  refreshMfData: Subject<any> = new Subject();
+  refreshEqData: Subject<any> = new Subject();
 
   showLoadSpinner() {
     this.spinner.show();
@@ -198,6 +202,21 @@ export class UtilService {
       month = d.getMonth() + 1;
     }
     return [this.padLeadingZero(day), this.padLeadingZero(month), d.getFullYear()].join('-');
+  }
+
+  calculateDateDiff(date1: string | Date, date2?: string | Date) {
+    let currentDate = new Date();
+    if (date2 !== undefined) {
+      if (typeof date2 === 'string') {
+        date2 = new Date(date2);
+      }
+      currentDate = date2;
+    }
+    if (typeof date1 === 'string') {
+      date1 = new Date(date1);
+    }
+
+    return Math.floor((Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) - Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate())) / (1000 * 60 * 60 * 24));
   }
 
   calculateMfInvestedAmount(transAmt: number, transDate: string | Date) {

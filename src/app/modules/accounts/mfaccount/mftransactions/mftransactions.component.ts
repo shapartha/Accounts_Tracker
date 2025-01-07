@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './mftransactions.component.html',
   styleUrl: './mftransactions.component.scss'
 })
-export class MftransactionsComponent {
+export class MfTransactionsComponent {
 
 }

@@ -123,6 +123,8 @@ export class HomeComponent implements OnInit {
     const selectedAccount: Account = event.options[0].value;
     if (selectedAccount.is_mf == '1') {
       this.router.navigate(['mf-dashboard'], { queryParams: selectedAccount });
+    } else if (selectedAccount.is_equity == '1') {
+      this.router.navigate(['eq-dashboard'], { queryParams: selectedAccount });
     } else {
       this.router.navigate(['all-transactions'], { state: selectedAccount });
     }

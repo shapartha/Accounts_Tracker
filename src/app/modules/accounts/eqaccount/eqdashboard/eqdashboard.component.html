@@ -1,0 +1,59 @@
+<div style="margin: 20px;">
+    @for (item of eqMappings; track $index) {
+    <div [classList]="getMoneyVal(item, 'row eq-mapping-item ', 'bg-danger-subtle', 'bg-success-subtle')" [contextMenu]="oneContextMenu"
+        [contextMenuValue]="item">
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-12 font-weight-bold">{{item.stock_name}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-6">Code: {{item.stock_symbol}}</div>
+                <div class="col-sm-6">CMP: {{item.current_market_price}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-6">Invested: {{item.inv_amt}}</div>
+                <div class="col-sm-6">Shares: {{item.no_of_shares}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-6">Last Upd: {{item.purchase_date}}</div>
+                <div class="col-sm-6">Avg Price: {{item.avg_price}}</div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="row font-weight-bold" style="font-size: 14px;">
+                <div [classList]="getMoneyVal(item, 'col-sm-12 text-end ', 'negative-val', 'positive-val')">{{item.curr_amt}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-12 text-end purple-val">XIRR: <span class="font-weight-bold">{{item.ann_return}}%</span></div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-12 text-end purple-val">Returns: <span class="font-weight-bold">{{item.abs_return}}%</span></div>
+            </div>
+        </div>
+    </div>
+    }
+    @if (eqMappings.length == 0) {
+    <div class="no-items-header">No Stock Mapping available for this account</div>
+    }
+</div>
+
+<context-menu #oneContextMenu [menuClass]="'app-eq-dashboard-context-menu'">
+    <ng-template contextMenuItem (execute)="redeem(redeemDialogContent, $event)" let-value>Redeem All</ng-template>
+    <ng-template contextMenuItem (execute)="redeem(redeemDialogContent, $event, false)" let-value>Redeem Partial</ng-template>
+</context-menu>
+
+<ng-template #redeemDialogContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title">{{dialogTitle}}</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-3">
+            <app-redeem-eq [eqData]="selectedEqScheme" (formData)="updatedRecord($event)"></app-redeem-eq>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="confirmRedeem(modifiedRecord)">Redeem</button>
+    </div>
+</ng-template>
