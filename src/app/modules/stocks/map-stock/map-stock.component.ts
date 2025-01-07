@@ -146,7 +146,7 @@ export class MapStockComponent implements OnInit {
                 this.utilService.showAlert(addTransResp);
               } else {
                 this.utilService.showAlert("Stock Mapped !!!", 'success');
-                this.form.reset();
+                this.form.get('purchasePrice')?.reset();
               }
             }, error: (err) => {
               console.error(err);

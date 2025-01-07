@@ -231,7 +231,7 @@ export class MapMfComponent implements OnInit {
           this.utilService.showAlert(addTransResp);
         } else {
           this.utilService.showAlert("Mutual Fund Mapped !!!", 'success');
-          this.form.reset();
+          this.form.get('schemeCode')?.reset();
         }
       }, error: (err) => {
         console.error(err);
