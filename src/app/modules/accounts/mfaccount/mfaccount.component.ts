@@ -7,6 +7,7 @@ import { AllTransactionsComponent } from "../../transactions/all-transactions/al
 import { ActivatedRoute } from '@angular/router';
 import { MfDashboardComponent } from './mfdashboard/mfdashboard.component';
 import { FormControl } from '@angular/forms';
+import { ApiService } from 'app/services/api.service';
 
 @Component({
   selector: 'app-mfaccount',
@@ -22,9 +23,18 @@ export class MfAccountComponent implements OnInit {
   showAmount = '';
   selectedTab = new FormControl(0);
 
-  constructor(private route: ActivatedRoute, public utilService: UtilService) {
+  constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService) {
     this.route.queryParams.subscribe(params => {
       this.inputAccountData = params as Account;
+      this.apiService.getAccountById({ account_id: this.inputAccountData.id }).subscribe(acc => {
+        this.inputAccountData = acc.dataArray[0];
+        this.inputAccountData.id = acc.dataArray[0].account_id;
+        this.inputAccountData.name = acc.dataArray[0].account_name;
+        this.inputAccountData.is_mf = Boolean(Number(acc.dataArray[0].is_mf));
+        this.inputAccountData.is_equity = Boolean(Number(acc.dataArray[0].is_equity));
+        this.inputAccountData.balance = this.utilService.formatAmountWithComma(acc.dataArray[0].balance);
+        this.showAmount = this.inputAccountData.balance;
+      });
     });
   }
 
