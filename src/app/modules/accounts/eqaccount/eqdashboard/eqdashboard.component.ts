@@ -144,7 +144,7 @@ export class EqDashboardComponent implements OnInit {
     this.eqMappings.forEach(element => {
       let _indObj_ = {
         current_market_price: this.utilService.formatStringValueToAmount(element.current_market_price),
-        last_market_date: lastUpdate.split(" ")[0],
+        last_market_date: this.utilService.convertDate(lastUpdate.split(" ")[0]),
         stock_symbol: element.stock_symbol
       }
       _updObj_.push(_indObj_);
