@@ -3,6 +3,16 @@
         flex: 0 0 auto;
         width: 50%;
     }
+
+    .col-sm-9 {
+        flex: 0 0 auto;
+        width: 75%;
+    }
+
+    .col-sm-3 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
 }
 
 .mf-transaction-item {

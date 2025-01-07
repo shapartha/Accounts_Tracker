@@ -41,4 +41,13 @@ export class MfTransactionsComponent implements OnInit {
     }
     return classListValue;
   }
+
+  getMoneyValue(value: any, existingClass: string, negativeClass: string, positiveClass: string) {
+    if (this.utilService.formatStringValueToAmount(value.curr_amt) <= value.inv_amt) {
+      value.trans_type = 'DEBIT';
+    } else {
+      value.trans_type = 'CREDIT';
+    }
+    return this.getMoneyVal(value, existingClass, negativeClass, positiveClass);
+  }
 }

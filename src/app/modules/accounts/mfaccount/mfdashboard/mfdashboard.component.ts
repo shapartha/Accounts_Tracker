@@ -85,7 +85,7 @@ export class MfDashboardComponent implements OnInit {
               xirr_val: 0,
               abs_return: 0
             };
-            _item.curr_amt = this.utilService.formatAmountWithComma((_item.units * _item.nav_amt).toString());
+            _item.curr_amt = this.utilService.formatAmountWithComma(this.utilService.roundUpAmount(_item.units * _item.nav_amt));
             _item.nav_date = this.utilService.formatDate(_item.nav_date);
             this.mfMappings.push(_item);
           });
@@ -374,7 +374,7 @@ export class MfDashboardComponent implements OnInit {
           _mappedMf_.scheme_name = resp.meta.scheme_name;
           _mappedMf_.nav_amt = this.utilService.roundUpAmount(resp.data[0].nav);
           _mappedMf_.nav_date = this.utilService.formatDate(resp.data[0].date);
-          _mappedMf_.curr_amt = this.utilService.formatAmountWithComma(this.utilService.roundUpAmount(resp.data[0].nav * _mappedMf_.units));
+          _mappedMf_.curr_amt = this.utilService.formatAmountWithComma(this.utilService.roundUpAmt(resp.data[0].nav) * Number(this.utilService.roundUpAmount(_mappedMf_.units, 4)));
           investmentValuation += this.utilService.formatStringValueToAmount(_mappedMf_.curr_amt);
           counter++;
           if (counter === this.mfMappings.length) {

@@ -19,7 +19,7 @@
         </div>
         <div class="col-sm-3">
             <div class="row font-weight-bold" style="font-size: 14px;">
-                <div [classList]="getMoneyVal(mfAccount, 'col-sm-12 text-end ', 'negative-val', 'positive-val')">{{mfAccount.curr_amt}}</div>
+                <div [classList]="getMoneyValue(mfAccount, 'col-sm-12 text-end ', 'negative-val', 'positive-val')">{{mfAccount.curr_amt}}</div>
             </div>
             <div class="row small-font">
                 <div class="col-sm-12 text-end purple-val">XIRR: <span class="font-weight-bold">{{mfAccount.xirr_val}}%</span></div>
