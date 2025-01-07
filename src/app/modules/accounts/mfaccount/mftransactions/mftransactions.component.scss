@@ -1,0 +1,15 @@
+@media (max-width: 575px) {
+    .col-sm-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+}
+
+.mf-transaction-item {
+    border-radius: 7px;
+    padding: 5px 0;
+}
+
+#selected-mf-scheme {
+    border-radius: 7px;
+}

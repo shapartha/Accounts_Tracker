@@ -37,6 +37,7 @@
 <context-menu #oneContextMenu [menuClass]="'app-mf-dashboard-context-menu'">
     <ng-template contextMenuItem (execute)="redeem(redeemDialogContent, $event)" let-value>Redeem All</ng-template>
     <ng-template contextMenuItem (execute)="redeem(redeemDialogContent, $event, false)" let-value>Redeem Partial</ng-template>
+    <ng-template contextMenuItem (execute)="viewDetails($event)" let-value>View Details</ng-template>
 </context-menu>
 
 <ng-template #redeemDialogContent let-modal>

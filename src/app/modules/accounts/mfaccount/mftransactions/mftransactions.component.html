@@ -1,1 +1,49 @@
-<p>mftransactions works!</p>
+<div style="margin: 20px;">
+    <div id="selected-mf-scheme" class="bg-warning-subtle mb-3 mt-2 pb-2 pt-2 row">
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-12 font-weight-bold">{{mfAccount.scheme_name}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-6">Code: {{mfAccount.scheme_code}}</div>
+                <div class="col-sm-6">NAV: {{mfAccount.nav_amt}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-6">Invested: {{mfAccount.inv_amt}}</div>
+                <div class="col-sm-6">Units: {{mfAccount.units}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-6">Last Upd: {{mfAccount.nav_date}}</div>
+                <div class="col-sm-6">Avg NAV: {{mfAccount.avg_nav}}</div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="row font-weight-bold" style="font-size: 14px;">
+                <div [classList]="getMoneyVal(mfAccount, 'col-sm-12 text-end ', 'negative-val', 'positive-val')">{{mfAccount.curr_amt}}</div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-12 text-end purple-val">XIRR: <span class="font-weight-bold">{{mfAccount.xirr_val}}%</span></div>
+            </div>
+            <div class="row small-font">
+                <div class="col-sm-12 text-end purple-val">Returns: <span class="font-weight-bold">{{mfAccount.abs_return}}%</span></div>
+            </div>
+        </div>
+    </div>
+    <h4 class="text-center">All Transactions under this Scheme</h4>
+    @for (item of mfTransRecords; track $index) {
+    <div [classList]="getMoneyVal(item, 'row mf-transaction-item ', 'bg-danger-subtle', 'bg-success-subtle')">
+        <div class="row font-weight-bold">
+            <div class="col-sm-6">Amount Invested:</div>
+            <div [classList]="getMoneyVal(item, 'col-sm-6 text-end ', 'text-danger', 'text-success')">{{utilService.formatAmountWithComma(item.amount)}}</div>
+        </div>
+        <div class="row small-font">
+            <div class="col-sm-6">Trans Date: {{utilService.formatDate(item.trans_date)}}</div>
+            <div class="col-sm-6">NAV: {{item.nav}}</div>
+        </div>
+        <div class="row small-font">
+            <div class="col-sm-6">Units: {{item.units}}</div>
+            <div class="col-sm-6">Balance Units: {{item.balance_units}}</div>
+        </div>
+    </div>
+    }
+</div>

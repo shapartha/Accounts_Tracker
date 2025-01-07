@@ -8,11 +8,12 @@ import { ActivatedRoute } from '@angular/router';
 import { MfDashboardComponent } from './mfdashboard/mfdashboard.component';
 import { FormControl } from '@angular/forms';
 import { ApiService } from 'app/services/api.service';
+import { MfTransactionsComponent } from "./mftransactions/mftransactions.component";
 
 @Component({
   selector: 'app-mfaccount',
   standalone: true,
-  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, MfDashboardComponent],
+  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, MfDashboardComponent, MfTransactionsComponent],
   templateUrl: './mfaccount.component.html',
   styleUrl: './mfaccount.component.scss'
 })
@@ -22,6 +23,7 @@ export class MfAccountComponent implements OnInit {
   transactionHeader: string = '';
   showAmount = '';
   selectedTab = new FormControl(0);
+  selectedMfScheme: any;
 
   constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService) {
     this.route.queryParams.subscribe(params => {
@@ -58,5 +60,19 @@ export class MfAccountComponent implements OnInit {
   updatedAccDetails(acc: Account) {
     this.inputAccountData = acc;
     this.showAmount = this.inputAccountData.balance;
+  }
+
+  onMfSchemeSelected(evt: any) {
+    if (evt != null) {
+      this.selectedMfScheme = evt;
+      this.selectedTab.setValue(2);
+    }
+  }
+
+  onTabChange(evt: any) {
+    this.selectedTab.setValue(evt);
+    if (evt != 2) {
+      this.selectedMfScheme = null;
+    }
   }
 }

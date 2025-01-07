@@ -20,6 +20,7 @@ export class MfDashboardComponent implements OnInit {
 
   @Input() accountDetails: Account = {};
   @Output() changedAccountDetails: EventEmitter<Account> = new EventEmitter();
+  @Output() selectedData: EventEmitter<any> = new EventEmitter();
   mfMappings: any[] = [];
   overallXirr: number = 0.00;
   dialogTitle = '';
@@ -452,5 +453,10 @@ export class MfDashboardComponent implements OnInit {
         this.utilService.showAlert("Validation of MF Mapping Update Response Failed !");
       }
     }
+  }
+
+  viewDetails(evt: any) {
+    let data = evt.value;
+    this.selectedData.emit(data);
   }
 }

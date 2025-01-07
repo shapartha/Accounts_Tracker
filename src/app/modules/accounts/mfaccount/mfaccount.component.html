@@ -1,17 +1,24 @@
 <div class="container mt-2" id="mf-account-dashboard-section">
-    <h3>{{ transactionHeader }} <button *ngIf="selectedTab.value == 0" class="float-end btn btn-success" (click)="refreshMfData()"><i class="bi bi-repeat"></i><span> Refresh</span></button></h3>
+    <h3>{{ transactionHeader }} <button *ngIf="selectedTab.value == 0" class="float-end btn btn-success" (click)="refreshMfData()"><i
+                class="bi bi-repeat"></i><span> Refresh</span></button></h3>
     <h4 class="pt-2" *ngIf="inputAccountData != null && inputAccountData.id != null">Balance: <span class="float-end font-weight-bold "
             [ngClass]="utilService.formatStringValueToAmount(showAmount) < 0 ? 'negative-val': 'positive-val'">{{
             showAmount }}</span></h4>
-    <mat-tab-group animationDuration="300ms">
+    <mat-tab-group animationDuration="300ms" [selectedIndex]="selectedTab.value" (selectedIndexChange)="onTabChange($event)">
         <mat-tab label="Dashboard">
             <ng-template matTabContent>
-                <app-mfdashboard (switchTab)="switchTab($event)" [accountDetails]="inputAccountData" (changedAccountDetails)="updatedAccDetails($event)"></app-mfdashboard>
+                <app-mfdashboard (switchTab)="switchTab($event)" [accountDetails]="inputAccountData" (changedAccountDetails)="updatedAccDetails($event)"
+                    (selectedData)="onMfSchemeSelected($event)"></app-mfdashboard>
             </ng-template>
         </mat-tab>
         <mat-tab label="Transactions">
             <ng-template matTabContent>
                 <app-all-transactions (switchTab)="switchTab($event)" [accountId]="inputAccountData.id"></app-all-transactions>
+            </ng-template>
+        </mat-tab>
+        <mat-tab *ngIf="selectedMfScheme != null" label="MF Details">
+            <ng-template matTabContent>
+                <app-mftransactions [mfAccount]="selectedMfScheme"></app-mftransactions>
             </ng-template>
         </mat-tab>
     </mat-tab-group>
