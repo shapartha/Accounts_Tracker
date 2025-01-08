@@ -18,20 +18,28 @@
             </div>
         </div>
         <div class="col-sm-3">
-            <div class="row font-weight-bold" style="font-size: 14px;">
-                <div [classList]="getMoneyValue(mfAccount, 'col-sm-12 text-end ', 'negative-val', 'positive-val')">{{mfAccount.curr_amt}}</div>
+            <div *ngIf="transactionsModified != true">
+                <div class="row font-weight-bold" style="font-size: 14px;">
+                    <div [classList]="getMoneyValue(mfAccount, 'col-sm-12 text-end ', 'negative-val', 'positive-val')">{{mfAccount.curr_amt}}</div>
+                </div>
+                <div class="row small-font">
+                    <div class="col-sm-12 text-end purple-val">XIRR: <span class="font-weight-bold">{{mfAccount.xirr_val}}%</span></div>
+                </div>
+                <div class="row small-font">
+                    <div class="col-sm-12 text-end purple-val">Returns: <span class="font-weight-bold">{{mfAccount.abs_return}}%</span></div>
+                </div>
             </div>
-            <div class="row small-font">
-                <div class="col-sm-12 text-end purple-val">XIRR: <span class="font-weight-bold">{{mfAccount.xirr_val}}%</span></div>
-            </div>
-            <div class="row small-font">
-                <div class="col-sm-12 text-end purple-val">Returns: <span class="font-weight-bold">{{mfAccount.abs_return}}%</span></div>
+            <div *ngIf="transactionsModified == true">
+                <div class="row font-weight-bold text-center" style="font-size: 14px;">
+                    Refresh
+                </div>
             </div>
         </div>
     </div>
     <h4 class="text-center">All Transactions under this Scheme</h4>
     @for (item of mfTransRecords; track $index) {
-    <div [classList]="getMoneyVal(item, 'row mf-transaction-item ', 'bg-danger-subtle', 'bg-success-subtle')">
+    <div [classList]="getMoneyVal(item, 'row mf-transaction-item ', 'bg-danger-subtle', 'bg-success-subtle')" [contextMenu]="oneContextMenu"
+        [contextMenuValue]="item">
         <div class="row font-weight-bold">
             <div class="col-sm-6">Amount Invested:</div>
             <div [classList]="getMoneyVal(item, 'col-sm-6 text-end ', 'text-danger', 'text-success')">{{utilService.formatAmountWithComma(item.amount)}}</div>
@@ -47,3 +55,8 @@
     </div>
     }
 </div>
+
+<context-menu #oneContextMenu [menuClass]="'app-mf-transactions-context-menu'">
+    <ng-template contextMenuItem (execute)="update($event)" let-value>Update</ng-template>
+    <ng-template contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
+</context-menu>

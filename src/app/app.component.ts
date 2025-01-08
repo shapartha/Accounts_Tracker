@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, inject } from '@angular/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,12 +34,13 @@ export class AppComponent implements OnInit {
       behavior: "smooth",
     });
   }
-  constructor() {
+  constructor(private elementRef: ElementRef) {
     this.authService = inject(AuthService);
     this.isLoggedIn = this.authService.checkLogin();
   }
 
   ngOnInit(): void {
+    this.elementRef.nativeElement.removeAttribute("ng-version");
     this.loginSubscription = this.authService.isLoggedIn$.subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn);
   }
 

@@ -310,6 +310,11 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  deleteMfTrans(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_MF_TRANS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
   deleteMfMapping(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_DELETE_MF_MAPPING;
     return this.postApiCall(apiFuncName, apiFuncParams);

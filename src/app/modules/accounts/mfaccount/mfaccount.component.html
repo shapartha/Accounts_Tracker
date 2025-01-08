@@ -18,8 +18,15 @@
         </mat-tab>
         <mat-tab *ngIf="selectedMfScheme != null" label="MF Details">
             <ng-template matTabContent>
-                <app-mftransactions [mfAccount]="selectedMfScheme"></app-mftransactions>
+                <app-mftransactions [mfAccount]="selectedMfScheme" (confirmObject)="retrieveConfirmObject($event)"
+                    [deleteClicked]="invokeDeleted"></app-mftransactions>
             </ng-template>
         </mat-tab>
     </mat-tab-group>
 </div>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>

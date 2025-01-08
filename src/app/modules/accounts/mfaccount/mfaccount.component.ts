@@ -9,11 +9,13 @@ import { MfDashboardComponent } from './mfdashboard/mfdashboard.component';
 import { FormControl } from '@angular/forms';
 import { ApiService } from 'app/services/api.service';
 import { MfTransactionsComponent } from "./mftransactions/mftransactions.component";
+import { ConfirmData } from 'app/models/confirm';
+import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-mfaccount',
   standalone: true,
-  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, MfDashboardComponent, MfTransactionsComponent],
+  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, MfDashboardComponent, MfTransactionsComponent, ConfirmDialogComponent],
   templateUrl: './mfaccount.component.html',
   styleUrl: './mfaccount.component.scss'
 })
@@ -24,6 +26,32 @@ export class MfAccountComponent implements OnInit {
   showAmount = '';
   selectedTab = new FormControl(0);
   selectedMfScheme: any;
+
+  modalTitle: string = '';
+  modalBody: string = '';
+  modalBtnName: string = '';
+  confirmData: ConfirmData = {} as any;
+  canClose: boolean = false;
+  invokeDeleted: boolean = false;
+  selected: any;
+
+  confirm(evt: ConfirmData) {
+    if (evt.type == 'DELETE-MF-TRANS' && evt.value == true) {
+      this.invokeDeleted = true;
+      setTimeout(() => {
+        this.invokeDeleted = false;
+      }, 1000);
+    }
+  }
+
+  retrieveConfirmObject(e: any) {
+    this.modalTitle = e.modalTitle;
+    this.modalBtnName = e.modalBtnName;
+    this.modalBody = e.modalBody;
+    this.confirmData = e.confirmData;
+    this.canClose = e.canClose;
+    this.selected = e.record;
+  }
 
   constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService) {
     this.route.queryParams.subscribe(params => {
