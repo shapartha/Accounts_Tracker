@@ -20,6 +20,7 @@ export class EqDashboardComponent implements OnInit {
 
   @Input() accountDetails: Account = {};
   @Output() changedAccountDetails: EventEmitter<Account> = new EventEmitter();
+  @Output() selectedData: EventEmitter<any> = new EventEmitter();
   eqMappings: any[] = [];
   selectedEqScheme: any;
   dialogTitle: string = '';
@@ -281,5 +282,10 @@ export class EqDashboardComponent implements OnInit {
         }
       });
     }
+  }
+
+  viewDetails(evt: any) {
+    let data = evt.value;
+    this.selectedData.emit(data);
   }
 }

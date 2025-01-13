@@ -330,6 +330,11 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
+  getAllEqMappingsByAccountSymbol(apiFuncParams: any) {
+    const apiFuncName = ApiConstants.API_GET_ALL_STOCK_MAPPINGS_BY_ACC_SYM;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   invokeMfStockUpdater(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_MF_STOCKS_UPDATER;
     return this.invokeApiCall(apiFuncName, apiFuncParams);

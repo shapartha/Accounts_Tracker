@@ -8,11 +8,14 @@ import { UtilService } from 'app/services/util.service';
 import { EqDashboardComponent } from './eqdashboard/eqdashboard.component';
 import { FormControl } from '@angular/forms';
 import { ApiService } from 'app/services/api.service';
+import { EqTransactionsComponent } from './eqtransactions/eqtransactions.component';
+import { ConfirmData } from 'app/models/confirm';
+import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-eqaccount',
   standalone: true,
-  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, EqDashboardComponent],
+  imports: [MatTabsModule, CommonModule, AllTransactionsComponent, EqDashboardComponent, EqTransactionsComponent, ConfirmDialogComponent],
   templateUrl: './eqaccount.component.html',
   styleUrl: './eqaccount.component.scss'
 })
@@ -22,6 +25,15 @@ export class EqAccountComponent implements OnInit {
   transactionHeader: string = '';
   showAmount = '';
   selectedTab = new FormControl(0);
+  selectedEqScheme: any;
+  invokeDeleted: boolean = false;
+
+  modalTitle: string = '';
+  modalBody: string = '';
+  modalBtnName: string = '';
+  confirmData: ConfirmData = {} as any;
+  canClose: boolean = false;
+  selected: any;
 
   constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService) {
     this.route.queryParams.subscribe(params => {
@@ -45,6 +57,24 @@ export class EqAccountComponent implements OnInit {
     }
   }
 
+  confirm(evt: ConfirmData) {
+    if (evt.type == 'DELETE-EQ-TRANS' && evt.value == true) {
+      this.invokeDeleted = true;
+      setTimeout(() => {
+        this.invokeDeleted = false;
+      }, 1000);
+    }
+  }
+
+  retrieveConfirmObject(e: any) {
+    this.modalTitle = e.modalTitle;
+    this.modalBtnName = e.modalBtnName;
+    this.modalBody = e.modalBody;
+    this.confirmData = e.confirmData;
+    this.canClose = e.canClose;
+    this.selected = e.record;
+  }
+
   switchTab(e: any) {
     if (e.refresh == true) {
       this.selectedTab.setValue(e.tabId);
@@ -58,5 +88,19 @@ export class EqAccountComponent implements OnInit {
   updatedAccDetails(acc: Account) {
     this.inputAccountData = acc;
     this.showAmount = this.inputAccountData.balance;
+  }
+
+  onEqSchemeSelected(evt: any) {
+    if (evt != null) {
+      this.selectedEqScheme = evt;
+      this.selectedTab.setValue(2);
+    }
+  }
+
+  onTabChange(evt: any) {
+    this.selectedTab.setValue(evt);
+    if (evt != 2) {
+      this.selectedEqScheme = null;
+    }
   }
 }

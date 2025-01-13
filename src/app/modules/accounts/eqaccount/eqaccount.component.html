@@ -1,12 +1,14 @@
 <div class="container mt-2" id="eq-account-dashboard-section">
-    <h3>{{ transactionHeader }} <button *ngIf="selectedTab.value == 0" class="float-end btn btn-success" (click)="refreshEqData()"><i class="bi bi-repeat"></i><span> Refresh</span></button></h3>
+    <h3>{{ transactionHeader }} <button *ngIf="selectedTab.value == 0" class="float-end btn btn-success" (click)="refreshEqData()"><i
+                class="bi bi-repeat"></i><span> Refresh</span></button></h3>
     <h4 class="pt-2" *ngIf="inputAccountData != null && inputAccountData.id != null">Balance: <span class="float-end font-weight-bold "
             [ngClass]="utilService.formatStringValueToAmount(showAmount) < 0 ? 'negative-val': 'positive-val'">{{
             showAmount }}</span></h4>
-    <mat-tab-group animationDuration="300ms">
+    <mat-tab-group animationDuration="300ms" [selectedIndex]="selectedTab.value" (selectedIndexChange)="onTabChange($event)">
         <mat-tab label="Dashboard">
             <ng-template matTabContent>
-                <app-eqdashboard (switchTab)="switchTab($event)" [accountDetails]="inputAccountData" (changedAccountDetails)="updatedAccDetails($event)"></app-eqdashboard>
+                <app-eqdashboard (switchTab)="switchTab($event)" [accountDetails]="inputAccountData" (changedAccountDetails)="updatedAccDetails($event)"
+                    (selectedData)="onEqSchemeSelected($event)"></app-eqdashboard>
             </ng-template>
         </mat-tab>
         <mat-tab label="Transactions">
@@ -14,5 +16,17 @@
                 <app-all-transactions (switchTab)="switchTab($event)" [accountId]="inputAccountData.id"></app-all-transactions>
             </ng-template>
         </mat-tab>
+        <mat-tab *ngIf="selectedEqScheme != null" label="Stock Details">
+            <ng-template matTabContent>
+                <app-eqtransactions [eqAccount]="selectedEqScheme" (confirmObject)="retrieveConfirmObject($event)"
+                    [deleteClicked]="invokeDeleted"></app-eqtransactions>
+            </ng-template>
+        </mat-tab>
     </mat-tab-group>
 </div>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>
