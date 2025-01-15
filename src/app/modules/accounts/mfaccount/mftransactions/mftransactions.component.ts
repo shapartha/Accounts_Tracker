@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ConfirmData } from 'app/models/confirm';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { firstValueFrom } from 'rxjs';
+import { UpdateMfTransComponent } from "../../../modals/update-mf-trans/update-mf-trans.component";
 
 @Component({
   selector: 'app-mftransactions',
   standalone: true,
-  imports: [ContextMenuModule, CommonModule],
+  imports: [ContextMenuModule, CommonModule, UpdateMfTransComponent],
   templateUrl: './mftransactions.component.html',
   styleUrl: './mftransactions.component.scss'
 })
@@ -21,8 +23,11 @@ export class MfTransactionsComponent implements OnInit, OnChanges {
   @Output() confirmObject = new EventEmitter<any>();
   @Input() deleteClicked: boolean = false;
   transactionsModified: boolean = false;
+  selectedMfScheme: any;
+  modifiedRecord: any = {};
+  modalRef: any;
 
-  constructor(public utilService: UtilService, private apiService: ApiService) { }
+  constructor(public utilService: UtilService, private apiService: ApiService, private modalService: NgbModal) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['deleteClicked']?.isFirstChange() && changes['deleteClicked']?.currentValue == true) {
@@ -65,7 +70,19 @@ export class MfTransactionsComponent implements OnInit, OnChanges {
     return this.getMoneyVal(value, existingClass, negativeClass, positiveClass);
   }
 
-  update(evt: any) { }
+  update(content: TemplateRef<any>, evt: any) {
+    let data = evt.value;
+    this.selectedMfScheme = data;
+    this.modalRef = this.modalService.open(content,
+      {
+        ariaLabelledBy: 'modal-basic-title',
+        backdrop: 'static',
+        keyboard: false,
+        fullscreen: 'md',
+        scrollable: true,
+        size: 'lg'
+      });
+  }
 
   delete(evt: any) {
     this.selectedRecord = evt.value;
@@ -183,5 +200,65 @@ export class MfTransactionsComponent implements OnInit, OnChanges {
         this.utilService.showAlert(err);
       }
     });
+  }
+
+  updatedRecord(event: any) {
+    this.modifiedRecord = this.selectedMfScheme;
+    this.modifiedRecord.newDate = this.utilService.convertDate(event.transDate);
+    this.modifiedRecord.newNav = event.nav;
+    this.modifiedRecord.newBalanceUnits = event.balanceUnits;
+    this.modifiedRecord.newUnits = event.units;
+    this.modifiedRecord.is_valid = event.valid;
+  }
+
+  confirmUpdate(item: any) {
+    if (item.is_valid == false) {
+      this.utilService.showAlert('One or more form fields are invalid');
+    } else {
+      let mfTransUpdInputs = {
+        trans_id: item.trans_id,
+        trans_type: item.trans_type,
+        balance_units: item.newBalanceUnits,
+        units: item.newUnits,
+        trans_date: item.newDate,
+        nav: item.newNav
+      };
+      this.apiService.updateMfTrans([mfTransUpdInputs]).subscribe({
+        next: (updResp: any) => {
+          if (updResp[0].success == true) {
+            let unitDiff = this.utilService.roundUpAmt(item.newBalanceUnits, 4) - this.utilService.roundUpAmt(item.balance_units);
+            if (this.utilService.roundUpAmt(unitDiff, 1) != 0) {
+              let mfMappingInput = {
+                account_id: this.mfAccount.account_id,
+                scheme_code: this.mfAccount.scheme_code,
+                units: this.utilService.roundUpAmount((Number(this.mfAccount.units) + unitDiff), 4),
+                avg_nav: '0.0'
+              };
+              mfMappingInput.avg_nav = this.utilService.roundUpAmount(Number(this.mfAccount.inv_amt) / Number(mfMappingInput.units), 4);
+              this.apiService.updateMfMapping([mfMappingInput]).subscribe({
+                next: (updMfMapResp: any) => {
+                  if (updMfMapResp[0].success == true) {
+                    this.transactionsModified = true;
+                    this.utilService.showAlert('MF Transaction updated successfully', 'success');
+                    this.modalRef.close('Submitted');
+                    this.mfAccount.units = mfMappingInput.units;
+                    this.mfAccount.avg_nav = mfMappingInput.avg_nav;
+                    this.loadMfTransactions();
+                  } else {
+                    this.utilService.showAlert(updMfMapResp);
+                  }
+                }, error: err => {
+                  this.utilService.showAlert(err);
+                }
+              });
+            }
+          } else {
+            this.utilService.showAlert(updResp);
+          }
+        }, error: err => {
+          this.utilService.showAlert(err);
+        }
+      });
+    }
   }
 }

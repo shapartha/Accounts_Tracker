@@ -1,0 +1,28 @@
+<form [formGroup]="form">
+    <div class="row">
+        <mat-form-field appearance="outline" class="col-sm-4 mt-3">
+            <mat-label>Invested Amount</mat-label>
+            <input type="number" matInput placeholder="Enter Amount to Redeem" name="invAmt" min="1" formControlName="invAmt">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-sm-4 mt-3">
+            <mat-label>NAV Date</mat-label>
+            <input matInput [matDatepicker]="picker" name="transDate" formControlName="transDate" [max]="blockFutureDates">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-sm-4 mt-3">
+            <mat-label>NAV Amount</mat-label>
+            <input type="number" matInput placeholder="Enter NAV" name="nav" min="1" formControlName="nav" (keyup)="onChangeNavVal()" (change)="onChangeNavVal()">
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline" class="col-sm-4 mt-3">
+            <mat-label>Balance Units</mat-label>
+            <input type="number" matInput placeholder="Enter No of Units" name="balanceUnits" formControlName="balanceUnits">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-sm-4 mt-3">
+            <mat-label>Units</mat-label>
+            <input type="number" matInput placeholder="Enter No of Units" name="units" formControlName="units" (keyup)="onChangeUnitsVal()" (change)="onChangeUnitsVal()">
+        </mat-form-field>
+    </div>
+</form>

@@ -119,8 +119,8 @@ export class UtilService {
     return amount.toFixed(_dCount);
   }
 
-  roundUpAmt(amount: string | number) {
-    return Number(this.roundUpAmount(amount));
+  roundUpAmt(amount: string | number, digitCount = 2) {
+    return Number(this.roundUpAmount(amount, digitCount));
   }
 
   formatAmountWithComma(amount: string | number): string {
