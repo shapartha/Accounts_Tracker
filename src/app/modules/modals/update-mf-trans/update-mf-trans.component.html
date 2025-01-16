@@ -18,11 +18,11 @@
     <div class="row">
         <mat-form-field appearance="outline" class="col-sm-4 mt-3">
             <mat-label>Balance Units</mat-label>
-            <input type="number" matInput placeholder="Enter No of Units" name="balanceUnits" formControlName="balanceUnits">
+            <input type="number" matInput min="0" placeholder="Enter No of Units" name="balanceUnits" formControlName="balanceUnits">
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-sm-4 mt-3">
             <mat-label>Units</mat-label>
-            <input type="number" matInput placeholder="Enter No of Units" name="units" formControlName="units" (keyup)="onChangeUnitsVal()" (change)="onChangeUnitsVal()">
+            <input type="number" matInput min="0" placeholder="Enter No of Units" name="units" formControlName="units" (keyup)="onChangeUnitsVal()" (change)="onChangeUnitsVal()">
         </mat-form-field>
     </div>
 </form>
