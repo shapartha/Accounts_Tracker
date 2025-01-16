@@ -144,7 +144,7 @@ export class MapMfComponent implements OnInit {
               if (saveMfMapResp[0].success !== true) {
                 this.utilService.showAlert(saveMfMapResp[0]);
               } else {
-                this.saveMfTransObject(inpObj, checkExistMfMapRes.dataArray);
+                this.saveMfTransObject(inpObj);
               }
             }, error: (err) => {
               console.error(err);
@@ -152,7 +152,7 @@ export class MapMfComponent implements OnInit {
             }
           });
         } else {
-          this.saveMfTransObject(inpObj);
+          this.saveMfTransObject(inpObj, checkExistMfMapRes.dataArray);
         }
       }, error: (err) => {
         console.error(err);
