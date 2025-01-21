@@ -17,6 +17,7 @@ import { MutualFundsComponent } from './modules/mutual-funds/mutual-funds.compon
 import { StocksComponent } from './modules/stocks/stocks.component';
 import { MfAccountComponent } from './modules/accounts/mfaccount/mfaccount.component';
 import { EqAccountComponent } from './modules/accounts/eqaccount/eqaccount.component';
+import { AutoMailsComponent } from './modules/auto-mails/auto-mails.component';
 
 export const routes: Routes = [
     {
@@ -84,6 +85,10 @@ export const routes: Routes = [
     {
         path: 'eq-dashboard',
         component: EqAccountComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: 'email_transactions',
+        component: AutoMailsComponent, canActivate: [AuthGuard]
     },
     {
         path: 'logout',

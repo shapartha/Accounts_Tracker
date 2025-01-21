@@ -1,0 +1,22 @@
+<div class="container mt-2" id="auto-mail-trans-section">
+    <h3>
+        Transaction Reader from Emails
+        <button class="float-end btn btn-danger" *ngIf="signedIn" (click)="signOut()"><i class="bi bi-box-arrow-right"></i><span> Sign Out</span></button>
+        <button class="float-end btn btn-warning me-2" (click)="readGoogle()"><i class="bi bi-google"></i><span> {{ signedIn ? 'Read from Google' : 'Sign
+                In'}}</span></button>
+    </h3>
+    @for (acc_cat of mail_trans_cat; track acc_cat; let i = $index) {
+    <div class="card">
+        <h5 class="card-header bg-dark">{{ acc_cat.accName }}</h5>
+        <div class="card-body">
+            @for (trans of acc_cat.data; track trans; let idx = $index) {
+            <div class="card-text row pt-1">
+                <div class="col-md-4">{{ trans?.trans_desc }}</div>
+                <div class="col-md-4 text-center">{{ utilService.formatDate(utilService.getDate(trans?.trans_date)) }}</div>
+                <div class="col-md-4 text-end">{{ utilService.formatAmountWithComma(trans?.trans_amt) }}</div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+</div>

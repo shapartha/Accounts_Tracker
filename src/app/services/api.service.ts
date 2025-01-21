@@ -378,4 +378,18 @@ export class ApiService {
     const serverUrl = ApiConstants.API_FETCH_STOCK_CMP + stockSymbol;
     return this.invokeApiCall('', '', false, serverUrl);
   }
+
+  checkGoogleSigninStatus() {
+    const serverUrl = ApiConstants.API_GOOGLE_SIGNIN_CHECK;
+    return this.invokeApiCall({}, {}, false, serverUrl);
+  }
+
+  googleSignout() {
+    const serverUrl = ApiConstants.API_GOOGLE_SIGNOUT;
+    return this.invokeApiCall({}, {}, false, serverUrl);
+  }
+
+  readGmailTransactions(urlToInvoke: string) {
+    return this.http.get<any>(urlToInvoke);
+  }
 }
