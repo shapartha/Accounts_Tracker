@@ -161,6 +161,48 @@ export class AutoMailsComponent implements OnInit {
     this.canClose = true;
   }
 
+  deleteItem(evt: any) {
+    this.selectedRecord = evt;
+    this.modalTitle = "Delete this mail condition - " + this.selectedRecord.value.filter + " ?";
+    this.modalBody = "You're about to remove this mail filter condition. Are you sure you want to delete this ?";
+    this.modalBtnName = 'Delete';
+    this.confirmData = {
+      type: 'DELETE-MAIL-FILTER',
+      value: false
+    };
+    this.canClose = false;
+    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
+    confirmBtn.click();
+  }
+
+  deleteItemConfirmed(evt: any) {
+    let data = evt.value;
+    let _inpObj = {
+      filter: data.filter
+    };
+    this.apiService.getMailFilterMappingByFilter(_inpObj).subscribe({
+      next: (apiResp: any) => {
+        let id = apiResp.dataArray[0].mapping_id;
+        this.apiService.deleteMailFilterMapping([{ mapping_id: id }]).subscribe({
+          next: (resp: any) => {
+            if (resp[0].success == true && resp[0].response == '200') {
+              this.utilService.showAlert('Mail Filter deleted successfully', 'success');
+              this.canClose = true;
+              this.mail_trans_cat.splice(this.mail_trans_cat.findIndex(pObj => pObj.filter == this.selectedRecord.value.filter && pObj.accId == this.selectedRecord.value.accId), 1);
+            } else {
+              this.utilService.showAlert('An error occurred deleting this mail filter');
+            }
+          }, error: (err) => {
+            console.error(err);
+            this.utilService.showAlert(err);
+          }
+        });
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
   markMsgProcessed(item: any) {
     let _inpObj = {
       filter: item.trans.google_filter,
@@ -211,6 +253,77 @@ export class AutoMailsComponent implements OnInit {
       this.acceptItemConfirmed(this.selectedRecord);
     } else if (evt.type == 'REJECT-TRANS' && evt.value == true) {
       this.rejectItemConfirmed(this.selectedRecord);
+    } else if (evt.type == 'DELETE-MAIL-FILTER' && evt.value == true) {
+      this.deleteItemConfirmed(this.selectedRecord);
+    } else if (evt.type == 'CLEAN-UP' && evt.value == true) {
+      this.cleanUpConfirmed();
     }
+  }
+
+  cleanUp() {
+    this.modalTitle = "Clean Up Old Records ?";
+    this.modalBody = "This will clean up all old processed messages from each filters. Some already processed messages may re-appear. In such cases, reject the repeat items. Are you sure to continue ?";
+    this.modalBtnName = 'Clean Up';
+    this.confirmData = {
+      type: 'CLEAN-UP',
+      value: false
+    };
+    this.canClose = false;
+    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
+    confirmBtn.click();
+  }
+
+  cleanUpConfirmed() {
+    let alertMessages = [];
+    let _updObjs = [];
+    this.apiService.getAllMailFilterMappings().subscribe({
+      next: (apiCallData: any) => {
+        if (apiCallData.success == true && apiCallData.response == '200') {
+          this.canClose = true;
+          let accFilterMappings = apiCallData.dataArray;
+          for (var i = 0; i < accFilterMappings.length; i++) {
+            let __filter = accFilterMappings[i];
+            let lastMsgIds = __filter.last_msg_id;
+            let lastMsgIdArr = lastMsgIds.split(",");
+            if (lastMsgIdArr.length > 100) {
+              let newMsgIdArr = lastMsgIdArr.slice(50);
+              let newMsgIds = newMsgIdArr.join(",");
+              let _updObj = {
+                mapping_id: __filter.mapping_id,
+                filter: __filter.filter,
+                last_msg_id: newMsgIds
+              };
+              _updObjs.push(_updObj);
+            } else {
+              alertMessages.push("Nothing to clean-up for filter - " + __filter.filter);
+            }
+          }
+          if (_updObjs.length > 0) {
+            this.apiService.updateMailFilterMapping(_updObjs).subscribe({
+              next: (apiCallUpdate: any) => {
+                for (var x = 0; x < apiCallUpdate.length; x++) {
+                  if (apiCallUpdate[x].success == true) {
+                    alertMessages.push("Messages Cleaned-Up Successfully for filter - " + _updObjs[x].filter);
+                  } else {
+                    alertMessages.push("An error occurred cleaning-up the messages in DB for filter - " + _updObjs[x].filter);
+                  }
+                }
+                if (alertMessages.length > 0) {
+                  this.utilService.showAlert(alertMessages.join(" , "), 'warning');
+                }
+              }, error: err => {
+                this.utilService.showAlert(err);
+              }
+            });
+          } else {
+            if (alertMessages.length > 0) {
+              this.utilService.showAlert(alertMessages.join(" , "), 'warning');
+            }
+          }
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
   }
 }

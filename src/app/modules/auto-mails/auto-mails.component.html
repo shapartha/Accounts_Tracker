@@ -7,7 +7,7 @@
     </h3>
     @for (acc_cat of mail_trans_cat; track acc_cat; let i = $index) {
     <div class="card">
-        <h5 class="card-header bg-dark">{{ acc_cat.accName }}</h5>
+        <h5 class="card-header bg-dark" [contextMenu]="twoContextMenu" [contextMenuValue]="acc_cat">{{ acc_cat.accName }}</h5>
         <div class="card-body">
             @for (trans of acc_cat.data; track trans; let idx = $index) {
             <div class="card-text row pt-1" [contextMenu]="oneContextMenu" [contextMenuValue]="{trans: trans, acc: acc_cat}">
@@ -19,6 +19,9 @@
         </div>
     </div>
     }
+    <div class="text-center">
+        <button class="btn btn-primary" (click)="cleanUp()"><i class="bi bi-delete"></i><span> Clean Up</span></button>
+    </div>
 </div>
 
 <context-menu #oneContextMenu [menuClass]="'app-auto-mails-context-menu'">
@@ -26,8 +29,12 @@
     <ng-template contextMenuItem (execute)="rejectItem($event)" let-value>Reject</ng-template>
 </context-menu>
 
+<context-menu #twoContextMenu [menuClass]="'app-auto-mails-parent-context-menu'">
+    <ng-template contextMenuItem (execute)="deleteItem($event)" let-value>Delete</ng-template>
+</context-menu>
+
 <button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
     modal</button>
 
-<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
-    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="modalBtnName"></app-confirm-dialog>
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>
