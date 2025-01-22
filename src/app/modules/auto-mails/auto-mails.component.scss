@@ -5,3 +5,15 @@
 .card-header.bg-dark {
     color: white;
 }
+
+@media (max-width: 575px) {
+    .col-md-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 33.33333333%;
+    }
+}

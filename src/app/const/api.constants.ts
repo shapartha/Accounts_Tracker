@@ -77,4 +77,5 @@ export class ApiConstants {
 
     static API_GOOGLE_SIGNIN_CHECK: string = "checkGoogleSigninStatus";
     static API_GOOGLE_SIGNOUT: string = "gapiSignout";
+    static API_GOOGLE_READ_EMAILS: string = "readEmails";
 }

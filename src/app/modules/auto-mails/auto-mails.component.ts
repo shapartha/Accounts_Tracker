@@ -25,6 +25,7 @@ export class AutoMailsComponent implements OnInit {
       next: data => {
         if (data.success == true) {
           this.signedIn = true;
+          this.readGoogle();
         }
       }, error: err => {
         this.utilService.showAlert(err);
@@ -50,6 +51,7 @@ export class AutoMailsComponent implements OnInit {
       next: data => {
         if (data.success == true) {
           this.signedIn = false;
+          this.mail_trans_cat = [];
         } else {
           this.utilService.showAlert(data.responseDescription);
         }
@@ -60,11 +62,17 @@ export class AutoMailsComponent implements OnInit {
   }
 
   readGoogle() {
-    let callingUrl = 'http://shapartha.online/google-apis/readEmails.php?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname);
+    let callingUrl = 'http://shapartha.online/google-apis/readEmails.php?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname.replace('email_transactions', 'callback'));
     if (this.signedIn) {
-      this.apiService.readGmailTransactions(callingUrl).subscribe({
+      let inputs = {
+        db_apiKey: ApiConstants.API_KEY,
+        db_apiToken: this.utilService.appToken,
+        _callbackUrl: window.location.origin + window.location.pathname,
+        gapiSigned: this.signedIn
+      };
+      this.apiService.readGmailTransactions(inputs).subscribe({
         next: data => {
-          this.mail_trans_cat = data;
+          this.mail_trans_cat = JSON.parse(data);
           this.mail_trans_cat.forEach(element => {
             element.accName = this.accounts.find(acc => Number(acc.id) == Number(element.accId))?.name;
           });
@@ -74,7 +82,14 @@ export class AutoMailsComponent implements OnInit {
         }
       });
     } else {
-      window.location.href = callingUrl;
+      this.utilService.setCookie('redir-link', callingUrl, (1 / 24 / 60));
+      var myWindow = window.open(window.location.origin + window.location.pathname.replace('email_transactions', 'callback'));
+      var timer = setInterval(function () {
+        if (myWindow?.closed) {
+          clearInterval(timer);
+          window.location.reload();
+        }
+      }, 1000);
     }
   }
 }
