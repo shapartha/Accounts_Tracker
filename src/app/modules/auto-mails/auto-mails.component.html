@@ -10,7 +10,7 @@
         <h5 class="card-header bg-dark">{{ acc_cat.accName }}</h5>
         <div class="card-body">
             @for (trans of acc_cat.data; track trans; let idx = $index) {
-            <div class="card-text row pt-1">
+            <div class="card-text row pt-1" [contextMenu]="oneContextMenu" [contextMenuValue]="{trans: trans, acc: acc_cat}">
                 <div class="col-md-4">{{ trans?.trans_desc }}</div>
                 <div class="col-md-4 text-center">{{ utilService.formatDate(utilService.getDate(trans?.trans_date)) }}</div>
                 <div class="col-md-4 text-end">{{ utilService.formatAmountWithComma(trans?.trans_amt) }}</div>
@@ -20,3 +20,14 @@
     </div>
     }
 </div>
+
+<context-menu #oneContextMenu [menuClass]="'app-auto-mails-context-menu'">
+    <ng-template contextMenuItem (execute)="acceptItem($event)" let-value>Accept</ng-template>
+    <ng-template contextMenuItem (execute)="rejectItem($event)" let-value>Reject</ng-template>
+</context-menu>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
+    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="modalBtnName"></app-confirm-dialog>
