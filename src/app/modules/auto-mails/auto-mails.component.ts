@@ -51,7 +51,7 @@ export class AutoMailsComponent implements OnInit {
         if (data.success == true) {
           this.signedIn = false;
         } else {
-          this.utilService.showAlert(data.message);
+          this.utilService.showAlert(data.responseDescription);
         }
       }, error: err => {
         this.utilService.showAlert(err);
@@ -60,7 +60,7 @@ export class AutoMailsComponent implements OnInit {
   }
 
   readGoogle() {
-    let callingUrl = ApiConstants.GOOGLESERVER_PATH_URL + 'readEmails.php?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname);
+    let callingUrl = 'http://shapartha.online/google-apis/readEmails.php?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname);
     if (this.signedIn) {
       this.apiService.readGmailTransactions(callingUrl).subscribe({
         next: data => {

@@ -380,13 +380,13 @@ export class ApiService {
   }
 
   checkGoogleSigninStatus() {
-    const serverUrl = ApiConstants.API_GOOGLE_SIGNIN_CHECK;
-    return this.invokeApiCall({}, {}, false, serverUrl);
+    const apiFuncName = ApiConstants.API_GOOGLE_SIGNIN_CHECK;
+    return this.invokeApiCall(apiFuncName, {});
   }
 
   googleSignout() {
-    const serverUrl = ApiConstants.API_GOOGLE_SIGNOUT;
-    return this.invokeApiCall({}, {}, false, serverUrl);
+    const apiFuncName = ApiConstants.API_GOOGLE_SIGNOUT;
+    return this.invokeApiCall(apiFuncName, {});
   }
 
   readGmailTransactions(urlToInvoke: string) {

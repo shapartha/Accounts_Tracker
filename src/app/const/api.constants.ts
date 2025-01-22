@@ -66,7 +66,6 @@ export class ApiConstants {
     static API_GET_STOCK_MAPPING_BY_ACC_SYM: string = "getStockMappingByAccountSymbol";
     static API_GET_ALL_STOCK_MAPPINGS_BY_ACC_SYM: string = "getAllStockMappingsByAccountSymbol";
     
-    static GOOGLESERVER_PATH_URL: string = "http://shapartha.online/google-apis/";
     static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
@@ -76,6 +75,6 @@ export class ApiConstants {
     static API_FETCH_STOCK_CMP: string = "https://priceapi.moneycontrol.com/pricefeed/bse/equitycash/";
     static API_FETCH_STOCK_LIVE_DATA: string = "https://priceapi.moneycontrol.com/pricefeed/notapplicable/inidicesindia/";
 
-    static API_GOOGLE_SIGNIN_CHECK: string = this.GOOGLESERVER_PATH_URL + "checkSignIn.php";
-    static API_GOOGLE_SIGNOUT: string = this.GOOGLESERVER_PATH_URL + "gapiSignout.php";
+    static API_GOOGLE_SIGNIN_CHECK: string = "checkGoogleSigninStatus";
+    static API_GOOGLE_SIGNOUT: string = "gapiSignout";
 }
