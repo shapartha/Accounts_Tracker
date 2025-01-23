@@ -1,0 +1,28 @@
+@media (max-width: 575px) {
+    .col-md-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 33.33333333%;
+    }
+
+    .w-33 {
+        width: 100% !important;
+    }
+}
+
+#transaction-tags-section {
+    padding-bottom: 40px;
+}
+
+.no-tags-header {
+    padding: 10px;
+    text-align: center;
+}
+
+mat-icon {
+    cursor: pointer;
+}

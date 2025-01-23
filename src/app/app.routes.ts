@@ -19,6 +19,7 @@ import { MfAccountComponent } from './modules/accounts/mfaccount/mfaccount.compo
 import { EqAccountComponent } from './modules/accounts/eqaccount/eqaccount.component';
 import { AutoMailsComponent } from './modules/auto-mails/auto-mails.component';
 import { CallbackComponent } from './modules/admin/callback/callback.component';
+import { TagsComponent } from './modules/transactions/tags/tags.component';
 
 export const routes: Routes = [
     {
@@ -90,6 +91,10 @@ export const routes: Routes = [
     {
         path: 'email_transactions',
         component: AutoMailsComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: 'transaction_tags',
+        component: TagsComponent, canActivate: [AuthGuard]
     },
     {
         path: 'logout',

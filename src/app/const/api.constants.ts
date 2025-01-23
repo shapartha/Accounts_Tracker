@@ -65,6 +65,12 @@ export class ApiConstants {
     static API_GET_STOCK_MAPPING_BY_ACC: string = "getStockMappingByAccount";
     static API_GET_STOCK_MAPPING_BY_ACC_SYM: string = "getStockMappingByAccountSymbol";
     static API_GET_ALL_STOCK_MAPPINGS_BY_ACC_SYM: string = "getAllStockMappingsByAccountSymbol";
+    static API_GET_ALL_TAGS: string = "getAllTags";
+    static API_SAVE_TAG: string = "saveTag";
+    static API_EDIT_TAG: string = "editTag";
+    static API_DELETE_TAG: string = "deleteTag";
+    static API_SAVE_TRANS_TAG_MAPPING: string = "saveTransTagMapping";
+    static API_QUERY_ANYTHING: string = "excQry";
     
     static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";

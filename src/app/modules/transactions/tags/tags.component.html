@@ -1,0 +1,41 @@
+<div class="container mt-2" id="transaction-tags-section">
+    <h3>Transaction Tags <button class="float-end btn btn-primary" (click)="addTag(content)"><i class="bi bi-plus"></i><span> Add</span></button></h3>
+    @for (tag of tags; track tag) {
+    <div class="ps-2 pe-2 pt-2 d-inline-grid w-33">
+        <div class="row">
+            <div class="col-md-6 font-weight-bold">{{ tag.tagName }}</div>
+            <div class="col-md-6 text-end">
+                <mat-icon class="text-end" (click)="editTag(content, tag)">edit</mat-icon>
+                <mat-icon class="text-end" (click)="deleteTagConfirm(tag)">delete</mat-icon>
+            </div>
+        </div>
+    </div>
+    }
+    <div *ngIf="tags == null || tags.length == 0" class="no-tags-header">
+        No tags available. Please create some tags first.
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ isUpdate ? 'Edit Tag' : 'Add Tag' }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <app-add-tag [addUpdateTag]="addUpdateTag" (formData)="updatedRecord($event)"></app-add-tag>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('Button close')">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveOrUpdate(modifiedRecord)">{{ isUpdate ? 'Update' : 'Add' }}</button>
+    </div>
+</ng-template>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
+    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="modalBtnName"></app-confirm-dialog>

@@ -330,6 +330,44 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
+  getAllTags(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_ALL_TAGS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveOrUpdateTag(apiFuncParams: any = {}, isUpdate: boolean) {
+    if (isUpdate) {
+      return this.editTag(apiFuncParams);
+    } else {
+      return this.saveTag(apiFuncParams);
+    }
+  }
+
+  saveTag(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_TAG;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  editTag(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_EDIT_TAG;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteTag(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_TAG;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveTransTagMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_TRANS_TAG_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  executeQuery(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_QUERY_ANYTHING;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   getAllEqMappingsByAccountSymbol(apiFuncParams: any) {
     const apiFuncName = ApiConstants.API_GET_ALL_STOCK_MAPPINGS_BY_ACC_SYM;
     return this.invokeApiCall(apiFuncName, apiFuncParams);

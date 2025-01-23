@@ -1,0 +1,11 @@
+<form [formGroup]="form">
+    <div class="row">
+        <mat-form-field appearance="outline" class="col-md-6 mt-3">
+            <mat-label>Tag Name</mat-label>
+            <input type="text" matInput required placeholder="Enter Tag Name" name="tagName" formControlName="tagName" autofocus>
+            <mat-error>
+                Valid tag required
+            </mat-error>
+        </mat-form-field>
+    </div>
+</form>

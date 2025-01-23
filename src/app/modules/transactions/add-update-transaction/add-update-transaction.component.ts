@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Input, model, OnInit, Output, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SaveTransaction } from 'app/models/transaction';
@@ -16,11 +16,16 @@ import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-add-update-transaction',
   standalone: true,
-  imports: [MatFormFieldModule, ReactiveFormsModule, FormsModule, MatDatepickerModule, MatNativeDateModule, MatRadioModule, MatSelectModule, MatToolbarModule, CommonModule, MatInputModule, MatSlideToggleModule],
+  imports: [MatFormFieldModule, ReactiveFormsModule, FormsModule, MatDatepickerModule, MatNativeDateModule, MatRadioModule, MatSelectModule, MatToolbarModule, CommonModule, MatInputModule, MatSlideToggleModule, MatChipsModule, MatAutocompleteModule, MatIconModule],
   providers: [NgxImageCompressService],
   templateUrl: './add-update-transaction.component.html',
   styleUrl: './add-update-transaction.component.scss'
@@ -70,7 +75,8 @@ export class AddUpdateTransactionComponent implements OnInit {
           mfNav: [],
           isRecurringTrans: [false],
           reccDate: [],
-          id: []
+          id: [],
+          currentTag: [this.currentTag]
         });
       }
     } else {
@@ -86,7 +92,8 @@ export class AddUpdateTransactionComponent implements OnInit {
         mfNav: [],
         isRecurringTrans: [false],
         reccDate: [],
-        id: []
+        id: [],
+        currentTag: [this.currentTag]
       });
     }
   }
@@ -117,7 +124,8 @@ export class AddUpdateTransactionComponent implements OnInit {
         mfNav: [this.updateScheduledTrans.mf_nav],
         isRecurringTrans: [{ value: (this.updateScheduledTrans.rec_date != null && this.updateScheduledTrans.rec_date != "") ? true : false, disabled: true }],
         reccDate: [this.updateScheduledTrans.rec_date],
-        id: [this.updateScheduledTrans.trans_id]
+        id: [this.updateScheduledTrans.trans_id],
+        currentTag: [this.currentTag]
       });
     }
     this.form.get('isTransferTrans')?.valueChanges.subscribe(data => {
@@ -130,6 +138,7 @@ export class AddUpdateTransactionComponent implements OnInit {
       this.monthDays.push(i);
     }
     this.loadAccounts();
+    this.loadAllTags();
 
     this.formData.emit(this.form.value);
     this.form.valueChanges.subscribe(val => {
@@ -398,6 +407,9 @@ export class AddUpdateTransactionComponent implements OnInit {
             let newBalance = this.utilService.formatStringValueToAmount(this.fromAccBalance) - parseFloat(_inpData.amount);
             this.fromAccBalance = this.utilService.formatAmountWithComma(newBalance);
           }
+          if (this.tags().length > 0) {
+            this.storeTagsMapping();
+          }
           this.utilService.showAlert("Transaction Saved Successfully", "success");
           this.form.get('amount')?.reset();
           if (this.isGoBack) {
@@ -412,6 +424,41 @@ export class AddUpdateTransactionComponent implements OnInit {
         this.utilService.showAlert("Error Occurred while Saving ! Please try again.");
       }
     });
+  }
+
+  storeTagsMapping() {
+    let inputQuery = {
+      exc_qry: 'SELECT MAX(trans_id) as trans_id FROM vw_transactions;'
+    };
+    this.apiService.executeQuery(inputQuery).subscribe({
+      next: (resp: any) => {
+        if (resp.success == true && resp.response == '200') {
+          const transId = resp.dataArray[0].trans_id;
+          let inputs = [];
+          for (var i = 0; i < this.tags().length; i++) {
+            inputs.push({
+              trans_id: transId,
+              tag_id: this.tags()[i].tagId
+            });
+          }
+          this.apiService.saveTransTagMapping(inputs).subscribe({
+            next: (resp: any) => {
+              if (resp[0].success == true && resp[0].response == '200') {
+                this.utilService.showAlert("Transaction and Tags Saved Successfully", "success");
+              } else {
+                this.utilService.showAlert(resp);
+              }
+            }, error: err => {
+              this.utilService.showAlert(err);
+            }
+          });
+        } else {
+          this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    })
   }
 
   onChangeTransferTrans(val: boolean) {
@@ -449,5 +496,74 @@ export class AddUpdateTransactionComponent implements OnInit {
       this.form.get('mfSchemeCode')?.removeValidators([Validators.required]);
       this.form.get('mfSchemeCode')?.updateValueAndValidity();
     }
+  }
+
+  /**
+   * 
+   * Code below is for Mat Chips with Autocomplete
+   * 
+   */
+
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  readonly currentTag = model({} as any);
+  readonly tags: WritableSignal<any[]> = signal([]);
+  allTags: any[] = [];
+  filteredTags = this.calculateFilteredTags();
+
+  loadAllTags() {
+    this.apiService.getAllTags().subscribe({
+      next: (resp: any) => {
+        if (resp.success == true && resp.response == '200') {
+          this.allTags = [];
+          resp.dataArray.forEach((element: any) => {
+            this.allTags.push({
+              tagId: element.tag_id,
+              tagName: element.tag_name
+            });
+            this.filteredTags = this.calculateFilteredTags();
+          });
+        } else {
+          this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  calculateFilteredTags() {
+    return computed(() => {
+      const currentTag = this.currentTag()?.tagName?.toLowerCase();
+      return currentTag ? this.allTags.filter(tag => tag?.tagName?.toLowerCase().includes(currentTag)) : this.allTags.slice();
+    });
+  }
+
+  readonly announcer = inject(LiveAnnouncer);
+
+  add(event: MatChipInputEvent): void {
+    this.utilService.showAlert('Please select something from the list');
+    return;
+  }
+
+  remove(tag: any): void {
+    this.tags.update(tags => {
+      const index = tags.indexOf(tag);
+      if (index < 0) {
+        return tags;
+      }
+      tags.splice(index, 1);
+      this.announcer.announce(`Removed ${tag}`);
+      this.allTags.push(tag);
+      this.filteredTags = this.calculateFilteredTags();
+      return [...tags];
+    });
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.tags.update(tags => [...tags, event.option.value]);
+    this.allTags.splice(this.allTags.findIndex(idx => idx.tagId == event.option.value.tagId), 1);
+    this.currentTag.set('');
+    event.option.deselect();
+    this.filteredTags = this.calculateFilteredTags();
   }
 }
