@@ -358,8 +358,28 @@ export class ApiService {
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 
+  getTagsByTransId(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_TAGS_BY_TRANSID;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   saveTransTagMapping(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SAVE_TRANS_TAG_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteTransTagMapping(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_TRANS_TAG_MAPPING;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteTagsMappingForTransId(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_TAGS_BY_TRANSID;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteTransactionMappingForTagId(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_TRANS_BY_TAGID;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
 

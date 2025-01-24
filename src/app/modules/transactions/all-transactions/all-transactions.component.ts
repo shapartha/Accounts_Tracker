@@ -205,6 +205,7 @@ export class AllTransactionsComponent implements OnInit {
                 this.utilService.showAlert(err);
               }
             });
+            this.deleteAssociatedTags(this.selectedRecord.id);
           } else {
             this.utilService.showAlert("An error occurred | " + data[0].response + ":" + data[0].responseDescription);
           }
@@ -214,6 +215,18 @@ export class AllTransactionsComponent implements OnInit {
         }
       });
     }
+  }
+
+  deleteAssociatedTags(transId: any) {
+    this.apiService.deleteTagsMappingForTransId([{ trans_id: transId }]).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success != true || resp[0].response != '200') {
+          this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
   }
 
   markDeliveryOrder(e: any) {
@@ -335,6 +348,10 @@ export class AllTransactionsComponent implements OnInit {
     this.modifiedRecord.imageUpdated = event.imageUpdated;
     this.modifiedRecord.fileBitmap = event.fileBitmap;
     this.modifiedRecord.is_valid = event.valid;
+    this.modifiedRecord.tags = {
+      add: event.tagChanges.new.filter((element: any) => !event.tagChanges.existing.includes(element)),
+      remove: event.tagChanges.existing.filter((element: any) => !event.tagChanges.new.includes(element))
+    };
   }
 
   saveOrUpdate(item: any) {
@@ -379,6 +396,42 @@ export class AllTransactionsComponent implements OnInit {
       }, error: (err) => {
         console.error(err);
         this.utilService.showAlert("Transaction Update Failed. Error: " + JSON.stringify(err));
+      }
+    });
+    this.addOrRemoveTags(_obj_.trans_id);
+  }
+
+  addOrRemoveTags(transId: any) {
+    let inputsToRemove = [];
+    let inputsToAdd = [];
+    for (var i = 0; i < this.modifiedRecord.tags.remove.length; i++) {
+      inputsToRemove.push({
+        trans_id: transId,
+        tag_id: this.modifiedRecord.tags.remove[i]
+      });
+    }
+    for (var i = 0; i < this.modifiedRecord.tags.add.length; i++) {
+      inputsToAdd.push({
+        trans_id: transId,
+        tag_id: this.modifiedRecord.tags.add[i]
+      });
+    }
+    this.apiService.saveTransTagMapping(inputsToAdd).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success != true || resp[0].response != '200') {
+          this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
+    this.apiService.deleteTransTagMapping(inputsToRemove).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success != true || resp[0].response != '200') {
+          this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
       }
     });
   }

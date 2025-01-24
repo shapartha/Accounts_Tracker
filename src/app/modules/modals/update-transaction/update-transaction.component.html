@@ -10,8 +10,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-md-4 mt-3">
                 <mat-label>Description</mat-label>
-                <input type="text" matInput required placeholder="Enter Description" name="transDesc"
-                    formControlName="transDesc">
+                <input type="text" matInput required placeholder="Enter Description" name="transDesc" formControlName="transDesc">
                 <mat-error>
                     Valid description required.
                 </mat-error>
@@ -24,6 +23,28 @@
                 <mat-error>
                     Valid date required.
                 </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="mt-3" appearance="outline">
+                <mat-label>Tags</mat-label>
+                <mat-chip-grid #chipGrid aria-label="Tag Selection">
+                    @for (tag of tags(); track $index) {
+                    <mat-chip-row (removed)="remove(tag)">
+                        {{tag.tagName}}
+                        <button matChipRemove [attr.aria-label]="'remove ' + tag.tagName">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                    }
+                </mat-chip-grid>
+                <input matInput name="currentTag" placeholder="Select Tag" #tagInput formControlName="currentTag" [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)" />
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                    @for (tag of filteredTags(); track tag) {
+                    <mat-option [value]="tag">{{tag.tagName}}</mat-option>
+                    }
+                </mat-autocomplete>
             </mat-form-field>
         </div>
         <div class="row">

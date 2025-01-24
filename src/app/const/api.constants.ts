@@ -70,6 +70,10 @@ export class ApiConstants {
     static API_EDIT_TAG: string = "editTag";
     static API_DELETE_TAG: string = "deleteTag";
     static API_SAVE_TRANS_TAG_MAPPING: string = "saveTransTagMapping";
+    static API_DELETE_TRANS_TAG_MAPPING: string = "deleteTransactionTagMapping";
+    static API_DELETE_TAGS_BY_TRANSID: string = "deleteTagsMappingForTransId";
+    static API_DELETE_TRANS_BY_TAGID: string = "deleteTransactionMappingForTagId";
+    static API_GET_TAGS_BY_TRANSID: string = "getTagsByTransId";
     static API_QUERY_ANYTHING: string = "excQry";
     
     static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
