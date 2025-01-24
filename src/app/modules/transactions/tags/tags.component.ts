@@ -57,6 +57,8 @@ export class TagsComponent implements OnInit {
   }
 
   addTag(content: TemplateRef<any>) {
+    this.addUpdateTag = null;
+    this.isUpdate = false;
     this.modalRef = this.modalService.open(content,
       {
         ariaLabelledBy: 'modal-basic-title',
@@ -146,16 +148,26 @@ export class TagsComponent implements OnInit {
         this.utilService.showAlert("Tag Name must be atleast 3 characters");
         return;
       }
-      let inputAddTag: any = {
-        tag_name: item.tagName
-      };
+      let inputAddTag: any[] = [];
+      if (item.tagName.indexOf(",") == -1) {
+        inputAddTag.push({
+          tag_name: item.tagName.trim()
+        });
+      } else {
+        let tags = item.tagName.split(",");
+        tags.forEach((element: any) => {
+          inputAddTag.push({
+            tag_name: element.trim()
+          });
+        });
+      }
       if (this.isUpdate) {
-        inputAddTag = {
+        inputAddTag = [{
           tag_id: item.tagId,
           tag_name: item.tagName
-        };
+        }];
       }
-      this.apiService.saveOrUpdateTag([inputAddTag], this.isUpdate).subscribe({
+      this.apiService.saveOrUpdateTag(inputAddTag, this.isUpdate).subscribe({
         next: (resp: any) => {
           if (resp[0].success && resp[0].response == '200') {
             if (this.isUpdate) {
