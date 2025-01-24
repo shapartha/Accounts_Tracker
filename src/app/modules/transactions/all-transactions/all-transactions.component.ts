@@ -33,6 +33,7 @@ export class AllTransactionsComponent implements OnInit {
   disableNext: boolean = false;
   disablePrev: boolean = false;
   totalRecords: number = 0;
+  showPaginator: boolean = true;
   inputParams: any;
   transactionHeader: string = 'All Transactions';
   pageLoaded = false;
@@ -48,6 +49,9 @@ export class AllTransactionsComponent implements OnInit {
   modalBtnName: string = '';
 
   @Input() accountId = null;
+
+  tagId: string = '';
+  tagName: string = '';
 
   constructor(private route: ActivatedRoute, public utilService: UtilService, private apiService: ApiService, private modalService: NgbModal, private router: Router) {
     this.route.queryParams.subscribe({
@@ -71,6 +75,7 @@ export class AllTransactionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageLoaded = true;
+    this.tagId = this.route.snapshot.paramMap.get('tagId') || '';
     if (this.accountId != null) {
       this.inputAccountData = {
         id: this.accountId
@@ -96,7 +101,14 @@ export class AllTransactionsComponent implements OnInit {
       this.inputParams.text = this.inputSearchObj.text;
       this.transactionHeader = "Transactions containing text - " + this.inputSearchObj.text;
     } else {
-      this.apiFuncName = ApiConstants.API_GET_ALL_TRANS;
+      if (this.tagId != '') {
+        this.apiFuncName = ApiConstants.API_GET_TRANS_BY_TAGID;
+        this.inputParams.tag_id = this.tagId;
+        this.inputParams.user_id = this.utilService.appUserId;
+        this.showPaginator = false;
+      } else {
+        this.apiFuncName = ApiConstants.API_GET_ALL_TRANS;
+      }
     }
     history.replaceState({}, '');
     this.disablePrev = true;
@@ -330,6 +342,10 @@ export class AllTransactionsComponent implements OnInit {
           if (this.transactionStartOffset - this.transactionEndOffset < 0) {
             this.disablePrev = true;
           }
+        }
+        if (this.tagId != '') {
+          this.tagName = trans.dataArray[0].tag_name;
+          this.transactionHeader = "Transactions tagged with Tag - " + this.tagName;
         }
       }, error: (err) => {
         console.error(err);

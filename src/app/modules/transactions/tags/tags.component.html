@@ -3,7 +3,7 @@
     @for (tag of tags; track tag) {
     <div class="ps-2 pe-2 pt-2 d-inline-grid w-33">
         <div class="row">
-            <div class="col-md-6 font-weight-bold">{{ tag.tagName }}</div>
+            <div class="col-md-6 font-weight-bold" (click)="showRelatedTransactions(tag)"><span matBadge="{{ tag.itemsCount }}" matBadgeOverlap="false" matBadgeColor="warn">{{ tag.tagName }}</span></div>
             <div class="col-md-6 text-end">
                 <mat-icon class="text-end" (click)="editTag(content, tag)">edit</mat-icon>
                 <mat-icon class="text-end" (click)="deleteTagConfirm(tag)">delete</mat-icon>

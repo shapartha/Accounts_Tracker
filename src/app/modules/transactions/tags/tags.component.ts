@@ -7,11 +7,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService } from 'app/services/api.service';
 import { ConfirmData } from 'app/models/confirm';
 import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
+import { MatBadgeModule } from '@angular/material/badge';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tags',
   standalone: true,
-  imports: [MatIconModule, CommonModule, AddTagComponent, ConfirmDialogComponent],
+  imports: [MatIconModule, CommonModule, AddTagComponent, ConfirmDialogComponent, MatBadgeModule],
   templateUrl: './tags.component.html',
   styleUrl: './tags.component.scss'
 })
@@ -30,7 +32,7 @@ export class TagsComponent implements OnInit {
   confirmData: ConfirmData = {} as any;
   modalBtnName: string = '';
 
-  constructor(public utilService: UtilService, private modalService: NgbModal, private apiService: ApiService) { }
+  constructor(public utilService: UtilService, private modalService: NgbModal, private apiService: ApiService, private router: Router) { }
 
   ngOnInit(): void {
     this.fetchAllTags();
@@ -41,11 +43,26 @@ export class TagsComponent implements OnInit {
       next: (resp: any) => {
         if (resp.success == true && resp.response == '200') {
           this.tags = [];
-          resp.dataArray.forEach((element: any) => {
-            this.tags.push({
-              tagId: element.tag_id,
-              tagName: element.tag_name
-            });
+          let queryInput = {
+            exc_qry: 'SELECT t.tag_id, t.tag_name, count(*) as item_count FROM tags t INNER JOIN transaction_tag_mapping ttm ON t.tag_id = ttm.tag_id GROUP BY ttm.tag_id'
+          }
+          this.apiService.executeQuery(queryInput).subscribe({
+            next: (qryResp: any) => {
+              resp.dataArray.forEach((element: any) => {
+                this.tags.push({
+                  tagId: element.tag_id,
+                  tagName: element.tag_name,
+                  itemsCount: 0
+                });
+              });
+              if (qryResp.success == true && qryResp.response == '200') {
+                qryResp.dataArray.forEach((element: any) => {
+                  this.tags.find(tg => tg.tagId == element.tag_id).itemsCount = element.item_count
+                });
+              }
+            }, error: err => {
+              this.utilService.showAlert(err);
+            }
           });
         } else {
           this.utilService.showAlert(resp);
@@ -187,5 +204,13 @@ export class TagsComponent implements OnInit {
     } else {
       this.utilService.showAlert('One or more form fields are invalid');
     }
+  }
+
+  showRelatedTransactions(tag: any) {
+    if (tag.itemsCount == 0) {
+      this.utilService.showAlert('No transactions available under this tag');
+      return;
+    }
+    this.router.navigate(['all-transactions/tags', tag.tagId]);
   }
 }

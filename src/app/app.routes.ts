@@ -33,6 +33,10 @@ export const routes: Routes = [
         component: AllTransactionsComponent, canActivate : [AuthGuard]
     },
     {
+        path: 'all-transactions/tags/:tagId',
+        component: AllTransactionsComponent, canActivate : [AuthGuard]
+    },
+    {
         path: 'all-recurring',
         component: AllRecurringComponent, canActivate : [AuthGuard]
     },

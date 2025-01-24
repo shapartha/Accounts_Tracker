@@ -31,7 +31,7 @@
     <div *ngIf="transactions == null || transactions.length == 0" class="no-trans-header">
         No transactions available for the selected filter. Please change the selection filter to view transactions.
     </div>
-    <div *ngIf="transactions != null && transactions.length > 0" class="text-center paginator mt-3">
+    <div *ngIf="showPaginator == true && transactions != null && transactions.length > 0" class="text-center paginator mt-3">
         <span class="pe-3">Showing {{ (transactionStartOffset + 1) }} - {{ transactionStartOffset + noOfRecordsFetched
             }} of {{ totalRecords }} records </span>
         <div class="btn-group" role="group" aria-label="Navigator">
