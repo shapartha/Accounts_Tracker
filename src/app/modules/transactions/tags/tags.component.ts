@@ -103,9 +103,19 @@ export class TagsComponent implements OnInit {
     this.apiService.deleteTag([inputs]).subscribe({
       next: (resp: any) => {
         if (resp[0].success == true && resp[0].response == '200') {
-          this.utilService.showAlert('Tag deleted successfully', 'success');
-          this.canClose = true;
-          this.fetchAllTags();
+          this.apiService.deleteTransactionMappingForTagId([{ tag_id: data.tagId }]).subscribe({
+            next: (innerResp: any) => {
+              if (innerResp[0].success != true || innerResp[0].response != '200') {
+                this.utilService.showAlert(innerResp);
+              } else {
+                this.utilService.showAlert('Tag deleted successfully', 'success');
+                this.canClose = true;
+                this.fetchAllTags();
+              }
+            }, error: err => {
+              this.utilService.showAlert(err);
+            }
+          });
         } else {
           this.utilService.showAlert(resp);
         }
