@@ -21,6 +21,7 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatIconModule } from '@angular/material/icon';
+import { map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-add-update-transaction',
@@ -140,11 +141,25 @@ export class AddUpdateTransactionComponent implements OnInit {
     this.loadAccounts();
     this.loadAllTags();
 
+    this.form.get('currentTag')?.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    ).subscribe(val => {
+      this.filteredTags = computed(() => {
+        return val;
+      });
+    });
+
     this.formData.emit(this.form.value);
     this.form.valueChanges.subscribe(val => {
       val['valid'] = this.form.valid;
       this.formData.emit(val);
     });
+  }
+
+  private _filter(value: any): string[] {
+    const filterValue = value.tagName?.toLowerCase() || value?.toLowerCase();
+    return this.allTags.filter(option => option.tagName.toLowerCase().includes(filterValue));
   }
 
   loadAccounts() {
@@ -534,7 +549,8 @@ export class AddUpdateTransactionComponent implements OnInit {
   calculateFilteredTags() {
     return computed(() => {
       const currentTag = this.currentTag()?.tagName?.toLowerCase();
-      return currentTag ? this.allTags.filter(tag => tag?.tagName?.toLowerCase().includes(currentTag)) : this.allTags.slice();
+      let finalVal = currentTag ? this.allTags.filter(tag => tag?.tagName?.toLowerCase().includes(currentTag)) : this.allTags.slice();
+      return finalVal;
     });
   }
 
@@ -563,6 +579,10 @@ export class AddUpdateTransactionComponent implements OnInit {
     this.tags.update(tags => [...tags, event.option.value]);
     this.allTags.splice(this.allTags.findIndex(idx => idx.tagId == event.option.value.tagId), 1);
     this.currentTag.set('');
+    this.form.get('currentTag')?.setValue('');
+    document.getElementsByName('currentTag').forEach((item: any) => {
+      item.value = '';
+    });
     event.option.deselect();
     this.filteredTags = this.calculateFilteredTags();
   }

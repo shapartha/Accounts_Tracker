@@ -15,6 +15,7 @@ import { UtilService } from 'app/services/util.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-update-transaction',
@@ -82,6 +83,15 @@ export class UpdateTransactionComponent implements OnInit {
     });
     this.loadAllTags();
 
+    this.form.get('currentTag')?.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    ).subscribe(val => {
+      this.filteredTags = computed(() => {
+        return val;
+      });
+    });
+
     this.formData.emit(this.form.value);
     this.form.valueChanges.subscribe(val => {
       setTimeout(() => {
@@ -91,6 +101,11 @@ export class UpdateTransactionComponent implements OnInit {
         this.formData.emit(val);
       }, 300);
     });
+  }
+
+  private _filter(value: any): string[] {
+    const filterValue = value.tagName?.toLowerCase() || value?.toLowerCase();
+    return this.allTags.filter(option => option.tagName.toLowerCase().includes(filterValue));
   }
 
   selectFile(event: any): void {
@@ -180,6 +195,10 @@ export class UpdateTransactionComponent implements OnInit {
           });
           this.tags.set(existingTags);
           this.currentTag.set('');
+          this.form.get('currentTag')?.setValue('');
+          document.getElementsByName('currentTag').forEach((item: any) => {
+            item.value = '';
+          });
           this.filteredTags = this.calculateFilteredTags();
         } else {
           this.utilService.showAlert(resp);
@@ -216,13 +235,17 @@ export class UpdateTransactionComponent implements OnInit {
       this.filteredTags = this.calculateFilteredTags();
       return [...tags];
     });
-    this.form.get('currentTag')?.setValue(' ');
+    this.form.get('currentTag')?.setValue('');
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.tags.update(tags => [...tags, event.option.value]);
     this.allTags.splice(this.allTags.findIndex(idx => idx.tagId == event.option.value.tagId), 1);
     this.currentTag.set('');
+    this.form.get('currentTag')?.setValue('');
+    document.getElementsByName('currentTag').forEach((item: any) => {
+      item.value = '';
+    });
     event.option.deselect();
     this.filteredTags = this.calculateFilteredTags();
   }
