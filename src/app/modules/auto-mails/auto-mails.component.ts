@@ -72,7 +72,7 @@ export class AutoMailsComponent implements OnInit {
   }
 
   readGoogle() {
-    let callingUrl = 'http://shapartha.online/google-apis/readEmails.php?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname.replace('email_transactions', 'callback'));
+    let callingUrl = ApiConstants.API_GOOGLE_AUTH_URL + '?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname.replace('email_transactions', 'callback'));
     if (this.signedIn) {
       let inputs = {
         db_apiKey: ApiConstants.API_KEY,
@@ -85,6 +85,13 @@ export class AutoMailsComponent implements OnInit {
           this.mail_trans_cat = JSON.parse(data);
           this.mail_trans_cat.forEach(element => {
             element.accName = this.accounts.find(acc => Number(acc.id) == Number(element.accId))?.name;
+            element.data.forEach((itm: any) => {
+              if (isNaN(new Date(itm.trans_date).getTime())) {
+                let _dte = itm.trans_date.split("-") || itm.trans_date.split("/");
+                itm.trans_date = _dte[2] + "-" + _dte[1] + "-" + _dte[0];
+              }
+              itm.trans_date = this.utilService.formatDate(this.utilService.getDate(itm.trans_date));
+            });
           });
         }, error: err => {
           this.utilService.showAlert(err);
@@ -325,5 +332,14 @@ export class AutoMailsComponent implements OnInit {
         this.utilService.showAlert(err);
       }
     });
+  }
+
+  getAmountClass(amt: string) {
+    if (amt.toUpperCase() == 'DEBIT') {
+      return 'negative-val';
+    } else if (amt.toUpperCase() == 'CREDIT') {
+      return 'positive-val';
+    }
+    return '';
   }
 }

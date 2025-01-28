@@ -13,7 +13,7 @@
             <div class="card-text row pt-1" [contextMenu]="oneContextMenu" [contextMenuValue]="{trans: trans, acc: acc_cat}">
                 <div class="col-md-4">{{ trans?.trans_desc }}</div>
                 <div class="col-md-4 text-center">{{ utilService.formatDate(utilService.getDate(trans?.trans_date)) }}</div>
-                <div class="col-md-4 text-end">{{ utilService.formatAmountWithComma(trans?.trans_amt) }}</div>
+                <div class="col-md-4 text-end" [ngClass]="getAmountClass(trans.trans_type)">{{ utilService.formatAmountWithComma(trans?.trans_amt) }}</div>
             </div>
             }
         </div>
