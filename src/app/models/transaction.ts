@@ -31,4 +31,6 @@ export interface SaveTransaction {
     image_path?: string;
     scheme_code?: string;
     mf_nav?: string;
+    is_delivery_order?: string | boolean;
+    is_delivered?: string | boolean;
 }

@@ -77,7 +77,9 @@ export class AddUpdateTransactionComponent implements OnInit {
           isRecurringTrans: [false],
           reccDate: [],
           id: [],
-          currentTag: [this.currentTag]
+          currentTag: [this.currentTag],
+          isDeliveryOrder: [false],
+          isDelivered: [false]
         });
       }
     } else {
@@ -94,7 +96,9 @@ export class AddUpdateTransactionComponent implements OnInit {
         isRecurringTrans: [false],
         reccDate: [],
         id: [],
-        currentTag: [this.currentTag]
+        currentTag: [this.currentTag],
+        isDeliveryOrder: [false],
+        isDelivered: [false]
       });
     }
   }
@@ -134,6 +138,11 @@ export class AddUpdateTransactionComponent implements OnInit {
     });
     this.form.get('isRecurringTrans')?.valueChanges.subscribe(data => {
       this.onChangeRecurringTrans(data);
+    });
+    this.form.get('isDeliveryOrder')?.valueChanges.subscribe(data => {
+      if (!data) {
+        this.form.get('isDelivered')?.setValue(false);
+      }
     });
     for (var i = 1; i <= 28; i++) {
       this.monthDays.push(i);
@@ -375,6 +384,8 @@ export class AddUpdateTransactionComponent implements OnInit {
         this.form.get('transType')?.setValue("DEBIT");
         this.saveTransactionTrans.acc_id = this.form.get('toAccDetails')?.value;
         this.saveTransactionTrans.user_id = this.utilService.appUserId.toString();
+        this.saveTransactionTrans.is_delivery_order = this.form.get('isDeliveryOrder')?.value;
+        this.saveTransactionTrans.is_delivered = this.form.get('isDelivered')?.value;
         if (this.form.get('isRecurringTrans')?.value == true) {
           this.saveTransactionTrans.rec_date = this.form.get('reccDate')?.value;
         }
@@ -389,6 +400,8 @@ export class AddUpdateTransactionComponent implements OnInit {
       this.saveTransaction.type = this.form.get('transType')?.value;
       this.saveTransaction.acc_id = this.form.get('fromAccDetails')?.value;
       this.saveTransaction.user_id = this.utilService.appUserId.toString();
+      this.saveTransaction.is_delivery_order = this.form.get('isDeliveryOrder')?.value;
+      this.saveTransaction.is_delivered = this.form.get('isDelivered')?.value;
       if (this.form.get('isRecurringTrans')?.value == true) {
         this.saveTransaction.rec_date = this.form.get('reccDate')?.value;
       }
