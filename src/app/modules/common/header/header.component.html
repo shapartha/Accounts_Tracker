@@ -53,7 +53,7 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="logout">Logout</a>
+                    <a class="nav-link hyperlink" (click)="logout()">Logout</a>
                 </li>
             </ul>
             <form class="form-line" (submit)="search()">
@@ -63,3 +63,6 @@
         </div>
     </div>
 </nav>
+
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>

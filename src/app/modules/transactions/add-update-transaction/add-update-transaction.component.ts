@@ -441,7 +441,7 @@ export class AddUpdateTransactionComponent implements OnInit {
           this.utilService.showAlert("Transaction Saved Successfully", "success");
           this.form.get('amount')?.reset();
           if (this.isGoBack) {
-            this.handleRoute('home');
+            this.handleRoute('all-transactions');
           }
         } else {
           this.utilService.showAlert("Some error occurred while saving. Please try again.");
