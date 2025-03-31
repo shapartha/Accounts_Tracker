@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ConfirmData } from 'app/models/confirm';
 import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
 import { UtilService } from 'app/services/util.service';
 
@@ -26,27 +25,10 @@ export class HeaderComponent {
     });
   }
 
-  modalTitle: string = '';
-  modalBody: string = '';
-  modalBtnName: string = '';
-  confirmData: ConfirmData = {} as any;
-  canClose: boolean = false;
-
-  confirm(e: any) {
-    this.router.navigate(['logout']);
-    this.canClose = true;
-  }
-
   logout() {
-    this.modalTitle = "Logout";
-    this.modalBody = "You are about to logout. Do you want to continue ?";
-    this.modalBtnName = 'Logout';
-    this.confirmData = {
-      type: 'LOGOUT',
-      value: false
-    };
-    this.canClose = false;
-    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
-    confirmBtn.click();
+    var isLogout = confirm("You're about to log out. Are you sure?");
+    if (isLogout) {
+      this.router.navigate(['logout']);
+    }
   }
 }
