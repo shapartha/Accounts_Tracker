@@ -77,7 +77,7 @@ export class ApiConstants {
     static API_GET_TRANS_BY_TAGID: string = "getTransactionsByTagId";
     static API_QUERY_ANYTHING: string = "excQry";
     
-    static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
+    static SERVER_PATH_URL: string = "https://shapartha.site/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
 
@@ -89,5 +89,5 @@ export class ApiConstants {
     static API_GOOGLE_SIGNIN_CHECK: string = "checkGoogleSigninStatus";
     static API_GOOGLE_SIGNOUT: string = "gapiSignout";
     static API_GOOGLE_READ_EMAILS: string = "readEmails";
-    static API_GOOGLE_AUTH_URL: string = "http://shapartha.online/google-apis/readEmails.php";
+    static API_GOOGLE_AUTH_URL: string = "http://shapartha.site/google-apis/readEmails.php";
 }
