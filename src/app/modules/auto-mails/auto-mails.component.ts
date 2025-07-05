@@ -134,6 +134,7 @@ export class AutoMailsComponent implements OnInit {
       acc_id: _accId,
       user_id: this.utilService.appUserId
     };
+    _inpObj.amount = _inpObj.amount.replace(/\.+/g, '.');
     this.apiService.saveTransaction(_inpObj).subscribe({
       next: (resp: any) => {
         if (resp.success === true) {

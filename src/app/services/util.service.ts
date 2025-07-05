@@ -127,6 +127,7 @@ export class UtilService {
     if (typeof amount == 'number') {
       amount = amount.toString();
     }
+    amount = amount.replace(/\.+/g, '.');
     var amountVal = amount.split(".");
     var formattedAmount = Math.abs(parseInt(amountVal[0]));
     var isNegative = parseInt(amountVal[0]) < 0 ? "-" : "";
