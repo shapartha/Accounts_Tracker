@@ -1,14 +1,14 @@
 {
   "name": "accounts-tracker",
-  "version": "12.2.1",
+  "version": "13.0.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm version patch --no-git-tag-version && node update-app-info.mjs && ng build",
     "prebuild": "node update-app-info.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "npm version patch --no-git-tag-version && node update-app-info.mjs && ng build --base-href='https://shapartha.github.io/Accounts_Tracker/' && npx angular-cli-ghpages --dir=dist/accounts-tracker/browser"
+    "deploy": "npm version patch --no-git-tag-version && node update-app-info.mjs && ng build --base-href='https://shapartha.github.io/Accounts_Tracker/' && npx angular-cli-ghpages --dir=dist/accounts-tracker/browser --no-silent"
   },
   "private": true,
   "dependencies": {
@@ -33,11 +33,13 @@
     "zone.js": "~0.14.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^20.0.5",
+    "@angular-devkit/build-angular": "^17.3.8",
     "@angular/cli": "^17.3.6",
     "@angular/compiler-cli": "^17.3.0",
     "@types/jasmine": "~5.1.0",
+    "cropperjs": "^1.5.12",
     "jasmine-core": "~5.1.0",
+    "jspdf": "^3.0.1",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",

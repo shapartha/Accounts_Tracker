@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, EventEmitter, inject, Input, model, OnInit, Output, signal, WritableSignal } from '@angular/core';
+import { Component, computed, ElementRef, EventEmitter, inject, Input, model, OnDestroy, OnInit, Output, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
@@ -16,6 +16,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { map, startWith } from 'rxjs';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-update-transaction',
@@ -24,7 +25,7 @@ import { map, startWith } from 'rxjs';
   templateUrl: './update-transaction.component.html',
   styleUrl: './update-transaction.component.scss'
 })
-export class UpdateTransactionComponent implements OnInit {
+export class UpdateTransactionComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   fileUploadMessage: string = '';
@@ -33,6 +34,7 @@ export class UpdateTransactionComponent implements OnInit {
   currentFile: any;
   newPreviewUrl: any;
   fileBitmap: any;
+  isReceiptPdf: boolean = false;
 
   @Input() updateTransaction: any;
   @Output() formData: EventEmitter<any> = new EventEmitter();
@@ -52,8 +54,12 @@ export class UpdateTransactionComponent implements OnInit {
       transId: [],
       imageUpdated: [],
       fileBitmap: [],
+      isPdf: ['N'],
       currentTag: [this.currentTag]
     });
+  }
+  ngOnDestroy(): void {
+    this.stopCamera();
   }
 
   ngOnInit(): void {
@@ -62,6 +68,10 @@ export class UpdateTransactionComponent implements OnInit {
       this.apiService.getReceiptImage({ "receipt_uid": this.updateTransaction.receiptImgId }).subscribe({
         next: (resp: any) => {
           let _bitmap_data = resp.dataArray[0].bitmap_data;
+          this.currentFile = _bitmap_data;
+          if (_bitmap_data.startsWith('data:application/pdf')) {
+            this.isReceiptPdf = true;
+          }
           prevUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(_bitmap_data);
           this.form.get('previewUrl')?.setValue(prevUrl);
         }, error: (err) => {
@@ -79,6 +89,7 @@ export class UpdateTransactionComponent implements OnInit {
       transId: [this.updateTransaction.id],
       imageUpdated: [false],
       fileBitmap: [],
+      isPdf: [this.isReceiptPdf ? 'Y' : 'N'],
       currentTag: [this.currentTag]
     });
     this.loadAllTags();
@@ -108,29 +119,6 @@ export class UpdateTransactionComponent implements OnInit {
     return this.allTags.filter(option => option.tagName.toLowerCase().includes(filterValue));
   }
 
-  selectFile(event: any): void {
-    if (event.target.files && event.target.files[0]) {
-      const file: File = event.target.files[0];
-      this.currentFile = file;
-      this.fileName = this.currentFile.name;
-      this.form.get('imageUpdated')?.setValue(true);
-      var reader = new FileReader();
-      reader.onload = (event: any) => {
-        var binaryString = event.target.result;
-        this.compressFile(binaryString);
-      }
-      reader.readAsDataURL(file);
-      this.fileType = file.type;
-      this.fileUploadMessage = "File selected for uploading"
-    } else {
-      this.currentFile = undefined;
-      this.fileName = 'Replace File';
-      this.newPreviewUrl = null;
-      this.fileType = null;
-      this.fileUploadMessage = '';
-    }
-  }
-
   async compressFile(image: any) {
     var orientation = -1;
     var finalImage = image;
@@ -140,9 +128,102 @@ export class UpdateTransactionComponent implements OnInit {
       console.log("After Size --- " + this.imageCompress.byteCount(result) / 1024);
       finalImage = result;
     }
-    this.newPreviewUrl = finalImage;
-    this.fileBitmap = finalImage;
-    this.form.get('fileBitmap')?.setValue(this.fileBitmap);
+    return finalImage;
+  }
+
+  toggleReceiptCaptureCanvas() {
+    this.showCanvas = !this.showCanvas;
+    if (this.showCanvas) {
+      this.initializeCamera();
+    } else {
+      this.stopCamera();
+    }
+  }
+
+  showCanvas: boolean = false;
+  @ViewChild('video', { static: false }) videoRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  stream: MediaStream | null = null;
+  croppedImages: string[] = [];
+
+  capturedImage = signal<string>('');
+
+  private async initializeCamera(): Promise<void> {
+    try {
+      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = this.videoRef.nativeElement;
+      video.srcObject = this.stream;
+      await video.play();
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+    }
+  }
+
+  private stopCamera(): void {
+    this.stream?.getTracks().forEach((track) => track.stop());
+    this.stream = null;
+  }
+
+  async captureImage(): Promise<void> {
+    const video = this.videoRef.nativeElement;
+    const canvas = this.canvasRef.nativeElement;
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      const compressed = await this.compressFile(dataUrl);
+      this.capturedImage.set(compressed);
+      this.saveCroppedImage();
+    }
+  }
+
+  saveCroppedImage(): void {
+    const croppedData = this.capturedImage();
+    this.croppedImages.push(croppedData);
+    this.form.get('imageUpdated')?.setValue(true);
+    this.capturedImage.set('');
+
+    /** below code to setup data for upload new receipt */
+
+    let isPdf: string = 'N';
+    if (this.croppedImages.length > 1) {
+      this.saveAllAsPdf();
+      isPdf = 'Y';
+    } else {
+      this.form.get('fileBitmap')?.setValue(this.croppedImages[0]);
+    }
+    this.form.get('isPdf')?.setValue(isPdf);
+  }
+
+  saveAllAsPdf(): void {
+    if (this.croppedImages.length === 0) return;
+
+    const pdf = new jsPDF();
+    this.croppedImages.forEach((img, index) => {
+      if (index !== 0) pdf.addPage();
+      pdf.addImage(img, 'JPEG', 10, 10, 190, 277); // Fit A4 page
+    });
+    const base64String = pdf.output('datauristring').split(',')[1];
+    this.form.get('fileBitmap')?.setValue(base64String);
+    // pdf.save("scanned-images.pdf");
+  }
+
+  downloadReceiptPdf(): void {
+    const link = document.createElement('a');
+    link.href = '' + this.currentFile;
+    link.download = "receipt.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  isMobileDevice(): boolean {
+    return this.utilService.isMobile();
   }
 
   /**

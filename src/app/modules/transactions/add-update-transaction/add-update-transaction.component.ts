@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, Input, model, OnInit, Output, signal, WritableSignal } from '@angular/core';
+import { Component, computed, ElementRef, EventEmitter, inject, Input, model, OnDestroy, OnInit, Output, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SaveTransaction } from 'app/models/transaction';
@@ -22,6 +22,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatIconModule } from '@angular/material/icon';
 import { map, startWith } from 'rxjs';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-add-update-transaction',
@@ -31,7 +32,7 @@ import { map, startWith } from 'rxjs';
   templateUrl: './add-update-transaction.component.html',
   styleUrl: './add-update-transaction.component.scss'
 })
-export class AddUpdateTransactionComponent implements OnInit {
+export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
 
   @Input() isUpdateScheduledTrans = false;
   @Input() updateScheduledTrans: any;
@@ -57,6 +58,7 @@ export class AddUpdateTransactionComponent implements OnInit {
   previewUrl: any;
   fileBitmap: any;
   fileType: any;
+  isReceiptPdf: boolean = false;
 
   constructor(private fb: FormBuilder, private router: Router, private apiService: ApiService, private domSanitizer: DomSanitizer, private utilService: UtilService, private imageCompress: NgxImageCompressService) {
     this.form = this.fb.group({});
@@ -102,6 +104,9 @@ export class AddUpdateTransactionComponent implements OnInit {
       });
     }
   }
+  ngOnDestroy(): void {
+    this.stopCamera();
+  }
 
   ngOnInit(): void {
     if (this.isUpdateScheduledTrans) {
@@ -109,6 +114,9 @@ export class AddUpdateTransactionComponent implements OnInit {
         this.apiService.getReceiptImage({ "receipt_uid": this.updateScheduledTrans.trans_receipt_image_id }).subscribe({
           next: (resp: any) => {
             let _bitmap_data = resp.dataArray[0].bitmap_data;
+            if (_bitmap_data.startsWith('data:application/pdf')) {
+              this.isReceiptPdf = true;
+            }
             this.currentFile = _bitmap_data;
             this.previewUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(_bitmap_data);
           }, error: (err) => {
@@ -303,28 +311,6 @@ export class AddUpdateTransactionComponent implements OnInit {
     }
   }
 
-  selectFile(event: any): void {
-    if (event.target.files && event.target.files[0]) {
-      const file: File = event.target.files[0];
-      this.currentFile = file;
-      this.fileName = this.currentFile.name;
-      var reader = new FileReader();
-      reader.onload = (event: any) => {
-        var binaryString = event.target.result;
-        this.compressFile(binaryString);
-      }
-      reader.readAsDataURL(file);
-      this.fileType = file.type;
-      this.fileUploadMessage = "File selected for uploading"
-    } else {
-      this.currentFile = undefined;
-      this.fileName = 'Select File';
-      this.previewUrl = null;
-      this.fileType = null;
-      this.fileUploadMessage = '';
-    }
-  }
-
   async compressFile(image: any) {
     var orientation = -1;
     var finalImage = image;
@@ -334,13 +320,103 @@ export class AddUpdateTransactionComponent implements OnInit {
       console.log("After Size --- " + this.imageCompress.byteCount(result) / 1024);
       finalImage = result;
     }
-    this.previewUrl = finalImage;
-    this.fileBitmap = finalImage;
+    return finalImage;
+  }
+
+  toggleReceiptCaptureCanvas() {
+    this.showCanvas = !this.showCanvas;
+    if (this.showCanvas) {
+      this.initializeCamera();
+    } else {
+      this.stopCamera();
+    }
+  }
+
+  showCanvas: boolean = false;
+  @ViewChild('video', { static: false }) videoRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  stream: MediaStream | null = null;
+  croppedImages: string[] = [];
+
+  capturedImage = signal<string>('');
+
+  private async initializeCamera(): Promise<void> {
+    try {
+      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = this.videoRef.nativeElement;
+      video.srcObject = this.stream;
+      await video.play();
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+    }
+  }
+
+  private stopCamera(): void {
+    this.stream?.getTracks().forEach((track) => track.stop());
+    this.stream = null;
+  }
+
+  async captureImage(): Promise<void> {
+    const video = this.videoRef.nativeElement;
+    const canvas = this.canvasRef.nativeElement;
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      const compressed = await this.compressFile(dataUrl);
+      this.capturedImage.set(compressed);
+      this.saveCroppedImage();
+    }
+  }
+
+  saveCroppedImage(): void {
+    const croppedData = this.capturedImage();
+    this.croppedImages.push(croppedData);
+    this.capturedImage.set('');
+  }
+
+  saveAllAsPdf(): void {
+    if (this.croppedImages.length === 0) return;
+
+    const pdf = new jsPDF();
+    this.croppedImages.forEach((img, index) => {
+      if (index !== 0) pdf.addPage();
+      pdf.addImage(img, 'JPEG', 10, 10, 190, 277); // Fit A4 page
+    });
+    const base64String = pdf.output('datauristring').split(',')[1];
+    this.fileBitmap = base64String;
+    // pdf.save("scanned-images.pdf");
+  }
+
+  downloadReceiptPdf(): void {
+    const link = document.createElement('a');
+    link.href = '' + this.currentFile;
+    link.download = "receipt.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  isMobileDevice(): boolean {
+    return this.utilService.isMobile();
   }
 
   upload() {
+    let isPdf: string = 'N';
+    if (this.croppedImages.length > 1) {
+      this.saveAllAsPdf();
+      isPdf = 'Y';
+    } else {
+      this.fileBitmap = this.croppedImages[0];
+    }
     let _inpObj = {
       bitmap_data: this.fileBitmap,
+      is_pdf: isPdf,
       created_at: this.utilService.getDate()
     }
     this.apiService.uploadReceiptImage(_inpObj).subscribe({
@@ -349,6 +425,8 @@ export class AddUpdateTransactionComponent implements OnInit {
         if (this.form.get('isTransferTrans')?.value == true) {
           this.saveTransactionTrans.image_path = data.dataArray[0].receipt_id;
         }
+        this.capturedImage.set('');
+        this.croppedImages = [];
         this.uploadWithoutImage();
       },
       error: (err) => {
@@ -409,7 +487,7 @@ export class AddUpdateTransactionComponent implements OnInit {
         this.saveTransaction.scheme_code = this.form.get('mfSchemeCode')?.value;
         this.saveTransaction.mf_nav = this.form.get('mfNav')?.value;
       }
-      if (this.currentFile) {
+      if (this.croppedImages.length > 0) {
         this.upload();
       } else {
         this.uploadWithoutImage();

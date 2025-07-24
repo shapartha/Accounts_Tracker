@@ -127,24 +127,30 @@
             </mat-form-field>
         </div>
         <div class="row" *ngIf="!isUpdateScheduledTrans">
-            <mat-form-field appearance="outline" class="mt-3 w-100">
+            <button class="btn btn-primary mt-3" (click)="toggleReceiptCaptureCanvas()">{{ showCanvas == true ? 'Hide Receipt Section' : 'Show Receipt Section'}}</button>
+            <mat-form-field appearance="outline" class="mt-3 w-100" *ngIf="showCanvas">
                 <mat-label>Upload Transaction Receipt: </mat-label>
+                <br>
                 <div>
-                    <mat-toolbar>
-                        <input matInput [value]="fileName" readonly />
-                        <button class="btn btn-dark" color="primary" (click)="fileUpload.click()">Select</button>
-                    </mat-toolbar>
-                    <input type="file" id="fileInput" (change)="selectFile($event)" name="fileInput" #fileUpload />
+                    <video #video autoplay playsinline width="400"></video>
+                    <canvas #canvas hidden></canvas>
+                    <br>
+                    <input matInput type="text" hidden />
+                    <button class="btn btn-primary" (click)="captureImage()">📸 Capture</button>
                 </div>
-                <img id="upload-preview" *ngIf="currentFile" [src]="previewUrl" alt="your image" />
-                <div *ngIf="fileUploadMessage != ''" class="message">
-                    {{ fileUploadMessage }}
+                <div *ngIf="croppedImages.length">
+                    <p>Scanned: {{ croppedImages.length }} image(s)</p>
+                    <img *ngFor="let img of croppedImages" [src]="img" alt="Cropped Image" width="200" />
                 </div>
             </mat-form-field>
         </div>
         <div class="row" *ngIf="isUpdateScheduledTrans && updateScheduledTrans.trans_receipt_image_id != null">
             <mat-label>View Transaction Receipt: </mat-label>
-            <img id="upload-preview" *ngIf="currentFile" [src]="previewUrl" alt="your image" />
+            <img id="upload-preview" *ngIf="currentFile && !isReceiptPdf" [src]="previewUrl" alt="your image" />
+            <iframe *ngIf="currentFile && isReceiptPdf && !isMobileDevice()" allowfullscreen="true" [src]="previewUrl" width="100%" height="500px"></iframe>
+            <div *ngIf="currentFile && isReceiptPdf && isMobileDevice()" class="text-center mt-2">
+                <button class="btn btn-info" (click)="downloadReceiptPdf()">Download Receipt</button>
+            </div>
             <div *ngIf="fileUploadMessage != ''" class="message">
                 {{ fileUploadMessage }}
             </div>
