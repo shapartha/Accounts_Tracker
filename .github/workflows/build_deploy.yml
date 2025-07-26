@@ -1,0 +1,43 @@
+name: Deploy Angular to GitHub Pages User Site
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build Angular app
+      run: npm run build -- --configuration=production
+
+    - name: Prepare deployment files
+      run: |
+        # Copy build output to a separate directory for deployment
+        rm -rf deploy
+        mkdir deploy
+        cp -r dist/accounts-tracker/* deploy/
+
+    - name: Deploy to shapartha.github.io repo
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: deploy
+        # Set the target branch to 'main' for user/organization site
+        destination_repo: ${{ github.repository_owner }}/${{ github.repository_owner }}.github.io
+        destination_branch: main
+        # Set up commit message
+        commit_message: "Deploy Angular site from source repo"
