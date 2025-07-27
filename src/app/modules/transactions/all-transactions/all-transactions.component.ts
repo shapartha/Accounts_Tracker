@@ -363,6 +363,7 @@ export class AllTransactionsComponent implements OnInit {
     this.modifiedRecord.is_valid = event.valid;
     this.modifiedRecord.imageUpdated = event.imageUpdated;
     this.modifiedRecord.fileBitmap = event.fileBitmap;
+    this.modifiedRecord.isPdf = event.isPdf;
     this.modifiedRecord.is_valid = event.valid;
     this.modifiedRecord.tags = {
       add: event.tagChanges.new.filter((element: any) => !event.tagChanges.existing.includes(element)),
@@ -455,6 +456,7 @@ export class AllTransactionsComponent implements OnInit {
   upload(item: any) {
     let _inpObj = {
       bitmap_data: item.fileBitmap,
+      is_pdf: item.isPdf,
       created_at: this.utilService.getDate()
     }
     this.apiService.uploadReceiptImage(_inpObj).subscribe({
