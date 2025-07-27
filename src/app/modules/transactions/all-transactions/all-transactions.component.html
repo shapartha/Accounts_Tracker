@@ -4,9 +4,32 @@
             class="float-end font-weight-bold "
             [ngClass]="utilService.formatStringValueToAmount(showAmount) < 0 ? 'negative-val': 'positive-val'">{{
             showAmount }}</span></h4>
+    <div class="row mb-3" *ngIf="showTagsForUpdateAll()">
+        <mat-form-field class="mt-3 w-75" appearance="outline">
+            <mat-label>Tags</mat-label>
+            <mat-chip-grid #chipGrid aria-label="Tag Selection">
+                @for (tag of tags(); track $index) {
+                <mat-chip-row (removed)="remove(tag)">
+                    {{tag.tagName}}
+                    <button matChipRemove [attr.aria-label]="'remove ' + tag.tagName">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+                }
+            </mat-chip-grid>
+            <input matInput name="currentTag" placeholder="Select Tag" #tagInput [value]="currentTag()" [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)" (input)="onTagInput($event)" />
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                @for (tag of filteredTags(); track tag) {
+                <mat-option [value]="tag">{{tag.tagName}}</mat-option>
+                }
+            </mat-autocomplete>
+        </mat-form-field>
+        <button mat-raised-button class="btn btn-primary mt-3 w-25" style="height: fit-content;" (click)="updateTags()">Update All</button>
+    </div>
     @for (transaction of transactions; track transaction) {
     <div [contextMenu]="oneContextMenu" [contextMenuValue]="transaction"
-        [classList]="getMoneyVal(transaction, 'transaction-item ps-2 pe-2 pt-2 ', 'bg-danger-subtle', 'bg-success-subtle')">
+        [classList]="getCustomClass(transaction, 'transaction-item ps-2 pe-2 pt-2 ', 'bg-danger-subtle', 'bg-success-subtle')">
         <div class="row">
             <div class="col-sm-6 font-weight-bold" style="font-size: 16px;">{{ transaction.description }}</div>
             <div class="col-sm-6 text-end">
@@ -44,7 +67,11 @@
 </div>
 
 <context-menu #oneContextMenu [menuClass]="'app-trans-context-menu'">
-    <ng-template contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
+    <ng-template contextMenuItem (execute)="select($event)" let-value>Select</ng-template>
+    <ng-template [visible]="showSelectAll" contextMenuItem (execute)="selectAll($event)" let-value>
+        {{ selectAllActive ? 'Deselect All' : 'Select All' }}
+    </ng-template>
+    <ng-template [visible]="showUpdate" contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
     <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
     <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="markDeliveryOrder($event)" let-value>
         Mark as Delivery Order

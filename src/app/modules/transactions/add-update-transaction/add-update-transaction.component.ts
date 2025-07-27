@@ -343,7 +343,9 @@ export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
 
   private async initializeCamera(): Promise<void> {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      this.stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } }
+      });
       const video = this.videoRef.nativeElement;
       video.srcObject = this.stream;
       await video.play();

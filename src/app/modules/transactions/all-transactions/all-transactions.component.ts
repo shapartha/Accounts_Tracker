@@ -1,6 +1,13 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, computed, inject, Input, model, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
@@ -13,11 +20,14 @@ import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confir
 import { UpdateTransactionComponent } from 'app/modules/modals/update-transaction/update-transaction.component';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
+import { map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-all-transactions',
   standalone: true,
-  imports: [CommonModule, MatIconModule, ContextMenuModule, ConfirmDialogComponent, UpdateTransactionComponent],
+  imports: [CommonModule, MatIconModule, ContextMenuModule, ConfirmDialogComponent, UpdateTransactionComponent, MatChipsModule, MatAutocompleteModule,
+    MatInputModule, MatSelectModule
+  ],
   templateUrl: './all-transactions.component.html',
   styleUrl: './all-transactions.component.scss'
 })
@@ -119,6 +129,7 @@ export class AllTransactionsComponent implements OnInit {
       return;
     }
     this.fetchTransactions(this.inputParams, this.apiFuncName);
+    this.loadAllTags();
   }
 
   next() {
@@ -157,6 +168,34 @@ export class AllTransactionsComponent implements OnInit {
         scrollable: true,
         size: 'lg'
       });
+  }
+
+  showTagsForUpdateAll() {
+    let showTags = false;
+    for (const item of this.transactions as any[]) {
+      if (item.selected === true) {
+        showTags = true;
+        break;
+      }
+    }
+    return showTags;
+  }
+
+  select(e: any) {
+    this.selectedRecord = e.value;
+    this.selectedRecord.selected = !this.selectedRecord.selected;
+  }
+
+  selectAllActive = false;
+
+  selectAll(e: any) {
+    this.selectAllActive = !this.selectAllActive;
+    this.transactions.forEach((item: any) => {
+      item.selected = this.selectAllActive;
+    });
+    if (!this.selectAllActive) {
+      this.removeAllTags();
+    }
   }
 
   delete(e: any) {
@@ -283,16 +322,32 @@ export class AllTransactionsComponent implements OnInit {
     });
   }
 
+  showUpdate(value: any) {
+    return value['selected'] != true;
+  }
+
+  showSelectAll(value: any) {
+    return value['selected'];
+  }
+
   showDeleteCopy(value: any) {
-    return value['is_mf'] != true && value['is_equity'] != true;
+    return value['is_mf'] != true && value['is_equity'] != true && value['selected'] != true;
   }
 
   showMarkDelivery(value: any) {
-    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] != true && value['is_delivered'] != true;
+    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] != true && value['is_delivered'] != true && value['selected'] != true;
   }
 
   showUnmarkSetDelivery(value: any) {
-    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] == true && value['is_delivered'] != true;
+    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] == true && value['is_delivered'] != true && value['selected'] != true;
+  }
+
+  getCustomClass(value: any, existingClass: string, negativeClass: string, positiveClass: string) {
+    let classListValue = this.getMoneyVal(value, existingClass, negativeClass, positiveClass);
+    if (value.selected == true) {
+      classListValue += ' selected';
+    }
+    return classListValue;
   }
 
   getMoneyVal(value: any, existingClass: string, negativeClass: string, positiveClass: string) {
@@ -483,5 +538,91 @@ export class AllTransactionsComponent implements OnInit {
       fragment: 'top'
     };
     this.router.navigate(['add-transaction'], { state: objToSend });
+  }
+
+  updateTags() {
+    //
+  }
+  
+  /**
+   * 
+   * Code below is for Mat Chips with Autocomplete
+   * 
+   */
+
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  readonly currentTag = signal('');
+  readonly tags: WritableSignal<any[]> = signal([]);
+  allTags: any[] = [];
+  filteredTags = this.calculateFilteredTags();
+
+  loadAllTags() {
+    this.apiService.getAllTags().subscribe({
+      next: (resp: any) => {
+        if (resp.success == true && resp.response == '200') {
+          this.allTags = [];
+          resp.dataArray.forEach((element: any) => {
+            this.allTags.push({
+              tagId: element.tag_id,
+              tagName: element.tag_name
+            });
+          });
+        } else {
+          this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  add(event: MatChipInputEvent): void {
+    this.utilService.showAlert('Please select something from the list');
+    return;
+  }
+
+  calculateFilteredTags() {
+    return computed(() => {
+      const currentTag = this.currentTag()?.toLowerCase();
+      let finalVal = currentTag ? this.allTags.filter(tag => tag?.tagName?.toLowerCase().includes(currentTag)) : this.allTags.slice();
+      return finalVal;
+    });
+  }
+
+  remove(tag: any): void {
+    this.tags.update(tags => {
+      const index = tags.indexOf(tag);
+      if (index < 0) {
+        return tags;
+      }
+      tags.splice(index, 1);
+      this.allTags.push(tag);
+      this.filteredTags = this.calculateFilteredTags();
+      return [...tags];
+    });
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.tags.update(tags => [...tags, event.option.value]);
+    this.allTags.splice(this.allTags.findIndex(idx => idx.tagId == event.option.value.tagId), 1);
+    this.filteredTags = this.calculateFilteredTags();
+    this.currentTag.set('');
+    event.option.deselect();
+  }
+
+  onTagInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.currentTag.set(input.value);
+  }
+
+  removeAllTags() {
+    this.tags.update(tags => {
+      tags.forEach(tag => {
+        this.allTags.push(tag);
+      });
+      tags.length = 0;
+      this.filteredTags = this.calculateFilteredTags();
+      return [...tags];
+    });
   }
 }
