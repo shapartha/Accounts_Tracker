@@ -31,6 +31,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist/accounts-tracker
+          publish_dir: dist/accounts-tracker/browser
           destination_branch: gh-pages
           keep_history: true
