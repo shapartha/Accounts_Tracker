@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npm version patch --no-git-tag-version && node update-app-info.mjs && ng build",
+    "build": "npm version patch --no-git-tag-version && node update-app-info.mjs && ng build --base-href='https://shapartha.github.io/Accounts_Tracker/'",
     "prebuild": "node update-app-info.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
