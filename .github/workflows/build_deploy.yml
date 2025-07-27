@@ -25,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular app
-        run: npm run build -- --configuration=production
+        run: npm run build --base-href='https://shapartha.github.io/Accounts_Tracker/' --configuration=production
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
