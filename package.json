@@ -1,6 +1,6 @@
 {
   "name": "accounts-tracker",
-  "version": "13.0.7",
+  "version": "13.0.11",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
