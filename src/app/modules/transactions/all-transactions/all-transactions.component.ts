@@ -549,8 +549,8 @@ export class AllTransactionsComponent implements OnInit {
     });
     this.apiService.saveTransTagMapping(inputs).subscribe({
       next: (resp: any) => {
-        if (resp[0].success == true && resp[0].response == '200') {
-          this.utilService.showAlert("Transaction updated with tags successfully", "success");
+        if (resp.some((item: any) => item.success === true && item.response === '200')) {
+          this.utilService.showAlert("Transaction updated with tags successfully. Some transactions may not have been updated. Please validate.", "warning");
           this.transactions.map((item: any) => {
             if (item.selected == true) {
               item.selected = false;

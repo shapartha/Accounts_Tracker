@@ -25,7 +25,10 @@
                 }
             </mat-autocomplete>
         </mat-form-field>
-        <button mat-raised-button class="btn btn-primary mt-3 w-25" style="height: fit-content;" (click)="updateTags()">Update All</button>
+        <div class="w-25 mt-3 d-grid">
+            <button mat-raised-button class="btn btn-primary" style="height: fit-content;" (click)="updateTags()">Add Tags</button>
+            <button mat-raised-button class="btn btn-primary mt-1" style="height: fit-content;" (click)="updateTags()">Remove Tags</button>
+        </div>
     </div>
     @for (transaction of transactions; track transaction) {
     <div [contextMenu]="oneContextMenu" [contextMenuValue]="transaction"
