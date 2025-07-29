@@ -1,8 +1,6 @@
-import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Input, model, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, computed, Input, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +18,6 @@ import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confir
 import { UpdateTransactionComponent } from 'app/modules/modals/update-transaction/update-transaction.component';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
-import { map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-all-transactions',
@@ -541,7 +538,32 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   updateTags() {
-    //
+    let inputs: any[] = [];
+    this.transactions.filter((item: any) => item.selected == true).forEach((item: any) => {
+      this.tags().forEach((tag: any) => {
+        inputs.push({
+          trans_id: item.id,
+          tag_id: tag.tagId
+        });
+      });
+    });
+    this.apiService.saveTransTagMapping(inputs).subscribe({
+      next: (resp: any) => {
+        if (resp[0].success == true && resp[0].response == '200') {
+          this.utilService.showAlert("Transaction updated with tags successfully", "success");
+          this.transactions.map((item: any) => {
+            if (item.selected == true) {
+              item.selected = false;
+            }
+          });
+          this.removeAllTags();
+        } else {
+          this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
   }
   
   /**
