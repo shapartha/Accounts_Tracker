@@ -556,9 +556,41 @@ export class AllTransactionsComponent implements OnInit {
               item.selected = false;
             }
           });
+          this.selectAllActive = false;
           this.removeAllTags();
         } else {
           this.utilService.showAlert(resp);
+        }
+      }, error: err => {
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  removeTags() {
+    let inputs: any[] = [];
+    this.transactions.filter((item: any) => item.selected == true).forEach((item: any) => {
+      this.tags().forEach((tag: any) => {
+        inputs.push({
+          trans_id: item.id,
+          tag_id: tag.tagId
+        });
+      });
+    });
+    
+    this.apiService.deleteTransTagMapping(inputs).subscribe({
+      next: (resp: any) => {
+        if (resp.every((item: any) => item.success === true && item.response === '200')) {
+          this.utilService.showAlert("Transaction tags removed successfully.", "success");
+          this.transactions.map((item: any) => {
+            if (item.selected == true) {
+              item.selected = false;
+            }
+          });
+          this.selectAllActive = false;
+          this.removeAllTags();
+        } else {
+          this.utilService.showAlert("Some tags may not have been removed from their transactions. Please validate.", "warning");
         }
       }, error: err => {
         this.utilService.showAlert(err);
