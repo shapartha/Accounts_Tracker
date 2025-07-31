@@ -14,7 +14,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
-import { NgxImageCompressService } from 'ngx-image-compress';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
@@ -28,7 +27,6 @@ import jsPDF from 'jspdf';
   selector: 'app-add-update-transaction',
   standalone: true,
   imports: [MatFormFieldModule, ReactiveFormsModule, FormsModule, MatDatepickerModule, MatNativeDateModule, MatRadioModule, MatSelectModule, MatToolbarModule, CommonModule, MatInputModule, MatSlideToggleModule, MatChipsModule, MatAutocompleteModule, MatIconModule],
-  providers: [NgxImageCompressService],
   templateUrl: './add-update-transaction.component.html',
   styleUrl: './add-update-transaction.component.scss'
 })
@@ -60,7 +58,7 @@ export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
   fileType: any;
   isReceiptPdf: boolean = false;
 
-  constructor(private fb: FormBuilder, private router: Router, private apiService: ApiService, private domSanitizer: DomSanitizer, private utilService: UtilService, private imageCompress: NgxImageCompressService) {
+  constructor(private fb: FormBuilder, private router: Router, private apiService: ApiService, private domSanitizer: DomSanitizer, private utilService: UtilService) {
     this.form = this.fb.group({});
     if (this.router.getCurrentNavigation()?.extras.state != null) {
       let objQueryParams = this.router.getCurrentNavigation()!.extras.state;
@@ -311,18 +309,6 @@ export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
     }
   }
 
-  async compressFile(image: any) {
-    var orientation = -1;
-    var finalImage = image;
-    if (this.imageCompress.byteCount(image) / 1024 > 60) {
-      console.log("Before Size --- " + this.imageCompress.byteCount(image) / 1024);
-      const result = await this.imageCompress.compressFile(image, orientation, 50, 50);
-      console.log("After Size --- " + this.imageCompress.byteCount(result) / 1024);
-      finalImage = result;
-    }
-    return finalImage;
-  }
-
   toggleReceiptCaptureCanvas() {
     this.showCanvas = !this.showCanvas;
     if (this.showCanvas) {
@@ -370,8 +356,7 @@ export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
     if (ctx) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const dataUrl = canvas.toDataURL('image/jpeg');
-      const compressed = await this.compressFile(dataUrl);
-      this.capturedImage.set(compressed);
+      this.capturedImage.set(dataUrl);
       this.saveCroppedImage();
     }
   }

@@ -12,7 +12,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
-import { NgxImageCompressService } from 'ngx-image-compress';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { map, startWith } from 'rxjs';
@@ -44,7 +43,7 @@ export class UpdateTransactionComponent implements OnInit, OnDestroy {
     new: [] as any[]
   };
 
-  constructor(private fb: FormBuilder, public utilService: UtilService, private domSanitizer: DomSanitizer, private apiService: ApiService, private imageCompress: NgxImageCompressService) {
+  constructor(private fb: FormBuilder, public utilService: UtilService, private domSanitizer: DomSanitizer, private apiService: ApiService) {
     this.form = this.fb.group({
       amount: [],
       transDesc: [],
@@ -119,18 +118,6 @@ export class UpdateTransactionComponent implements OnInit, OnDestroy {
     return this.allTags.filter(option => option.tagName.toLowerCase().includes(filterValue));
   }
 
-  async compressFile(image: any) {
-    var orientation = -1;
-    var finalImage = image;
-    if (this.imageCompress.byteCount(image) / 1024 > 60) {
-      console.log("Before Size --- " + this.imageCompress.byteCount(image) / 1024);
-      const result = await this.imageCompress.compressFile(image, orientation, 50, 50);
-      console.log("After Size --- " + this.imageCompress.byteCount(result) / 1024);
-      finalImage = result;
-    }
-    return finalImage;
-  }
-
   toggleReceiptCaptureCanvas() {
     this.showCanvas = !this.showCanvas;
     if (this.showCanvas) {
@@ -178,8 +165,7 @@ export class UpdateTransactionComponent implements OnInit, OnDestroy {
     if (ctx) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const dataUrl = canvas.toDataURL('image/jpeg');
-      const compressed = await this.compressFile(dataUrl);
-      this.capturedImage.set(compressed);
+      this.capturedImage.set(dataUrl);
       this.saveCroppedImage();
     }
   }
