@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppConstants } from 'app/const/app.constants';
+import { NgxImageCompressService } from 'ngx-image-compress';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subject } from 'rxjs';
 
@@ -9,7 +10,7 @@ import { Subject } from 'rxjs';
 })
 export class UtilService {
 
-  constructor(private snackBar: MatSnackBar, private spinner: NgxSpinnerService) { }
+  constructor(private snackBar: MatSnackBar, private spinner: NgxSpinnerService, private imageCompress: NgxImageCompressService) { }
 
   refreshMfData: Subject<any> = new Subject();
   refreshEqData: Subject<any> = new Subject();
@@ -253,5 +254,17 @@ export class UtilService {
   isMobile(): boolean {
     const userAgent = navigator.userAgent || navigator.vendor;
     return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+  }
+
+  async compressFile(image: any) {
+    var orientation = -1;
+    var finalImage = image;
+    if (this.imageCompress.byteCount(image) / 1024 > 60) {
+      console.log("Before Size --- " + this.imageCompress.byteCount(image) / 1024);
+      const result = await this.imageCompress.compressFile(image, orientation, 50, 50);
+      console.log("After Size --- " + this.imageCompress.byteCount(result) / 1024);
+      finalImage = result;
+    }
+    return finalImage;
   }
 }
