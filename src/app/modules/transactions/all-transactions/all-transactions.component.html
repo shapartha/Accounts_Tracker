@@ -1,10 +1,9 @@
 <div class="container mt-2" id="all-transactions-section">
     <h3 *ngIf="accountId == null">{{ transactionHeader }}</h3>
-    <h4 *ngIf="accountId == null && inputAccountData != null && inputAccountData.id != null">Balance: <span
-            class="float-end font-weight-bold "
+    <h4 *ngIf="accountId == null && inputAccountData != null && inputAccountData.id != null">Balance: <span class="float-end font-weight-bold "
             [ngClass]="utilService.formatStringValueToAmount(showAmount) < 0 ? 'negative-val': 'positive-val'">{{
             showAmount }}</span></h4>
-    <div class="row mb-3" *ngIf="showTagsForUpdateAll()">
+    <div class="row mb-3" *ngIf="showSectionsForSelectAll()">
         <mat-form-field class="mt-3 w-75" appearance="outline">
             <mat-label>Tags</mat-label>
             <mat-chip-grid #chipGrid aria-label="Tag Selection">
@@ -26,8 +25,22 @@
             </mat-autocomplete>
         </mat-form-field>
         <div class="w-25 mt-3 d-grid">
-            <button mat-raised-button class="btn btn-primary" style="height: fit-content;" (click)="updateTags()">Add Tags</button>
-            <button mat-raised-button class="btn btn-primary mt-1" style="height: fit-content;" (click)="removeTags()">Remove Tags</button>
+            <button mat-raised-button class="btn btn-primary" style="height: fit-content;" [disabled]="tags().length == 0" (click)="updateTags()">Add Tags</button>
+            <button mat-raised-button class="btn btn-primary mt-1" style="height: fit-content;" [disabled]="tags().length == 0" (click)="removeTags()">Remove
+                Tags</button>
+        </div>
+    </div>
+    <div class="row mb-3" *ngIf="showSectionsForSelectAll()">
+        <mat-form-field class="mt-3 w-75" appearance="outline">
+            <mat-label>Description</mat-label>
+            <input type="text" matInput placeholder="Description" name="transDesc" required (change)="onChangeUpdateAll($event)">
+            <mat-error>
+                Valid description required.
+            </mat-error>
+        </mat-form-field>
+        <div class="w-25 mt-3 d-grid">
+            <button mat-raised-button class="btn btn-primary" style="height: fit-content;" [disabled]="transDescriptionForAll == ''" (click)="updateAllTransDesc()">Update
+                All</button>
         </div>
     </div>
     @for (transaction of transactions; track transaction) {
@@ -36,19 +49,16 @@
         <div class="row">
             <div class="col-sm-6 font-weight-bold" style="font-size: 16px;">{{ transaction.description }}</div>
             <div class="col-sm-6 text-end">
-                <mat-icon *ngIf="transaction.is_delivered == '1'" class="text-end"
-                    style="color: green;">shopping_cart</mat-icon>
-                <mat-icon
-                    *ngIf="transaction.is_delivery_order == '1' && (transaction.is_delivered == undefined || transaction.is_delivered == '0')"
-                    class="text-end" style="color: grey;">add_shopping_cart</mat-icon>
+                <mat-icon *ngIf="transaction.is_delivered == '1'" class="text-end" style="color: green;">shopping_cart</mat-icon>
+                <mat-icon *ngIf="transaction.is_delivery_order == '1' && (transaction.is_delivered == undefined || transaction.is_delivered == '0')" class="text-end"
+                    style="color: grey;">add_shopping_cart</mat-icon>
                 <mat-icon *ngIf="transaction.receiptImgId != null" class="text-end" (click)="update(content, transaction, true)">image</mat-icon>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-4">{{ transaction.acc_name }}</div>
             <div class="col-sm-4 text-center">{{ transaction.date }}</div>
-            <div style="font-size: 16px;"
-                [classList]="getMoneyVal(transaction, 'col-sm-4 text-end font-weight-bold ', 'negative-val', 'positive-val')">
+            <div style="font-size: 16px;" [classList]="getMoneyVal(transaction, 'col-sm-4 text-end font-weight-bold ', 'negative-val', 'positive-val')">
                 {{ transaction.amount }}
             </div>
         </div>
@@ -61,10 +71,8 @@
         <span class="pe-3">Showing {{ (transactionStartOffset + 1) }} - {{ transactionStartOffset + noOfRecordsFetched
             }} of {{ totalRecords }} records </span>
         <div class="btn-group" role="group" aria-label="Navigator">
-            <button type="button" class="btn btn-outline-primary" (click)="prev()"
-                [disabled]="disablePrev">&lt;</button>
-            <button type="button" class="btn btn-outline-primary" (click)="next()"
-                [disabled]="disableNext">&gt;</button>
+            <button type="button" class="btn btn-outline-primary" (click)="prev()" [disabled]="disablePrev">&lt;</button>
+            <button type="button" class="btn btn-outline-primary" (click)="next()" [disabled]="disableNext">&gt;</button>
         </div>
     </div>
 </div>
@@ -79,8 +87,7 @@
     <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="markDeliveryOrder($event)" let-value>
         Mark as Delivery Order
     </ng-template>
-    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="markDeliveryOrder($event)"
-        let-value>Unmark as Delivery Order</ng-template>
+    <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="markDeliveryOrder($event)" let-value>Unmark as Delivery Order</ng-template>
     <ng-template [visible]="showUnmarkSetDelivery" contextMenuItem (execute)="setOrderDelivered($event)" let-value>
         Set Order Delivered
     </ng-template>
@@ -110,5 +117,5 @@
 <button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
     modal</button>
 
-<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
-    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="modalBtnName"></app-confirm-dialog>
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>

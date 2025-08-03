@@ -54,6 +54,7 @@ export class AllTransactionsComponent implements OnInit {
   updateTrans: any;
   modifiedRecord: any = {};
   modalBtnName: string = '';
+  transDescriptionForAll: string = '';
 
   @Input() accountId = null;
 
@@ -167,15 +168,15 @@ export class AllTransactionsComponent implements OnInit {
       });
   }
 
-  showTagsForUpdateAll() {
-    let showTags = false;
+  showSectionsForSelectAll() {
+    let showSelectAllSections = false;
     for (const item of this.transactions as any[]) {
       if (item.selected === true) {
-        showTags = true;
+        showSelectAllSections = true;
         break;
       }
     }
-    return showTags;
+    return showSelectAllSections;
   }
 
   select(e: any) {
@@ -301,13 +302,17 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   updateTransaction(_obj_: any, viaConfirm = false) {
-    this.apiService.updateTransaction([_obj_]).subscribe({
+    if (!Array.isArray(_obj_)) {
+      _obj_ = [_obj_];
+    }
+    this.apiService.updateTransaction(_obj_).subscribe({
       next: (resp: any) => {
         if (resp[0].success === true) {
           this.utilService.showAlert("Transaction Updated Successfully.", "success");
           if (viaConfirm) {
             this.canClose = true;
           }
+          this.selectAllActive = false;
           this.fetchTransactions(this.inputParams, this.apiFuncName);
         } else {
           this.utilService.showAlert("Transaction Update Failed. Failure: " + JSON.stringify(resp[0]));
@@ -596,6 +601,21 @@ export class AllTransactionsComponent implements OnInit {
         this.utilService.showAlert(err);
       }
     });
+  }
+
+  onChangeUpdateAll(e: any) {
+    this.transDescriptionForAll = e.target.value;
+  }
+
+  updateAllTransDesc() {
+    let _updTrans: any[] = [];
+    this.transactions.filter((item: any) => item.selected == true).forEach((item: any) => {
+      _updTrans.push({
+        trans_desc: this.transDescriptionForAll,
+        trans_id: item.id
+      });
+    });
+    this.updateTransaction(_updTrans);
   }
   
   /**

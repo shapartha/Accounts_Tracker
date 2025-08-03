@@ -1,11 +1,13 @@
 {
   "name": "accounts-tracker",
-  "version": "13.1.12",
+  "version": "13.3.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npm version patch --no-git-tag-version && node update-app-info.mjs && ng build --base-href='https://shapartha.github.io/Accounts_Tracker/'",
-    "prebuild": "node update-app-info.mjs",
+    "build": "ng build --base-href='https://shapartha.github.io/Accounts_Tracker/'",
+    "prebuild": "npm version patch --no-git-tag-version && node update-app-info.mjs",
+    "major": "npm version major --no-git-tag-version && node update-app-info.mjs",
+    "minor": "npm version minor --no-git-tag-version && node update-app-info.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "deploy": "npx angular-cli-ghpages --dir=dist/accounts-tracker/browser --no-silent"
