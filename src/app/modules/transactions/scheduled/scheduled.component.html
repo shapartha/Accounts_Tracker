@@ -10,7 +10,7 @@
                     <div class="row">
                         <h5 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">
                             {{ utilService.formatAmountWithComma(trans.trans_amount) }}</h5>
-                        <h6 class="col-md-6">{{ trans.scheme_name }}</h6>
+                        <h6 class="col-md-6">{{ trans.scheme_name }} @if (trans.is_mf == 1 || trans.is_equity == 1) { ({{ trans.mf_nav }}) }</h6>
                     </div>
                     <div class="card-text row">
                         <p class="col-md-6">{{ trans.account_name }}</p>
