@@ -4,6 +4,16 @@
         width: 50%;
     }
 
+    .col-sm-9 {
+        flex: 0 0 auto;
+        width: 75%;
+    }
+
+    .col-sm-3 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
     .col-sm-4 {
         flex: 0 0 auto;
         width: 33.33333333%;
@@ -15,12 +25,12 @@
 }
 
 .transaction-item {
-    font-size: 14px;
+    font-size: 10px;
     border-radius: 5px;
 }
 
 .paginator {
-    font-size: 14px;
+    font-size: 10px;
 }
 
 .no-trans-header {
@@ -31,4 +41,11 @@
 .selected {
     border: 1px dashed black;
     opacity: 0.4;
+}
+
+::ng-deep #selectAllDiv .mdc-label {
+    margin-top: .5rem !important;
+    margin-left: .5rem !important;
+    display: inline-flex;
+    align-items: center;
 }

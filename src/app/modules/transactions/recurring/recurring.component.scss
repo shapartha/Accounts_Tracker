@@ -9,7 +9,11 @@
 }
 
 .card-text.row {
-    font-size: 14px;
+    font-size: 10px;
+
+    p {
+        margin-bottom: 4px;
+    }
 }
 
 ::ng-deep.carousel-indicators [data-bs-target] {

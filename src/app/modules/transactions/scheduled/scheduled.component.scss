@@ -1,6 +1,6 @@
 @media (max-width: 767px) {
     .card-text.row>* {
-        width: 50% !important;
+        width: 33% !important;
     }
 }
 
@@ -9,7 +9,11 @@
 }
 
 .card-text.row {
-    font-size: 14px;
+    font-size: 10px;
+
+    p {
+        margin-bottom: 4px;
+    }
 }
 
 ::ng-deep.carousel-indicators [data-bs-target] {

@@ -1,10 +1,11 @@
 <div class="container mt-2" id="transaction-tags-section">
-    <h3>Transaction Tags <button class="float-end btn btn-primary" (click)="addTag(content)"><i class="bi bi-plus"></i><span> Add</span></button></h3>
+    <h5>Transaction Tags <button class="float-end btn btn-primary" (click)="addTag(content)"><i class="bi bi-plus"></i><span> Add</span></button></h5>
     @for (tag of tags; track tag) {
-    <div class="ps-2 pe-2 pt-2 d-inline-grid w-33">
+    <div class="row ps-2 pe-2 pt-2 d-inline-grid w-50">
         <div class="row">
-            <div class="col-md-6 font-weight-bold" (click)="showRelatedTransactions(tag)"><span matBadge="{{ tag.itemsCount }}" matBadgeOverlap="false" matBadgeColor="warn">{{ tag.tagName }}</span></div>
-            <div class="col-md-6 text-end">
+            <div class="col-md-8 font-weight-bold" (click)="showRelatedTransactions(tag)"><span matBadge="{{ tag.itemsCount }}" matBadgeOverlap="false"
+                    matBadgeColor="warn">{{ tag.tagName }}</span></div>
+            <div class="col-md-4 text-end">
                 <mat-icon class="text-end" (click)="editTag(content, tag)">edit</mat-icon>
                 <mat-icon class="text-end" (click)="deleteTagConfirm(tag)">delete</mat-icon>
             </div>
@@ -37,5 +38,5 @@
 <button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
     modal</button>
 
-<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
-    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="modalBtnName"></app-confirm-dialog>
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>

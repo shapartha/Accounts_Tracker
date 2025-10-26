@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ApiConstants } from 'app/const/api.constants';
 import { Account } from 'app/models/account';
 import { ConfirmData } from 'app/models/confirm';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { ConfirmDialogComponent } from '../modals/confirm-dialog/confirm-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-auto-mails',
   standalone: true,
-  imports: [CommonModule, ContextMenuModule, ConfirmDialogComponent],
+  imports: [CommonModule, ConfirmDialogComponent, MatIconModule],
   templateUrl: './auto-mails.component.html',
   styleUrl: './auto-mails.component.scss'
 })
@@ -109,9 +109,12 @@ export class AutoMailsComponent implements OnInit {
     }
   }
 
-  acceptItem(evt: any) {
-    this.selectedRecord = evt;
-    this.modalTitle = "Accept this transaction - " + this.selectedRecord.value.trans.trans_desc + " ?";
+  acceptItem(trans: any, acc: any) {
+    this.selectedRecord = {
+      trans: trans,
+      acc: acc
+    };
+    this.modalTitle = "Accept this transaction - " + trans.trans_desc + " ?";
     this.modalBody = "You're about to add this as a new transaction. Are you sure you want to accept this transaction ?";
     this.modalBtnName = 'Accept';
     this.confirmData = {
@@ -124,7 +127,7 @@ export class AutoMailsComponent implements OnInit {
   }
 
   acceptItemConfirmed(evt: any) {
-    let item = evt.value;
+    let item = evt;
     let _accId = item.acc.accId;
     let _inpObj = {
       amount: item.trans.trans_amt.replace(",", ""),
@@ -150,9 +153,12 @@ export class AutoMailsComponent implements OnInit {
     });
   }
 
-  rejectItem(evt: any) {
-    this.selectedRecord = evt;
-    this.modalTitle = "Reject this transaction - " + this.selectedRecord.value.trans.trans_desc + " ?";
+  rejectItem(trans: any, acc: any) {
+    this.selectedRecord = {
+      trans: trans,
+      acc: acc
+    };
+    this.modalTitle = "Reject this transaction - " + trans.trans_desc + " ?";
     this.modalBody = "You're about to remove this from the gmail transaction logs. Are you sure you want to reject this transaction ?";
     this.modalBtnName = 'Reject';
     this.confirmData = {
@@ -165,13 +171,13 @@ export class AutoMailsComponent implements OnInit {
   }
 
   rejectItemConfirmed(evt: any) {
-    this.markMsgProcessed(evt.value);
+    this.markMsgProcessed(evt);
     this.canClose = true;
   }
 
   deleteItem(evt: any) {
     this.selectedRecord = evt;
-    this.modalTitle = "Delete this mail condition - " + this.selectedRecord.value.filter + " ?";
+    this.modalTitle = "Delete this mail condition - " + this.selectedRecord.filter + " ?";
     this.modalBody = "You're about to remove this mail filter condition. Are you sure you want to delete this ?";
     this.modalBtnName = 'Delete';
     this.confirmData = {
@@ -184,7 +190,7 @@ export class AutoMailsComponent implements OnInit {
   }
 
   deleteItemConfirmed(evt: any) {
-    let data = evt.value;
+    let data = evt;
     let _inpObj = {
       filter: data.filter
     };

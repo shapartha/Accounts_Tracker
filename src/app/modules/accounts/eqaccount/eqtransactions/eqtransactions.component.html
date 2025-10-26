@@ -19,7 +19,7 @@
         </div>
         <div class="col-sm-3">
             <div *ngIf="transactionsModified != true">
-                <div class="row font-weight-bold" style="font-size: 14px;">
+                <div class="row font-weight-bold" style="font-size: 10px;">
                     <div [classList]="getMoneyValue(eqAccount, 'col-sm-12 text-end ', 'negative-val', 'positive-val')">{{eqAccount.curr_amt}}</div>
                 </div>
                 <div class="row small-font">
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div *ngIf="transactionsModified == true">
-                <div class="row font-weight-bold text-center" style="font-size: 14px;">
+                <div class="row font-weight-bold text-center" style="font-size: 10px;">
                     Refresh
                 </div>
             </div>

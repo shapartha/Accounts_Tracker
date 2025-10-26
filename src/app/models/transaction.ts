@@ -18,6 +18,7 @@ export interface Transaction {
     is_mf?: string;
     is_delivery_order?: string;
     is_delivered?: string;
+    selected?: boolean;
 }
 
 export interface SaveTransaction {

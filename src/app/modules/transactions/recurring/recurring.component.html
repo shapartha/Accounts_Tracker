@@ -1,24 +1,26 @@
 <div *ngIf="pending_rec_trans.length > 0">
-    <h3>Recurring Transactions for Today</h3>
+    <h5>Recurring Transactions for Today</h5>
     <ngb-carousel #carousel [interval]="slideInterval" [pauseOnHover]="pauseOnHover" [pauseOnFocus]="pauseOnFocus" [showNavigationArrows]="false"
         (slide)="onSlide($event)">
         @for (trans of pending_rec_trans; track trans; let i = $index) {
         <ng-template ngbSlide>
             <div class="card">
-                <h5 class="card-header bg-dark">{{ trans.rec_trans_desc }}</h5>
+                <h6 class="card-header bg-dark">{{ trans.rec_trans_desc }}</h6>
                 <div [classList]="'card-body' + (trans.rec_trans_type == 'DEBIT' ? ' bg-danger-subtle' : ' bg-success-subtle')">
                     <div class="row">
-                        <h5 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">
-                            {{ utilService.formatAmountWithComma(trans.rec_trans_amount) }}</h5>
-                        <h6 class="col-md-6">{{ trans.scheme_name }}</h6>
+                        <h6 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">
+                            {{ utilService.formatAmountWithComma(trans.rec_trans_amount) }}</h6>
+                        <h6 class="col-md-6" *ngIf="trans.is_mf == 1 || trans.is_equity == 1">{{ trans.scheme_name }}</h6>
                     </div>
                     <div class="card-text row">
                         <p class="col-md-4">{{ trans.account_name }}</p>
-                        <p class="col-md-4 text-center">Due On {{
-                            utilService.formatDate(utilService.getFullDate(trans.rec_trans_date))
-                            }}</p>
-                        <p class="col-md-4 text-end">Last Executed: {{
-                            utilService.formatDate(trans.rec_trans_last_executed) }}
+                        <p class="col-md-4 text-center">Due On
+                            <br>
+                            {{ utilService.formatDate(utilService.getFullDate(trans.rec_trans_date)) }}
+                        </p>
+                        <p class="col-md-4 text-end">Last Executed:
+                            <br>
+                            {{ utilService.formatDate(trans.rec_trans_last_executed) }}
                         </p>
                     </div>
                     <div class="btn-group" role="group" aria-label="Action Buttons">

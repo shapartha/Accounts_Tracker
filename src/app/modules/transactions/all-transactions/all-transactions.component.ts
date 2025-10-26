@@ -6,6 +6,7 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
@@ -23,7 +24,7 @@ import { UtilService } from 'app/services/util.service';
   selector: 'app-all-transactions',
   standalone: true,
   imports: [CommonModule, MatIconModule, ContextMenuModule, ConfirmDialogComponent, UpdateTransactionComponent, MatChipsModule, MatAutocompleteModule,
-    MatInputModule, MatSelectModule
+    MatInputModule, MatSelectModule, MatCheckboxModule
   ],
   templateUrl: './all-transactions.component.html',
   styleUrl: './all-transactions.component.scss'
@@ -180,7 +181,7 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   select(e: any) {
-    this.selectedRecord = e.value;
+    this.selectedRecord = e;
     this.selectedRecord.selected = !this.selectedRecord.selected;
   }
 
@@ -346,9 +347,6 @@ export class AllTransactionsComponent implements OnInit {
 
   getCustomClass(value: any, existingClass: string, negativeClass: string, positiveClass: string) {
     let classListValue = this.getMoneyVal(value, existingClass, negativeClass, positiveClass);
-    if (value.selected == true) {
-      classListValue += ' selected';
-    }
     return classListValue;
   }
 

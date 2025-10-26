@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { NgbCarouselModule, NgbCarousel, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
@@ -9,7 +10,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-scheduled',
   standalone: true,
-  imports: [NgbCarouselModule, FormsModule, CommonModule],
+  imports: [NgbCarouselModule, FormsModule, CommonModule, MatIconModule],
   templateUrl: './scheduled.component.html',
   styleUrl: './scheduled.component.scss'
 })

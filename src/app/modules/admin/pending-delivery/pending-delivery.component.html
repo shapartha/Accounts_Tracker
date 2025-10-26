@@ -2,12 +2,12 @@
     @for (transaction of pendingDeliveries; track transaction) {
     <div [contextMenu]="oneContextMenu" [contextMenuValue]="transaction">
         <div class="row">
-            <div class="col-sm-12 font-weight-bold" style="font-size: 16px;">{{ transaction.description }}</div>
+            <div class="col-sm-12 font-weight-bold" style="font-size: 12px;">{{ transaction.description }}</div>
         </div>
         <div class="row transaction-item">
             <div class="col-sm-4">{{ transaction.acc_name }}</div>
             <div class="col-sm-4 text-center">{{ transaction.date }}</div>
-            <div class="col-sm-4 text-end" style="font-size: 16px;" [ngClass]="getClassVal(transaction)"> {{ transaction.amount }} </div>
+            <div class="col-sm-4 text-end" style="font-size: 12px;" [ngClass]="getClassVal(transaction)"> {{ transaction.amount }} </div>
         </div>
     </div>
     }

@@ -1,27 +1,35 @@
 <div *ngIf="pending_scheduled_trans.length > 0">
-    <h3>Scheduled Transactions for Today</h3>
+    <h5>Scheduled Transactions for Today</h5>
     <ngb-carousel #carousel [interval]="slideInterval" [pauseOnHover]="pauseOnHover" [pauseOnFocus]="pauseOnFocus" [showNavigationArrows]="false"
         (slide)="onSlide($event)">
         @for (trans of pending_scheduled_trans; track trans; let i = $index) {
         <ng-template ngbSlide>
             <div class="card">
-                <h5 class="card-header bg-dark">{{ trans.trans_desc }}</h5>
+                <h6 class="card-header bg-dark">{{ trans.trans_desc }}</h6>
                 <div [classList]="'card-body' + (trans.trans_type == 'DEBIT' ? ' bg-warning-subtle' : ' bg-primary-subtle')">
                     <div class="row">
-                        <h5 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">
-                            {{ utilService.formatAmountWithComma(trans.trans_amount) }}</h5>
-                        <h6 class="col-md-6">{{ trans.scheme_name }} @if (trans.is_mf == 1 || trans.is_equity == 1) { ({{ trans.mf_nav }}) }</h6>
+                        <h6 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">
+                            {{ utilService.formatAmountWithComma(trans.trans_amount) }}</h6>
+                        <h6 class="col-md-6" *ngIf="trans.is_mf == 1 || trans.is_equity == 1">{{ trans.scheme_name }} @if (trans.is_mf == 1 || trans.is_equity == 1) { ({{
+                            trans.mf_nav }}) }</h6>
                     </div>
                     <div class="card-text row">
-                        <p class="col-md-6">{{ trans.account_name }}</p>
-                        <p class="col-md-6 text-end">Due On {{
-                            utilService.formatDate(utilService.getFullDate(trans.trans_date))
-                            }}</p>
-                    </div>
-                    <div class="btn-group" role="group" aria-label="Action Buttons">
-                        <button type="button" class="btn btn-success" (click)="process(trans)">Process</button>
-                        <button type="button" class="btn btn-danger" (click)="remove(trans)">Remove</button>
-                        <button type="button" class="btn btn-secondary" (click)="postpone(trans)">Postpone</button>
+                        <p class="col-md-4">{{ trans.account_name }}</p>
+                        <p class="col-md-4 text-center">Due On
+                            <br>
+                            {{ utilService.formatDate(utilService.getFullDate(trans.trans_date)) }}
+                        </p>
+                        <div class="btn-group col-md-4" role="group" aria-label="Action Buttons">
+                            <button type="button" class="btn btn-success" (click)="process(trans)">
+                                <mat-icon>check_circle</mat-icon>
+                            </button>
+                            <button type="button" class="btn btn-danger" (click)="remove(trans)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                            <button type="button" class="btn btn-secondary" (click)="postpone(trans)">
+                                <mat-icon>more_time</mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

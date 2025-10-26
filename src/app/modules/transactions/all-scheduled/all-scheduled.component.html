@@ -1,5 +1,5 @@
 <div class="container" id="all-scheduled-section">
-    <h3>All Scheduled Transactions</h3>
+    <h5>All Scheduled Transactions</h5>
     <div *ngIf="scheduled_trans == null || scheduled_trans.length == 0" class="no-trans-header">
         No scheduled transactions available.
     </div>
@@ -8,14 +8,14 @@
         <div class="card" [contextMenu]="oneContextMenu" [contextMenuValue]="trans">
             <div class="card-body" [ngClass]="trans.trans_type == 'DEBIT' ? 'bg-info-subtle': 'bg-warning-subtle'">
                 <div class="row">
-                    <h5 class="col-md-6"> {{ trans.trans_desc }}</h5>
-                    <h6 class="col-md-6"> {{ trans.scheme_name }} @if (trans.is_mf == 1 || trans.is_equity == 1) { ({{ trans.mf_nav }}) }</h6>
+                    <h6 class="col-md-6"> {{ trans.trans_desc }}</h6>
+                    <h6 class="col-md-6" *ngIf="trans.is_mf == 1 || trans.is_equity == 1"> {{ trans.scheme_name }} @if (trans.is_mf == 1 || trans.is_equity == 1) { ({{ trans.mf_nav }}) }</h6>
                 </div>
                 <div class="card-text row">
                     <span class="col-md-4">{{ trans.account_name }}</span>
                     <span class="col-md-4 text-center">{{ trans.trans_date }}</span>
                     <span class="col-md-4 text-end font-weight-bold" [ngClass]="trans.trans_type == 'DEBIT' ? 'negative-val': 'positive-val'"
-                        style="font-size: 1rem;">{{ trans.trans_amount }}</span>
+                        style="font-size: 10px;">{{ trans.trans_amount }}</span>
                 </div>
             </div>
         </div>

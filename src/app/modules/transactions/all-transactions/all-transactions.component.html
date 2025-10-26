@@ -1,8 +1,13 @@
 <div class="container mt-2" id="all-transactions-section">
-    <h3 *ngIf="accountId == null">{{ transactionHeader }}</h3>
-    <h4 *ngIf="accountId == null && inputAccountData != null && inputAccountData.id != null">Balance: <span class="float-end font-weight-bold "
+    <h5 *ngIf="accountId == null">{{ transactionHeader }}</h5>
+    <h6 *ngIf="accountId == null && inputAccountData != null && inputAccountData.id != null">Balance: <span class="float-end font-weight-bold "
             [ngClass]="utilService.formatStringValueToAmount(showAmount) < 0 ? 'negative-val': 'positive-val'">{{
-            showAmount }}</span></h4>
+            showAmount }}</span></h6>
+    <div id="selectAllDiv" *ngIf="showSelectAll">
+        <mat-checkbox [checked]="selectAllActive" (change)="selectAll($event)">
+            {{ selectAllActive ? 'Deselect All' : 'Select All' }}
+        </mat-checkbox>
+    </div>
     <div class="row mb-3" *ngIf="showSectionsForSelectAll()">
         <mat-form-field class="mt-3 w-75" appearance="outline">
             <mat-label>Tags</mat-label>
@@ -47,18 +52,22 @@
     <div [contextMenu]="oneContextMenu" [contextMenuValue]="transaction"
         [classList]="getCustomClass(transaction, 'transaction-item ps-2 pe-2 pt-2 ', 'bg-danger-subtle', 'bg-success-subtle')">
         <div class="row">
-            <div class="col-sm-6 font-weight-bold" style="font-size: 16px;">{{ transaction.description }}</div>
-            <div class="col-sm-6 text-end">
+            <div class="col-sm-9 font-weight-bold" style="font-size: 12px;">
+                <mat-checkbox [checked]="transaction.selected" (change)="select(transaction)"></mat-checkbox>
+                {{ transaction.description }}
+            </div>
+            <div class="col-sm-3 text-end"
+                *ngIf="transaction.is_delivered == '1' || (transaction.is_delivery_order == '1' && (transaction.is_delivered == undefined || transaction.is_delivered == '0')) || transaction.receiptImgId != null">
                 <mat-icon *ngIf="transaction.is_delivered == '1'" class="text-end" style="color: green;">shopping_cart</mat-icon>
                 <mat-icon *ngIf="transaction.is_delivery_order == '1' && (transaction.is_delivered == undefined || transaction.is_delivered == '0')" class="text-end"
                     style="color: grey;">add_shopping_cart</mat-icon>
                 <mat-icon *ngIf="transaction.receiptImgId != null" class="text-end" (click)="update(content, transaction, true)">image</mat-icon>
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="align-items: baseline;">
             <div class="col-sm-4">{{ transaction.acc_name }}</div>
             <div class="col-sm-4 text-center">{{ transaction.date }}</div>
-            <div style="font-size: 16px;" [classList]="getMoneyVal(transaction, 'col-sm-4 text-end font-weight-bold ', 'negative-val', 'positive-val')">
+            <div style="font-size: 12px;" [classList]="getMoneyVal(transaction, 'col-sm-4 text-end font-weight-bold ', 'negative-val', 'positive-val')">
                 {{ transaction.amount }}
             </div>
         </div>
@@ -78,10 +87,6 @@
 </div>
 
 <context-menu #oneContextMenu [menuClass]="'app-trans-context-menu'">
-    <ng-template contextMenuItem (execute)="select($event)" let-value>Select</ng-template>
-    <ng-template [visible]="showSelectAll" contextMenuItem (execute)="selectAll($event)" let-value>
-        {{ selectAllActive ? 'Deselect All' : 'Select All' }}
-    </ng-template>
     <ng-template [visible]="showUpdate" contextMenuItem (execute)="update(content, $event)" let-value>Update</ng-template>
     <ng-template [visible]="showDeleteCopy" contextMenuItem (execute)="delete($event)" let-value>Delete</ng-template>
     <ng-template [visible]="showMarkDelivery" contextMenuItem (execute)="markDeliveryOrder($event)" let-value>

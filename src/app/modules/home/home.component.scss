@@ -1,5 +1,5 @@
 .card-img-top {
-    height: 140px;
+    height: 100px;
 }
 
 #home-section {
@@ -16,7 +16,7 @@
 
 @media (max-width: 767px) {
     .row>* {
-        width: 50% !important;
+        width: 33% !important;
     }
 }
 

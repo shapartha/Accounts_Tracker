@@ -13,6 +13,11 @@ $travel-birds-theme: mat.define-light-theme((color: (primary: $travel-birds-prim
 
 @include mat.all-component-themes($travel-birds-theme);
 
+:root {
+    font-size: 12px;
+    /* 1rem = 10px */
+}
+
 body {
     font-family: Arial, sans-serif;
 }
@@ -30,6 +35,8 @@ footer {
 
 .card {
     margin-bottom: 20px;
+    --bs-card-spacer-y: .5rem !important;
+    --bs-card-spacer-x: .5rem !important;
 }
 
 @media (max-width: 768px) {
@@ -41,6 +48,9 @@ footer {
 html,
 body {
     height: 100%;
+    --mdc-checkbox-state-layer-size: 15px;
+    --mdc-list-list-item-label-text-size: 13px;
+    --mdc-list-list-item-one-line-container-height: 30px;
 }
 
 body {
@@ -120,7 +130,7 @@ body {
 }
 
 .small-font {
-    font-size: 12px !important;
+    font-size: 8px !important;
 }
 
 .purple-val {
@@ -133,4 +143,47 @@ body {
 
 .hyperlink {
     cursor: pointer;
+}
+
+.material-icons {
+    font-size: 16px;
+}
+
+.mat-icon {
+    height: 16px !important;
+    width: 16px !important;
+}
+
+.btn {
+    --bs-btn-font-size: 12px;
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-padding-y: 0.25rem;
+}
+
+.mdc-checkbox {
+    width: 12px !important;
+    height: 12px !important;
+    flex: 0 0 12px !important;
+}
+
+.mdc-form-field {
+    --mdc-form-field-label-text-size: 12px !important;
+}
+
+.mdc-checkbox__background {
+    height: 14px !important;
+    width: 14px !important;
+}
+
+.row {
+    --bs-gutter-x: 1rem;
+}
+
+.btn-default {
+    --bs-btn-bg: #fdf9ee;
+    --bs-btn-border-color: #fdf9ee;
+    --bs-btn-hover-bg: #fdfdfd;
+    --bs-btn-hover-border-color: #fafdec;
+    --bs-btn-active-bg: #fefdfa;
+    --bs-btn-active-border-color: #fafdec;
 }

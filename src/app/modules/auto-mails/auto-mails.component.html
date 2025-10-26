@@ -1,19 +1,30 @@
 <div class="container mt-2" id="auto-mail-trans-section">
-    <h3 style="margin-bottom: 40px;">
+    <h5 style="margin-bottom: 40px;">
         Transaction Reader from Emails
         <button class="float-end btn btn-danger" *ngIf="signedIn" (click)="signOut()"><i class="bi bi-box-arrow-right"></i><span> Sign Out</span></button>
-        <button class="float-end btn btn-warning me-2" (click)="readGoogle()"><i class="bi bi-google"></i><span> {{ signedIn ? 'Read from Google' : 'Sign
-                In'}}</span></button>
-    </h3>
+        <button class="float-end btn btn-warning me-2" (click)="readGoogle()"><i class="bi bi-google"></i><span> {{ signedIn ? 'Read' : 'Sign In'}}</span></button>
+    </h5>
     @for (acc_cat of mail_trans_cat; track acc_cat; let i = $index) {
     <div class="card">
-        <h5 class="card-header bg-dark" [contextMenu]="twoContextMenu" [contextMenuValue]="acc_cat">{{ acc_cat.accName }}</h5>
+        <h6 class="card-header bg-dark">
+            {{ acc_cat.accName }}
+            <mat-icon (click)="deleteItem(acc_cat)">delete_forever</mat-icon>
+        </h6>
         <div class="card-body">
             @for (trans of acc_cat.data; track trans; let idx = $index) {
-            <div class="card-text row pt-1" [contextMenu]="oneContextMenu" [contextMenuValue]="{trans: trans, acc: acc_cat}">
+            <div class="card-text row pt-1">
                 <div class="col-md-4">{{ trans?.trans_desc }}</div>
-                <div class="col-md-4 text-center">{{ utilService.formatDate(utilService.getDate(trans?.trans_date)) }}</div>
-                <div class="col-md-4 text-end" [ngClass]="getAmountClass(trans.trans_type)">{{ utilService.formatAmountWithComma(trans?.trans_amt) }}</div>
+                <div class="col-md-4 text-center" style="width: 25%;">{{ utilService.formatDate(utilService.getDate(trans?.trans_date)) }}</div>
+                <div class="col-md-4 text-end" style="width: 25%;" [ngClass]="getAmountClass(trans.trans_type)">{{ utilService.formatAmountWithComma(trans?.trans_amt) }}
+                </div>
+                <div class="btn-group col-md-4" style="width: 16.66%;" role="group" aria-label="Action Buttons">
+                    <button type="button" class="btn btn-success" (click)="acceptItem(trans, acc_cat)">
+                        <mat-icon>check_circle</mat-icon>
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="rejectItem(trans, acc_cat)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
             </div>
             }
         </div>
@@ -23,15 +34,6 @@
         <button class="btn btn-primary" (click)="cleanUp()"><i class="bi bi-delete"></i><span> Clean Up</span></button>
     </div>
 </div>
-
-<context-menu #oneContextMenu [menuClass]="'app-auto-mails-context-menu'">
-    <ng-template contextMenuItem (execute)="acceptItem($event)" let-value>Accept</ng-template>
-    <ng-template contextMenuItem (execute)="rejectItem($event)" let-value>Reject</ng-template>
-</context-menu>
-
-<context-menu #twoContextMenu [menuClass]="'app-auto-mails-parent-context-menu'">
-    <ng-template contextMenuItem (execute)="deleteItem($event)" let-value>Delete</ng-template>
-</context-menu>
 
 <button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
     modal</button>

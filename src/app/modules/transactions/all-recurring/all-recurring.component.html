@@ -1,5 +1,5 @@
 <div class="container" id="all-recurring-section">
-    <h3>All Recurring Transactions</h3>
+    <h5>All Recurring Transactions</h5>
     <div *ngIf="recurring_trans == null || recurring_trans.length == 0" class="no-trans-header">
         No scheduled transactions available.
     </div>
@@ -9,8 +9,8 @@
             <div class="card-body"
                 [ngClass]="trans.rec_trans_executed == '1' ? 'bg-success-subtle': ((trans.is_paused == '1') ? 'bg-secondary-subtle': 'bg-info-subtle')">
                 <div class="row">
-                    <h5 class="col-md-6"> {{ trans.rec_trans_desc }}</h5>
-                    <span class="col-md-6" style="font-size: 14px; color: purple;" *ngIf="trans.is_mf == '1'">
+                    <h6 class="col-md-6"> {{ trans.rec_trans_desc }}</h6>
+                    <span class="col-md-6" style="font-size: 10px; color: purple;" *ngIf="trans.is_mf == '1'">
                         {{ trans.rec_mf_scheme_name }}
                     </span>
                 </div>
@@ -21,7 +21,7 @@
                         }}</span>
                     <span class="col-md-3 text-end font-weight-bold"
                         [ngClass]="trans.rec_trans_type == 'DEBIT' ? 'negative-val': 'positive-val'"
-                        style="font-size: 1rem;">{{ trans.rec_trans_amount }}</span>
+                        style="font-size: 10px;">{{ trans.rec_trans_amount }}</span>
                 </div>
             </div>
         </div>
