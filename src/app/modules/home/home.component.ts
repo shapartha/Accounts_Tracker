@@ -43,6 +43,7 @@ export class HomeComponent implements OnInit {
   constructor(private apiService: ApiService, public utilService: UtilService, private router: Router, private modalService: NgbModal) { }
 
   ngOnInit(): void {
+    this.utilService.removeSessionStorageData('lastAccountId');
     this.getAllCategories();
   }
 

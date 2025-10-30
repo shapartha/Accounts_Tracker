@@ -267,4 +267,61 @@ export class UtilService {
     }
     return finalImage;
   }
+
+  isNotBlank(value: any): boolean {
+    if (value === null || value === undefined) return false;
+
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    if (typeof value === 'object') {
+      return Object.keys(value as Record<string, unknown>).length > 0;
+    }
+
+    // numbers/booleans etc. are considered "not blank" if not null/undefined
+    return true;
+  }
+
+  /**
+   * Reload Service functions start
+   */
+
+  initReloadWatcher(): void {
+    const nav = (performance.getEntriesByType('navigation')[0]) as PerformanceNavigationTiming | undefined;
+    if (nav?.type === 'reload') {
+      this.onReloadDetected();
+    }
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+    window.addEventListener('pagehide', this.handlePageHide);
+  }
+
+  destroyReloadWatcher(): void {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+    window.removeEventListener('pagehide', this.handlePageHide);
+  }
+
+  private handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    localStorage.setItem('lastUnloadTs', Date.now().toString());
+    if (navigator.sendBeacon) {
+      const payload = JSON.stringify({ event: 'unload', ts: Date.now() });
+      navigator.sendBeacon('/api/track-unload', new Blob([payload], { type: 'application/json' }));
+    }
+  }
+
+  private handlePageHide = (ev: PageTransitionEvent) => this.handleBeforeUnload(ev as unknown as BeforeUnloadEvent);
+
+  private onReloadDetected(): void {
+    console.log('Reload detected (CoreService)');
+    this.removeSessionStorageData('serverTime');
+    this.removeSessionStorageData('lastAccountId');
+  }
+
+  /**
+   * Reload service functions end
+   */
 }

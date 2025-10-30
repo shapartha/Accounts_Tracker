@@ -1,5 +1,5 @@
 <div class="container mt-2" id="manage-mutual-funds-section">
-    <h3>Manage Mutual Funds <button *ngIf="selectedTab.value == 0" class="float-end btn btn-success" (click)="refreshMFs()"><i class="bi bi-repeat"></i><span> Refresh</span></button></h3>
+    <h5>Manage Mutual Funds <button *ngIf="selectedTab.value == 0" class="float-end btn btn-success" (click)="refreshMFs()"><i class="bi bi-repeat"></i><span> Refresh</span></button></h5>
     <mat-tab-group animationDuration="300ms" [selectedIndex]="selectedTab.value" (selectedIndexChange)="selectedTab.setValue($event)" class="w-100">
         <mat-tab label="Dashboard">
             <ng-template matTabContent>

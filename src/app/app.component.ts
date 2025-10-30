@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,7 @@ import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { UtilService } from './services/util.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Accounts_Tracker';
   authService: AuthService;
   isLoggedIn: boolean = false;
@@ -34,14 +36,19 @@ export class AppComponent implements OnInit {
       behavior: "smooth",
     });
   }
-  constructor(private elementRef: ElementRef) {
+  constructor(private elementRef: ElementRef, private utilService: UtilService) {
     this.authService = inject(AuthService);
     this.isLoggedIn = this.authService.checkLogin();
+  }
+
+  ngOnDestroy(): void {
+    this.utilService.destroyReloadWatcher();
   }
 
   ngOnInit(): void {
     this.elementRef.nativeElement.removeAttribute("ng-version");
     this.loginSubscription = this.authService.isLoggedIn$.subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn);
+    this.utilService.initReloadWatcher();
   }
 
 }

@@ -288,7 +288,6 @@ export class UpdateTransactionComponent implements OnInit, OnDestroy {
   readonly announcer = inject(LiveAnnouncer);
 
   add(event: MatChipInputEvent): void {
-    this.utilService.showAlert('Please select something from the list');
     return;
   }
 

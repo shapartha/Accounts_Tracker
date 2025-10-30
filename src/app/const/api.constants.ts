@@ -76,6 +76,7 @@ export class ApiConstants {
     static API_GET_TAGS_BY_TRANSID: string = "getTagsByTransId";
     static API_GET_TRANS_BY_TAGID: string = "getTransactionsByTagId";
     static API_QUERY_ANYTHING: string = "excQry";
+    static API_SERVER_TIME: string = "getServerTime";
     
     static SERVER_PATH_URL: string = "https://shapartha.site/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";

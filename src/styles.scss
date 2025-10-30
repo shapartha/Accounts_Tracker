@@ -9,7 +9,7 @@ $travel-birds-theme: mat.define-light-theme((color: (primary: $travel-birds-prim
                 warn: $travel-birds-warn,
             ),
             typography: mat.define-typography-config(),
-            density: 0));
+            density: -4));
 
 @include mat.all-component-themes($travel-birds-theme);
 
@@ -51,6 +51,35 @@ body {
     --mdc-checkbox-state-layer-size: 15px;
     --mdc-list-list-item-label-text-size: 13px;
     --mdc-list-list-item-one-line-container-height: 30px;
+    --mat-form-field-container-text-line-height: 20px;
+    --mat-form-field-container-text-size: 12px;
+    --mdc-filled-text-field-label-text-size: 12px;
+    --mdc-outlined-text-field-label-text-size: 12px;
+    --mat-form-field-container-height: 25px;
+    --mat-option-label-text-size: 12px;
+    
+    --mat-select-trigger-text-line-height: 16px;
+    --mat-select-trigger-text-size: 12px;
+}
+
+.mat-mdc-chip.mat-mdc-standard-chip {
+    --mdc-chip-container-height: 16px !important;
+}
+
+.mat-mdc-standard-chip {
+    --mdc-chip-label-text-size: 12px !important;
+}
+
+.mat-mdc-standard-chip .mdc-evolution-chip__icon--trailing {
+    height: 12px !important;
+    width: 16px !important;
+    font-size: 12px !important;
+}
+
+.mat-mdc-option {
+    min-height: 28px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
 }
 
 body {
@@ -186,4 +215,13 @@ body {
     --bs-btn-hover-border-color: #fafdec;
     --bs-btn-active-bg: #fefdfa;
     --bs-btn-active-border-color: #fafdec;
+}
+
+.mat-select-value {
+    font-size: 12px;
+}
+
+.mat-mdc-tab-header {
+    --mat-tab-header-label-text-size: 12px;
+    --mdc-secondary-navigation-tab-container-height: 26px;
 }

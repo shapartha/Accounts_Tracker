@@ -451,4 +451,9 @@ export class ApiService {
     const apiFuncName = ApiConstants.API_GOOGLE_READ_EMAILS;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
+
+  readServerTime(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SERVER_TIME;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
 }

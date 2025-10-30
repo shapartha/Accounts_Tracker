@@ -89,7 +89,7 @@ export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
         transDate: [this.utilService.getDate()],
         isTransferTrans: [false],
         transType: ['DEBIT'],
-        fromAccDetails: [],
+        fromAccDetails: [this.utilService.getSessionStorageData('lastAccountId')],
         toAccDetails: [],
         mfSchemeCode: [],
         mfNav: [],
@@ -103,6 +103,7 @@ export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
     }
   }
   ngOnDestroy(): void {
+    this.utilService.removeSessionStorageData('lastAccountId');
     this.stopCamera();
   }
 
@@ -635,7 +636,6 @@ export class AddUpdateTransactionComponent implements OnInit, OnDestroy {
   readonly announcer = inject(LiveAnnouncer);
 
   add(event: MatChipInputEvent): void {
-    this.utilService.showAlert('Please select something from the list');
     return;
   }
 

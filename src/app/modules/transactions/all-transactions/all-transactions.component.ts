@@ -23,7 +23,7 @@ import { UtilService } from 'app/services/util.service';
 @Component({
   selector: 'app-all-transactions',
   standalone: true,
-  imports: [CommonModule, MatIconModule, ContextMenuModule, ConfirmDialogComponent, UpdateTransactionComponent, MatChipsModule, MatAutocompleteModule,
+  imports: [CommonModule, MatIconModule, ConfirmDialogComponent, UpdateTransactionComponent, MatChipsModule, MatAutocompleteModule,
     MatInputModule, MatSelectModule, MatCheckboxModule
   ],
   templateUrl: './all-transactions.component.html',
@@ -50,7 +50,7 @@ export class AllTransactionsComponent implements OnInit {
   modalTitle: string = '';
   modalBody: string = '';
   confirmData: ConfirmData = {} as any;
-  selectedRecord: any;
+  selectedRecord: any | any[];
   modalRef: any;
   updateTrans: any;
   modifiedRecord: any = {};
@@ -105,6 +105,7 @@ export class AllTransactionsComponent implements OnInit {
       this.inputParams.account_id = this.inputAccountData.id;
       this.showAmount = this.inputAccountData.balance;
       this.transactionHeader = this.inputAccountData.name + " - Transactions";
+      this.utilService.setSessionStorageData('lastAccountId', this.inputAccountData.id);
     } else if (this.inputSearchObj != null && this.inputSearchObj.user_id != null) {
       this.apiFuncName = ApiConstants.API_SEARCH_TRANSACTION;
       this.inputParams.text = this.inputSearchObj.text;
@@ -152,11 +153,7 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   update(content: TemplateRef<any>, data: any, isViewOnly = false) {
-    if (isViewOnly == true) {
-      this.updateTrans = data;
-    } else {
-      this.updateTrans = data.value;
-    }
+    this.updateTrans = data;
     this.updateTrans.isViewOnly = isViewOnly;
     this.modalRef = this.modalService.open(content,
       {
@@ -197,10 +194,14 @@ export class AllTransactionsComponent implements OnInit {
     }
   }
 
-  delete(e: any) {
-    this.selectedRecord = e.value;
-    this.modalTitle = "Delete " + this.selectedRecord.description;
-    this.modalBody = "You are about to delete this transaction. Do you want to continue ?";
+  delete() {
+    let itemsToDelete: Transaction[] = [];
+    this.transactions.filter((item: any) => item.selected == true).forEach((item: any) => {
+      itemsToDelete.push(item);
+    });
+    this.selectedRecord = itemsToDelete;
+    this.modalTitle = "Delete " + this.selectedRecord.length + " record(s)";
+    this.modalBody = "You are about to delete " + this.selectedRecord.length + " transaction(s). Do you want to continue ?";
     this.modalBtnName = 'Delete';
     this.confirmData = {
       type: 'DELETE',
@@ -213,52 +214,71 @@ export class AllTransactionsComponent implements OnInit {
 
   confirm(evt: ConfirmData) {
     if (evt.type == 'SET-DELIVERED' && evt.value == true) {
-      let _updTrans = {
-        is_delivered: true,
-        trans_id: this.selectedRecord.id
-      };
-      this.updateTransaction(_updTrans, true);
-    } else if (evt.type == 'DELETE' && evt.value == true) {
-      if (this.selectedRecord.is_mf == true || this.selectedRecord.is_equity == true) {
-        this.utilService.showAlert("Transactions can't be deleted. Please Redeem/Sell units to perform transactions", "Close");
-        return;
+      let itemsToSetDelivered: Transaction[] = this.selectedRecord;
+      let finalItemsToSetDelivered: any[] = [];
+
+      for (var item of itemsToSetDelivered) {
+        if (item.is_mf == '1' || item.is_equity == '1') {
+          this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+          return;
+        }
+
+        if (item.is_delivery_order != '1' || item.is_delivered == '1') {
+          this.utilService.showAlert("Only Delivery Orders which are not yet delivered can be set as Delivered. Please uncheck invalid items to proceed", "Close");
+          return;
+        }
+
+        finalItemsToSetDelivered.push({
+          trans_id: item.id,
+          is_delivered: true
+        });
       }
-      this.apiService.deleteTransaction([{ trans_id: this.selectedRecord.id }]).subscribe({
+
+      this.updateTransaction(finalItemsToSetDelivered, true);
+    } else if (evt.type == 'DELETE' && evt.value == true) {
+      let itemsToDelete: Transaction[] = this.selectedRecord;
+      let finalItemsToDelete: any[] = [];
+
+      for (var item of itemsToDelete) {
+        if (item.is_mf == '1' || item.is_equity == '1') {
+          this.utilService.showAlert("MF/Stock transactions can't be deleted. Please uncheck them to proceed", "Close");
+          return;
+        }
+
+        finalItemsToDelete.push({
+          trans_id: item.id
+        });
+      }
+
+      this.apiService.deleteTransaction(finalItemsToDelete).subscribe({
         next: (data: any) => {
-          if (data[0].success === true) {
-            if (this.selectedRecord.transType.toUpperCase() == "DEBIT") {
-              this.selectedRecord.acc_balance = parseFloat(this.selectedRecord.acc_balance) + this.utilService.formatStringValueToAmount(this.selectedRecord.amount);
-            } else {
-              this.selectedRecord.acc_balance = parseFloat(this.selectedRecord.acc_balance) - this.utilService.formatStringValueToAmount(this.selectedRecord.amount);
-            }
-            let _acc = {
-              account_id: this.selectedRecord.acc_id,
-              account_name: this.selectedRecord.acc_name,
-              balance: this.selectedRecord.acc_balance.toString(),
-              user_id: this.selectedRecord.user_id,
-              category_id: this.selectedRecord.cat_id
-            };
-            this.apiService.updateAccount([_acc]).subscribe({
-              next: (data: any) => {
-                if (data[0].success === true) {
-                  this.utilService.showAlert("Transaction " + this.selectedRecord.description + " deleted successfully", "success");
-                  this.canClose = true;
-                  if (this.inputAccountData != null && this.inputAccountData.id != null) {
-                    this.showAmount = this.utilService.formatAmountWithComma(this.selectedRecord.acc_balance.toString());
-                  }
-                  this.fetchTransactions(this.inputParams, this.apiFuncName);
-                } else {
-                  this.utilService.showAlert("Some Error occurred updating the account details.");
-                }
-              }, error: (err) => {
-                console.error(err);
-                this.utilService.showAlert(err);
+          let counter = -1;
+          let accList = [];
+          let idList = [];
+          for (var item of itemsToDelete) {
+            counter++;
+            if (data[counter].success === true) {
+              if (item.transType!.toUpperCase() == "DEBIT") {
+                item.acc_balance = String(parseFloat(item.acc_balance!) + this.utilService.formatStringValueToAmount(item.amount));
+              } else {
+                item.acc_balance = String(parseFloat(item.acc_balance!) - this.utilService.formatStringValueToAmount(item.amount));
               }
-            });
-            this.deleteAssociatedTags(this.selectedRecord.id);
-          } else {
-            this.utilService.showAlert("An error occurred | " + data[0].response + ":" + data[0].responseDescription);
+              let _acc = {
+                account_id: item.acc_id,
+                account_name: item.acc_name,
+                balance: item.acc_balance.toString(),
+                user_id: item.user_id,
+                category_id: item.cat_id
+              };
+              accList.push(_acc);
+              idList.push(item.id)
+            } else {
+              this.utilService.showAlert("An error occurred | " + data[counter].response + ":" + data[counter].responseDescription);
+            }
           }
+
+          this.updateAccountData(accList);
+          this.deleteAssociatedTags(idList);
         }, error: (err) => {
           console.error(err);
           this.utilService.showAlert(err);
@@ -267,10 +287,38 @@ export class AllTransactionsComponent implements OnInit {
     }
   }
 
-  deleteAssociatedTags(transId: any) {
-    this.apiService.deleteTagsMappingForTransId([{ trans_id: transId }]).subscribe({
+  updateAccountData(_acc: any[]) {
+    this.apiService.updateAccount(_acc).subscribe({
+      next: (data: any) => {
+        if (data[_acc.length - 1].success === true) {
+          this.utilService.showAlert("Transactions deleted successfully", "success");
+          this.canClose = true;
+          if (this.inputAccountData != null && this.inputAccountData.id != null) {
+            this.showAmount = this.utilService.formatAmountWithComma(_acc[_acc.length - 1].balance);
+          }
+          this.fetchTransactions(this.inputParams, this.apiFuncName);
+        } else {
+          this.utilService.showAlert("Some Error occurred updating the account details.");
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+  }
+
+  deleteAssociatedTags(transIds: any[]) {
+    let idList: any[] = [];
+
+    for (var transId of transIds) {
+      idList.push({
+        trans_id: transId
+      });
+    }
+
+    this.apiService.deleteTagsMappingForTransId(idList).subscribe({
       next: (resp: any) => {
-        if (resp[0].success != true || resp[0].response != '200') {
+        if (resp[idList.length - 1].success != true || resp[idList.length - 1].response != '200') {
           this.utilService.showAlert(resp);
         }
       }, error: err => {
@@ -279,19 +327,42 @@ export class AllTransactionsComponent implements OnInit {
     });
   }
 
-  markDeliveryOrder(e: any) {
-    let item = e.value;
-    let _updTrans = {
-      is_delivery_order: ((item.is_delivery_order == undefined || item.is_delivery_order == 0) ? true : false),
-      trans_id: item.id
-    };
-    this.updateTransaction(_updTrans);
+  markUnmarkDeliveryOrder(isDelivery: boolean = false) {
+    let itemsToMarkDelivery: Transaction[] = [];
+    this.transactions.filter((item: any) => item.selected == true).forEach((item: any) => {
+      itemsToMarkDelivery.push(item);
+    });
+
+    let finalItemsToMarkDelivery: any[] = [];
+
+    for (var item of itemsToMarkDelivery) {
+      if (item.is_mf == '1' || item.is_equity == '1') {
+        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+        return;
+      }
+
+      if (item.is_delivered == '1') {
+        this.utilService.showAlert("Only Delivery Orders which are not yet delivered can be marked/unmarked as Delivery order. Please uncheck invalid items to proceed", "Close");
+        return;
+      }
+
+      finalItemsToMarkDelivery.push({
+        is_delivery_order: isDelivery,
+        trans_id: item.id
+      });
+    }
+
+    this.updateTransaction(finalItemsToMarkDelivery);
   }
 
-  setOrderDelivered(e: any) {
-    this.selectedRecord = e.value;
-    this.modalTitle = "Set this order as Delivered ?";
-    this.modalBody = "Are you sure you want to set this order as DELIVERED ?";
+  setOrderDelivered() {
+    let itemsToSetDelivered: Transaction[] = [];
+    this.transactions.filter((item: any) => item.selected == true).forEach((item: any) => {
+      itemsToSetDelivered.push(item);
+    });
+    this.selectedRecord = itemsToSetDelivered;
+    this.modalTitle = "Set " + itemsToSetDelivered.length + " selected order(s) as Delivered ?";
+    this.modalBody = "Are you sure you want to set " + this.selectedRecord.length + " order(s) as DELIVERED ?";
     this.modalBtnName = 'Set';
     this.confirmData = {
       type: 'SET-DELIVERED',
@@ -325,24 +396,8 @@ export class AllTransactionsComponent implements OnInit {
     });
   }
 
-  showUpdate(value: any) {
-    return value['selected'] != true;
-  }
-
   showSelectAll(value: any) {
     return value['selected'];
-  }
-
-  showDeleteCopy(value: any) {
-    return value['is_mf'] != true && value['is_equity'] != true && value['selected'] != true;
-  }
-
-  showMarkDelivery(value: any) {
-    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] != true && value['is_delivered'] != true && value['selected'] != true;
-  }
-
-  showUnmarkSetDelivery(value: any) {
-    return value['is_mf'] != true && value['is_equity'] != true && value['is_delivery_order'] == true && value['is_delivered'] != true && value['selected'] != true;
   }
 
   getCustomClass(value: any, existingClass: string, negativeClass: string, positiveClass: string) {
@@ -533,7 +588,7 @@ export class AllTransactionsComponent implements OnInit {
 
   copy(item: any) {
     let objToSend: NavigationExtras = {
-      queryParams: item.value,
+      queryParams: item,
       skipLocationChange: false,
       fragment: 'top'
     };
@@ -580,7 +635,7 @@ export class AllTransactionsComponent implements OnInit {
         });
       });
     });
-    
+
     this.apiService.deleteTransTagMapping(inputs).subscribe({
       next: (resp: any) => {
         if (resp.every((item: any) => item.success === true && item.response === '200')) {
@@ -615,7 +670,7 @@ export class AllTransactionsComponent implements OnInit {
     });
     this.updateTransaction(_updTrans);
   }
-  
+
   /**
    * 
    * Code below is for Mat Chips with Autocomplete
@@ -649,7 +704,6 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   add(event: MatChipInputEvent): void {
-    this.utilService.showAlert('Please select something from the list');
     return;
   }
 
