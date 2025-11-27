@@ -318,6 +318,7 @@ export class UtilService {
   private onReloadDetected(): void {
     console.log('Reload detected (CoreService)');
     this.removeSessionStorageData('serverTime');
+    this.removeSessionStorageData('dbTime');
     this.removeSessionStorageData('lastAccountId');
   }
 

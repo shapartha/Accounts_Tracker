@@ -69,6 +69,7 @@
                     style="color: grey;">add_shopping_cart</mat-icon>
                 <mat-icon *ngIf="transaction.receiptImgId != null" class="text-end" (click)="update(content, transaction, true)">image</mat-icon>
                 <mat-icon class="text-end" (click)="update(content, transaction)">edit</mat-icon>
+                <mat-icon class="text-end" (click)="openTransactionGroup(transaction)">group</mat-icon>
                 <mat-icon *ngIf="!(transaction.is_mf == '1' || transaction.is_equity == '1')" class="text-end" (click)="copy(transaction)">content_copy</mat-icon>
             </div>
         </div>

@@ -1,0 +1,31 @@
+@media (max-width: 575px) {
+    .col-md-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .col-md-9 {
+        flex: 0 0 auto;
+        width: 75%;
+    }
+
+    .col-md-3 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 33.33333333%;
+    }
+}
+
+#action-icons mat-icon {
+    align-self: anchor-center;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+#transaction-groups-section {
+    padding-bottom: 40px;
+}

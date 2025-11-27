@@ -15,19 +15,23 @@ export class FooterComponent implements OnInit {
 
   ngOnInit(): void {
     var formattedServerTime = this.utilService.getSessionStorageData("serverTime") || '';
+    var formattedDbTime = this.utilService.getSessionStorageData("dbTime") || '';
     this.currentYear = new Date().getFullYear();
 
     if (formattedServerTime == '') {
-      this.apiService.readServerTime().subscribe(d => {
-        formattedServerTime = d;
+      this.apiService.readServerTime().then(d => {
+        formattedServerTime = d.serverTime;
         this.utilService.setSessionStorageData("serverTime", formattedServerTime);
-        this.versionInfo = "Version: " + AppInfo.version + " Build Date: " + AppInfo.buildDate + " Server Time: " + formattedServerTime;
+        formattedDbTime = d.dbTime;
+        this.utilService.setSessionStorageData("dbTime", formattedDbTime);
+        this.serverInfo = "Server Time: " + formattedServerTime + " DB Time: " + formattedDbTime;
       });
     }
     
-    this.versionInfo = "Version: " + AppInfo.version + " Build Date: " + AppInfo.buildDate + " Server Time: " + formattedServerTime;
+    this.versionInfo = "Version: " + AppInfo.version + " Build Date: " + AppInfo.buildDate;
   }
   
   currentYear: any;
   versionInfo = '';
+  serverInfo = '';
 }

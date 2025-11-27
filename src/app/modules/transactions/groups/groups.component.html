@@ -1,0 +1,71 @@
+<div class="container mt-2" id="transaction-groups-section">
+    <h5>Group Items for <b>{{ transactionData?.trans_desc}}</b></h5>
+    <div class="row mb-2">
+        <div class="col">
+            <h6 class="text-muted">Transaction ID: {{ transId }}</h6>
+            <h6 class="text-muted">Transaction Amount: {{ transactionData?.trans_amount }}</h6>
+        </div>
+        <div class="col d-flex align-items-center justify-content-end w-50">
+            <mat-form-field class="mt-2 w-50" appearance="outline">
+                <mat-label>No. of Items: </mat-label>
+                <input type="text" matInput name="numItems" [(ngModel)]="numItems" required>
+                <mat-error>
+                    Valid number of items required.
+                </mat-error>
+            </mat-form-field>
+            <button class="btn btn-md btn-primary ms-2" (click)="splitItems()">Split Items</button>
+        </div>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <div formArrayName="items">
+            <div class="row col-md-12" *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Item Description</mat-label>
+                                    <input matInput formControlName="itemDesc" placeholder="Enter item description">
+                                    <mat-error *ngIf="item.get('itemDesc')?.invalid && item.get('itemDesc')?.touched">
+                                        Invalid description
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-3">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Item Amount</mat-label>
+                                    <input matInput type="number" formControlName="itemAmount" placeholder="Enter item amount">
+                                    <mat-error *ngIf="item.get('itemAmount')?.invalid && item.get('itemAmount')?.touched">
+                                        Invalid amount
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col d-flex align-items-end" id="action-icons">
+                                <mat-icon *ngIf="item.get('isReturned')?.value == '1'" class="text-end" style="color: green;">reply</mat-icon>
+                                <mat-icon *ngIf="item.get('isReturnOrder')?.value == '1' && (item.get('isReturned')?.value == undefined || item.get('isReturned')?.value == '0')" class="text-end" style="color: grey;" (click)="markReturned(item, i)">reply</mat-icon>
+                                <mat-icon *ngIf="item.get('isDelivered')?.value == '1'" class="text-end" style="color: green;" (click)="raiseReturn(item, i)">shopping_cart</mat-icon>
+                                <mat-icon *ngIf="item.get('isDeliveryOrder')?.value == '1' && (item.get('isDelivered')?.value == undefined || item.get('isDelivered')?.value == '0')" class="text-end" style="color: grey;" (click)="markDelivered(item, i)">add_shopping_cart</mat-icon>
+                                <mat-icon (click)="removeItem(item, i)">delete</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="form?.hasError('totalExceeded')" class="text-danger">
+            Total of amounts ({{ form.getError('totalExceeded')?.sum }}) does not match transaction amount ({{ form.getError('totalExceeded')?.max }})
+        </div>
+
+        <div *ngIf="form?.hasError('minItems')" class="text-danger">
+            At least {{ form.getError('minItems')?.min }} items are required. Current: {{ form.getError('minItems')?.actual }}
+        </div>
+
+        <button *ngIf="items.controls.length > 0" type="submit" class="btn btn-md btn-success mt-2" [disabled]="form.invalid">Submit</button>
+    </form>
+</div>
+
+<button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
+    modal</button>
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>

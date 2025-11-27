@@ -751,4 +751,9 @@ export class AllTransactionsComponent implements OnInit {
       return [...tags];
     });
   }
+
+  openTransactionGroup(transaction: Transaction) {
+    const transId = transaction.id;
+    this.router.navigate(['/transaction-group', transId]);
+  }
 }

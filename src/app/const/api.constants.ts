@@ -77,6 +77,11 @@ export class ApiConstants {
     static API_GET_TRANS_BY_TAGID: string = "getTransactionsByTagId";
     static API_QUERY_ANYTHING: string = "excQry";
     static API_SERVER_TIME: string = "getServerTime";
+    static API_GET_TRANSACTION_BY_ID: string = "getTransById";
+    static API_GET_TRANSACTION_GROUP_ITEMS: string = "getGroupItemsByTransId";
+    static API_DELETE_TRANSACTION_GROUP_ITEM: string = "deleteTransGroupMapping";
+    static API_SAVE_TRANSACTION_GROUP_ITEMS: string = "saveTransGroupMapping";
+    static API_UPDATE_TRANSACTION_GROUP_ITEMS: string = "updateTransGroupMapping";
     
     static SERVER_PATH_URL: string = "https://shapartha.site/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";

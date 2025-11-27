@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiConstants } from 'app/const/api.constants';
-import { Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { UtilService } from './util.service';
 
 @Injectable({
@@ -452,8 +452,35 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
-  readServerTime(apiFuncParams: any = {}) {
+  async readServerTime(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SERVER_TIME;
+    var serverTime = await firstValueFrom(this.invokeApiCall(apiFuncName, apiFuncParams));
+    var dbTime = await firstValueFrom(this.executeQuery({ exc_qry: 'SELECT CURRENT_TIMESTAMP as DB_TIME' }));
+    return { serverTime: serverTime, dbTime: dbTime.dataArray[0].DB_TIME };
+  }
+
+  getTransactionById(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_TRANSACTION_BY_ID;
     return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  getTransactionGroupItems(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_TRANSACTION_GROUP_ITEMS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
+  saveTransactionGroupItems(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SAVE_TRANSACTION_GROUP_ITEMS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  updateTransactionGroupItems(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_UPDATE_TRANSACTION_GROUP_ITEMS;
+    return this.postApiCall(apiFuncName, apiFuncParams);
+  }
+
+  deleteTransactionGroupItem(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_DELETE_TRANSACTION_GROUP_ITEM;
+    return this.postApiCall(apiFuncName, apiFuncParams);
   }
 }
