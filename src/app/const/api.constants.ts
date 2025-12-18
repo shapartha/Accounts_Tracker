@@ -83,7 +83,7 @@ export class ApiConstants {
     static API_SAVE_TRANSACTION_GROUP_ITEMS: string = "saveTransGroupMapping";
     static API_UPDATE_TRANSACTION_GROUP_ITEMS: string = "updateTransGroupMapping";
     
-    static SERVER_PATH_URL: string = "https://shapartha.site/accountstracker/";
+    static SERVER_PATH_URL: string = "http://shapartha.site/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
 
