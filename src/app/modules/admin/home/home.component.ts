@@ -6,6 +6,7 @@ import { ConfirmData } from 'app/models/confirm';
 import { ManageMailFiltersComponent } from "../manage-mail-filters/manage-mail-filters.component";
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
+import { ApiConstants } from 'app/const/api.constants';
 
 @Component({
   selector: 'app-admin-home',
@@ -136,6 +137,16 @@ export class AdminHomeComponent {
   }
 
   invokeBackup() {
-    this.utilService.showAlert("Coming back soon ... ! Due to the current system infrastructure limitations, this feature (DB/Schema Backup) is unavailable.", 'warning');
+    this.apiService.backupDbSchema().subscribe({
+      next: (response: any) => {
+        if (response.success == true) {
+          this.utilService.showAlert("Backup process completed successfully", 'success');
+        }
+      }, error: (err) => {
+        console.error(err);
+        this.utilService.showAlert(err);
+      }
+    });
+    // this.utilService.showAlert("Coming back soon ... ! Due to the current system infrastructure limitations, this feature (DB/Schema Backup) is unavailable.", 'warning');
   }
 }

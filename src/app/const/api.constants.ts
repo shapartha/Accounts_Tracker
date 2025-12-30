@@ -83,7 +83,7 @@ export class ApiConstants {
     static API_SAVE_TRANSACTION_GROUP_ITEMS: string = "saveTransGroupMapping";
     static API_UPDATE_TRANSACTION_GROUP_ITEMS: string = "updateTransGroupMapping";
     
-    static SERVER_PATH_URL: string = "http://shapartha.site/accountstracker/";
+    static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";
     static API_KEY: string = "tn4mzlCxWb7Ix90";
 
@@ -95,5 +95,5 @@ export class ApiConstants {
     static API_GOOGLE_SIGNIN_CHECK: string = "checkGoogleSigninStatus";
     static API_GOOGLE_SIGNOUT: string = "gapiSignout";
     static API_GOOGLE_READ_EMAILS: string = "readEmails";
-    static API_GOOGLE_AUTH_URL: string = "http://shapartha.site/google-apis/readEmails.php";
+    static API_GOOGLE_AUTH_URL: string = "https://shapartha.online/google-apis/readEmails.php";
 }

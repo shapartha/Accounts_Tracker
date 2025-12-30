@@ -427,6 +427,11 @@ export class ApiService {
       { 'headers': headers });
   }
 
+  backupDbSchema(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_SCHEMA_BACKUP;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   fetchMfNav(schemeCode: any) {
     const serverUrl = ApiConstants.API_FETCH_MF_NAV + schemeCode;
     return this.invokeApiCall('', '', false, serverUrl);

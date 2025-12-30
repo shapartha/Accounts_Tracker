@@ -7,7 +7,14 @@
         <div class="row transaction-item">
             <div class="col-sm-4">{{ transaction.acc_name }}</div>
             <div class="col-sm-4 text-center">{{ transaction.date }}</div>
-            <div class="col-sm-4 text-end" style="font-size: 12px;" [ngClass]="getClassVal(transaction)"> {{ transaction.amount }} </div>
+            @if (transaction.is_group_trans) {
+                <div class="col-sm-1">
+                    <mat-icon class="text-end" (click)="openTransactionGroup(transaction)">group</mat-icon>
+                </div>
+                <div class="col-sm-3 text-end" style="font-size: 12px;" [ngClass]="getClassVal(transaction)"> {{ transaction.amount }} </div>
+            } @else {
+                <div class="col-sm-4 text-end" style="font-size: 12px;" [ngClass]="getClassVal(transaction)"> {{ transaction.amount }} </div>
+            }
         </div>
     </div>
     }

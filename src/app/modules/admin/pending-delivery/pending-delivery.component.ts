@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ConfirmData } from 'app/models/confirm';
 import { Transaction } from 'app/models/transaction';
@@ -22,7 +23,7 @@ export class PendingDeliveryComponent implements OnInit, OnChanges {
   @Output() confirmObject = new EventEmitter<any>();
   @Input() setDeliveredClicked: boolean = false;
 
-  constructor(public utilService: UtilService, private apiService: ApiService) { }
+  constructor(public utilService: UtilService, private apiService: ApiService, private router: Router) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes['setDeliveredClicked'].isFirstChange() && changes['setDeliveredClicked'].currentValue == true) {
@@ -62,6 +63,7 @@ export class PendingDeliveryComponent implements OnInit, OnChanges {
             _trans.user_id = item.user_id;
             _trans.acc_balance = item.balance;
             _trans.receiptImgId = item.trans_receipt_image_id;
+            _trans.is_group_trans = item.trans_item_id == undefined ? false : true;
             this.pendingDeliveries.push(_trans);
           });
         }
@@ -132,5 +134,10 @@ export class PendingDeliveryComponent implements OnInit, OnChanges {
     });
     const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
     confirmBtn.click();
+  }
+
+  openTransactionGroup(transaction: Transaction) {
+    const transId = transaction.id;
+    this.router.navigate(['/transaction-group', transId]);
   }
 }
