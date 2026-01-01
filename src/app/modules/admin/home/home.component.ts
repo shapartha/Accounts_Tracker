@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PendingDeliveryComponent } from "../pending-delivery/pending-delivery.component";
 import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
@@ -15,7 +16,7 @@ import { ApiConstants } from 'app/const/api.constants';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class AdminHomeComponent {
+export class AdminHomeComponent implements OnInit {
 
   modalTitle: string = '';
   modalBody: string = '';
@@ -26,7 +27,15 @@ export class AdminHomeComponent {
   invokeSetDelivered: boolean = false;
   invokeDeleted: boolean = false;
 
-  constructor(private apiService: ApiService, public utilService: UtilService) { }
+  constructor(private apiService: ApiService, public utilService: UtilService, private activatedRoute: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params['messageType'] == 'success') {
+        this.utilService.showAlert('Database Backup process completed successfully', 'success');
+      }
+    });
+  }
 
   confirm(evt: ConfirmData) {
     if (evt.type == 'SET-DELIVERED' && evt.value == true) {
@@ -137,16 +146,7 @@ export class AdminHomeComponent {
   }
 
   invokeBackup() {
-    this.apiService.backupDbSchema().subscribe({
-      next: (response: any) => {
-        if (response.success == true) {
-          this.utilService.showAlert("Backup process completed successfully", 'success');
-        }
-      }, error: (err) => {
-        console.error(err);
-        this.utilService.showAlert(err);
-      }
-    });
+    window.location.href = this.apiService.backupDbSchema();
     // this.utilService.showAlert("Coming back soon ... ! Due to the current system infrastructure limitations, this feature (DB/Schema Backup) is unavailable.", 'warning');
   }
 }

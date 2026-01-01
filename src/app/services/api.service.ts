@@ -428,8 +428,7 @@ export class ApiService {
   }
 
   backupDbSchema(apiFuncParams: any = {}) {
-    const apiFuncName = ApiConstants.API_SCHEMA_BACKUP;
-    return this.invokeApiCall(apiFuncName, apiFuncParams);
+    return ApiConstants.SERVER_URL + "?apiFunctionName=" + encodeURIComponent(ApiConstants.API_SCHEMA_BACKUP) + "&apiFunctionParams=" + encodeURIComponent(JSON.stringify(apiFuncParams)) + this.appendMandatoryParams();
   }
 
   fetchMfNav(schemeCode: any) {
