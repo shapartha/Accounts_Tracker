@@ -72,7 +72,7 @@ export class AutoMailsComponent implements OnInit {
   }
 
   readGoogle() {
-    let callingUrl = ApiConstants.API_GOOGLE_AUTH_URL + '?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname.replace('email_transactions', 'callback'));
+    let callingUrl = ApiConstants.API_GOOGLE_AUTH_URL + '?db_apiKey=' + ApiConstants.API_KEY + '&db_apiToken=' + this.utilService.appToken + '&_callbackUrl=' + encodeURIComponent(window.location.origin + window.location.pathname);
     if (this.signedIn) {
       let inputs = {
         db_apiKey: ApiConstants.API_KEY,
@@ -98,14 +98,7 @@ export class AutoMailsComponent implements OnInit {
         }
       });
     } else {
-      this.utilService.setCookie('redir-link', callingUrl, (1 / 24 / 60));
-      var myWindow = window.open(window.location.origin + window.location.pathname.replace('email_transactions', 'callback'), 'callbackWindow', 'popup');
-      var timer = setInterval(function () {
-        if (myWindow?.closed) {
-          clearInterval(timer);
-          window.location.reload();
-        }
-      }, 1000);
+      window.location.href = callingUrl;
     }
   }
 

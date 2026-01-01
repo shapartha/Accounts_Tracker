@@ -18,7 +18,6 @@ import { StocksComponent } from './modules/stocks/stocks.component';
 import { MfAccountComponent } from './modules/accounts/mfaccount/mfaccount.component';
 import { EqAccountComponent } from './modules/accounts/eqaccount/eqaccount.component';
 import { AutoMailsComponent } from './modules/auto-mails/auto-mails.component';
-import { CallbackComponent } from './modules/admin/callback/callback.component';
 import { TagsComponent } from './modules/transactions/tags/tags.component';
 import { GroupsComponent } from './modules/transactions/groups/groups.component';
 
@@ -108,10 +107,6 @@ export const routes: Routes = [
     {
         path: 'login',
         component: LoginComponent
-    },
-    {
-        path: 'callback',
-        component: CallbackComponent
     },
     {
         path: 'transaction-group/:transId',
