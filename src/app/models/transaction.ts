@@ -18,6 +18,8 @@ export interface Transaction {
     is_mf?: string;
     is_delivery_order?: string;
     is_delivered?: string;
+    is_return_order?: string;
+    is_returned?: string;
     is_group_trans?: boolean;
     selected?: boolean;
 }

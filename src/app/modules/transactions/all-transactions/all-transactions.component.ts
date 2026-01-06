@@ -14,7 +14,7 @@ import { ApiConstants } from 'app/const/api.constants';
 import { AppConstants } from 'app/const/app.constants';
 import { Account } from 'app/models/account';
 import { ConfirmData } from 'app/models/confirm';
-import { Transaction } from 'app/models/transaction';
+import { SaveTransaction, Transaction } from 'app/models/transaction';
 import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
 import { UpdateTransactionComponent } from 'app/modules/modals/update-transaction/update-transaction.component';
 import { ApiService } from 'app/services/api.service';
@@ -235,6 +235,49 @@ export class AllTransactionsComponent implements OnInit {
       }
 
       this.updateTransaction(finalItemsToSetDelivered, true);
+    } else if (evt.type == 'RAISE_RETURN' && evt.value == true) {
+      let item: Transaction = this.selectedRecord;
+
+      if (item.is_mf == '1' || item.is_equity == '1') {
+        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+        return;
+      }
+
+      if (item.is_delivery_order != '1' && item.is_delivered != '1') {
+        this.utilService.showAlert("Only Delivery Orders which are delivered can be set as Return Order. Please uncheck invalid items to proceed", "Close");
+        return;
+      }
+      
+      let finalItemToSetReturnOrder = {
+        trans_id: item.id,
+        is_delivered: true,
+        is_return_order: true
+      };
+
+      this.updateTransaction([finalItemToSetReturnOrder], true);
+    } else if (evt.type == 'RETURNED' && evt.value == true) {
+      let item: Transaction = this.selectedRecord;
+
+      if (item.is_mf == '1' || item.is_equity == '1') {
+        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+        return;
+      }
+
+      if (item.is_return_order != '1' || item.is_returned == '1') {
+        this.utilService.showAlert("Only Return Orders which are not yet returned can be set as Returned. Please uncheck invalid items to proceed", "Close");
+        return;
+      }
+
+      let finalItemToSetReturned = {
+        trans_id: item.id,
+        is_delivered: true,
+        is_return_order: true,
+        is_returned: true
+      };
+
+      this.updateTransaction([finalItemToSetReturned], true);
+      this.addRefundTransaction(item);
+
     } else if (evt.type == 'DELETE' && evt.value == true) {
       let itemsToDelete: Transaction[] = this.selectedRecord;
       let finalItemsToDelete: any[] = [];
@@ -432,6 +475,8 @@ export class AllTransactionsComponent implements OnInit {
           _trans.is_equity = item.is_equity;
           _trans.is_delivery_order = item.is_delivery_order;
           _trans.is_delivered = item.is_delivered;
+          _trans.is_return_order = item.is_return_order;
+          _trans.is_returned = item.is_returned;
           _trans.acc_id = item.account_id;
           _trans.acc_name = item.account_name;
           _trans.cat_id = item.category_id;
@@ -755,5 +800,62 @@ export class AllTransactionsComponent implements OnInit {
   openTransactionGroup(transaction: Transaction) {
     const transId = transaction.id;
     this.router.navigate(['/transaction-group', transId]);
+  }
+
+  raiseReturn(item: any) {
+    if (item.is_return_order == '1') {
+      return;
+    }
+    this.selectedRecord = item;
+    this.modalTitle = "Raise Return for " + item.description;
+    this.modalBody = "You are about to raise return for " + item.description + ". Do you want to continue ?";
+    this.modalBtnName = 'Raise Return Order';
+    this.confirmData = {
+      type: 'RAISE_RETURN',
+      value: false
+    };
+    this.canClose = false;
+    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
+    confirmBtn.click();
+  }
+
+  markReturned(item: any) {
+    this.selectedRecord = item;
+    this.modalTitle = "Mark " + item.description + " as Returned";
+    this.modalBody = "You are about to mark " + item.description + " as returned. Do you want to continue ?";
+    this.modalBtnName = 'Returned';
+    this.confirmData = {
+      type: 'RETURNED',
+      value: false
+    };
+    this.canClose = false;
+    const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
+    confirmBtn.click();
+  }
+
+  addRefundTransaction(item: Transaction) {
+    let inputData: SaveTransaction = {};
+    inputData.acc_id = item.acc_id;
+    inputData.user_id = item.user_id;
+    inputData.amount = this.utilService.formatStringValueToAmount(item.amount).toString();
+    inputData.type = item.transType!.toUpperCase() == 'DEBIT' ? 'CREDIT' : 'DEBIT';
+    inputData.desc = 'Refund for ' + item.description;
+    let refundDate = new Date();
+    refundDate.setDate(refundDate.getDate() + 1);
+    inputData.date = this.utilService.convertDate(refundDate.toISOString().split('T')[0]);
+    inputData.is_delivery_order = '0';
+    inputData.is_delivered = '0';
+
+    this.apiService.saveTransaction(inputData).subscribe({
+      next: (resp: any) => {
+        if (resp.success !== true) {
+          this.utilService.showAlert("Some error occurred while saving. Please try again.");
+        }
+      },
+      error: (err) => {
+        console.error("Error -> " + err);
+        this.utilService.showAlert("Error Occurred while Saving ! Please try again.");
+      }
+    });
   }
 }

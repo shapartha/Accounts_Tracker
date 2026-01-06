@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConstants } from 'app/const/app.constants';
 import { ConfirmData } from 'app/models/confirm';
+import { SaveTransaction, Transaction } from 'app/models/transaction';
 import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confirm-dialog.component';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
@@ -179,6 +180,18 @@ export class GroupsComponent implements OnInit {
     } else if (evt.type == 'RETURNED' && evt.value == true) {
       const item = this.selectedRecord.data;
       this.updateItemStatus(item, 1, 1, 1);
+
+      let itemData: Transaction = {};
+      itemData.description = item.value.itemDesc;
+      itemData.amount = item.value.itemAmount;
+      itemData.transType = this.transactionData.trans_type;
+      let refundDate = new Date();
+      refundDate.setDate(refundDate.getDate() + 1);
+      itemData.date = this.utilService.convertDate(refundDate.toISOString().split('T')[0]);
+      itemData.acc_id = this.transactionData.account_id;
+      itemData.user_id = this.transactionData.user_id;
+      this.addRefundTransaction(itemData);
+      
       this.canClose = true;
     }
   }
@@ -366,5 +379,31 @@ export class GroupsComponent implements OnInit {
     this.canClose = false;
     const confirmBtn = document.getElementById('confirmBtn') as HTMLElement;
     confirmBtn.click();
+  }
+  
+  addRefundTransaction(item: Transaction) {
+    let inputData: SaveTransaction = {};
+    inputData.acc_id = item.acc_id;
+    inputData.user_id = item.user_id;
+    inputData.amount = item.amount;
+    inputData.type = item.transType!.toUpperCase() == 'DEBIT' ? 'CREDIT' : 'DEBIT';
+    inputData.desc = 'Refund for ' + item.description;
+    let refundDate = new Date();
+    refundDate.setDate(refundDate.getDate() + 1);
+    inputData.date = this.utilService.convertDate(refundDate.toISOString().split('T')[0]);
+    inputData.is_delivery_order = '0';
+    inputData.is_delivered = '0';
+
+    this.apiService.saveTransaction(inputData).subscribe({
+      next: (resp: any) => {
+        if (resp.success !== true) {
+          this.utilService.showAlert("Some error occurred while saving. Please try again.");
+        }
+      },
+      error: (err) => {
+        console.error("Error -> " + err);
+        this.utilService.showAlert("Error Occurred while Saving ! Please try again.");
+      }
+    });
   }
 }

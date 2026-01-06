@@ -6,12 +6,12 @@
 
     .col-sm-9 {
         flex: 0 0 auto;
-        width: 75%;
+        width: 72%;
     }
 
     .col-sm-3 {
         flex: 0 0 auto;
-        width: 25%;
+        width: 28%;
     }
 
     .col-sm-4 {
@@ -48,4 +48,8 @@
     margin-left: .5rem !important;
     display: inline-flex;
     align-items: center;
+}
+
+.action-icons .mat-icon:not(:last-child) {
+    margin-right: 1px;
 }
