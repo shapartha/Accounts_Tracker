@@ -806,6 +806,10 @@ export class AllTransactionsComponent implements OnInit {
     if (item.is_return_order == '1') {
       return;
     }
+    if (item.is_group_trans) {
+      this.utilService.showAlert("Return cannot be raised for transactions part of a group transaction.", "warning", "Close");
+      return;
+    }
     this.selectedRecord = item;
     this.modalTitle = "Raise Return for " + item.description;
     this.modalBody = "You are about to raise return for " + item.description + ". Do you want to continue ?";
@@ -820,6 +824,10 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   markReturned(item: any) {
+    if (item.is_group_trans) {
+      this.utilService.showAlert("Return cannot be marked for transactions part of a group transaction.", "warning", "Close");
+      return;
+    }
     this.selectedRecord = item;
     this.modalTitle = "Mark " + item.description + " as Returned";
     this.modalBody = "You are about to mark " + item.description + " as returned. Do you want to continue ?";
