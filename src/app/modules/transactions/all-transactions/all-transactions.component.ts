@@ -9,7 +9,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ApiConstants } from 'app/const/api.constants';
 import { AppConstants } from 'app/const/app.constants';
 import { Account } from 'app/models/account';
@@ -483,6 +482,7 @@ export class AllTransactionsComponent implements OnInit {
           _trans.user_id = item.user_id;
           _trans.acc_balance = item.balance;
           _trans.receiptImgId = item.trans_receipt_image_id;
+          _trans.is_group_trans = item.trans_item_id != null && item.trans_item_id != '';
           this.transactions.push(_trans);
           this.noOfRecordsFetched++;
         });

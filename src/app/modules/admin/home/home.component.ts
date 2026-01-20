@@ -145,8 +145,8 @@ export class AdminHomeComponent implements OnInit {
     confirmBtn.click();
   }
 
-  invokeBackup() {
-    window.location.href = this.apiService.backupDbSchema();
+  invokeBackup(onlyUpload = false) {
+    window.location.href = this.apiService.backupDbSchema({ onlyUpload: onlyUpload });
     // this.utilService.showAlert("Coming back soon ... ! Due to the current system infrastructure limitations, this feature (DB/Schema Backup) is unavailable.", 'warning');
   }
 }

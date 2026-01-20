@@ -1,19 +1,20 @@
 <div class="container mt-2" id="manage-admin-section">
     <h3>Administration | Home</h3>
     <mat-tab-group animationDuration="300ms">
-        <mat-tab label="Jobs / Schedulers">
-            <ng-template matTabContent>
-                <div class="d-grid gap-2 col-6 mx-auto m-5">
-                    <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater()">Mutual Funds Updater</button>
-                    <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater(true)">Stocks Updater</button>
-                    <button type="button" class="btn btn-secondary" (click)="invokeBackup()">DB/Schema Backup</button>
-                    <button type="button" class="btn btn-danger" (click)="invokeMonthlyRoutines()">Monthly Routines</button>
-                </div>
-            </ng-template>
-        </mat-tab>
         <mat-tab label="Pending Deliveries">
             <ng-template matTabContent>
                 <app-pending-delivery (confirmObject)="retrieveConfirmObject($event)" [setDeliveredClicked]="invokeSetDelivered"></app-pending-delivery>
+            </ng-template>
+        </mat-tab>
+        <mat-tab label="Jobs / Schedulers">
+            <ng-template matTabContent>
+                <div class="d-grid gap-2 col-9 mx-auto m-5">
+                    <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater()">Mutual Funds Updater</button>
+                    <button type="button" class="btn btn-primary" (click)="invokeMfStockUpdater(true)">Stocks Updater</button>
+                    <button type="button" class="btn btn-secondary" (click)="invokeBackup()">DB/Schema Backup & Upload to GDrive</button>
+                    <button type="button" class="btn btn-secondary" (click)="invokeBackup(true)">Upload Latest Backup to GDrive</button>
+                    <button type="button" class="btn btn-danger" (click)="invokeMonthlyRoutines()">Monthly Routines</button>
+                </div>
             </ng-template>
         </mat-tab>
         <mat-tab label="Mail Filter Mappings">

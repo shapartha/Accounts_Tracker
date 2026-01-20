@@ -1,4 +1,21 @@
 <div style="margin: 20px;">
+    <div class="row">
+        <div class="col-sm-3 filters-section font-weight-bold">
+            Filter By:
+        </div>
+        <div class="col-sm-9">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Delivery Type</mat-label>
+                <mat-select [(value)]="selectedDeliveryType" (selectionChange)="applyFilters()">
+                    @for (type of deliveryTypes; track type) {
+                        <mat-option [value]="type.id">{{ type.name }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="text-center mt-2">Found {{ pendingDeliveries.length }} records</div>
+    <div class="separator"></div>
     @for (transaction of pendingDeliveries; track transaction) {
     <div [contextMenu]="oneContextMenu" [contextMenuValue]="transaction">
         <div class="row">

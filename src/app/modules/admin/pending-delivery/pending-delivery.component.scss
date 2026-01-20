@@ -9,6 +9,11 @@
 }
 
 @media (max-width: 575px) {
+    .col-sm-9 {
+        flex: 0 0 auto;
+        width: 75%;
+    }
+
     .col-sm-6 {
         flex: 0 0 auto;
         width: 50%;

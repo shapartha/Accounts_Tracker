@@ -65,8 +65,8 @@
             </div>
             <div class="col-sm-3 text-end action-icons">
                 <mat-icon *ngIf="transaction.is_returned == '1'" class="text-end" style="color: green;">reply</mat-icon>
-                <mat-icon *ngIf="transaction.is_return_order == '1' && (transaction.is_returned == null || transaction.is_returned == '0')" class="text-end" style="color: grey;" (click)="markReturned(transaction)">reply</mat-icon>
-                <mat-icon *ngIf="transaction.is_delivered == '1'" (click)="raiseReturn(transaction)" class="text-end" style="color: green;">shopping_cart</mat-icon>
+                <mat-icon *ngIf="!transaction.is_group_trans && transaction.is_return_order == '1' && (transaction.is_returned == null || transaction.is_returned == '0')" class="text-end" style="color: grey;" (click)="markReturned(transaction)">reply</mat-icon>
+                <mat-icon *ngIf="transaction.is_delivered == '1' && !transaction.is_group_trans" (click)="raiseReturn(transaction)" class="text-end" style="color: green;">shopping_cart</mat-icon>
                 <mat-icon *ngIf="transaction.is_delivery_order == '1' && (transaction.is_delivered == undefined || transaction.is_delivered == '0')" class="text-end"
                     style="color: grey;">add_shopping_cart</mat-icon>
                 <mat-icon *ngIf="transaction.receiptImgId != null" class="text-end" (click)="update(content, transaction, true)">image</mat-icon>
