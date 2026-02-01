@@ -18,6 +18,7 @@ import { ConfirmDialogComponent } from 'app/modules/modals/confirm-dialog/confir
 import { UpdateTransactionComponent } from 'app/modules/modals/update-transaction/update-transaction.component';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
+import { firstValueFrom, map } from 'rxjs';
 
 @Component({
   selector: 'app-all-transactions',
@@ -211,19 +212,28 @@ export class AllTransactionsComponent implements OnInit {
     confirmBtn.click();
   }
 
-  confirm(evt: ConfirmData) {
+  async confirm(evt: ConfirmData) {
     if (evt.type == 'SET-DELIVERED' && evt.value == true) {
       let itemsToSetDelivered: Transaction[] = this.selectedRecord;
       let finalItemsToSetDelivered: any[] = [];
 
       for (var item of itemsToSetDelivered) {
         if (item.is_mf == '1' || item.is_equity == '1') {
-          this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+          this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed");
+          this.canClose = true;
           return;
         }
 
         if (item.is_delivery_order != '1' || item.is_delivered == '1') {
-          this.utilService.showAlert("Only Delivery Orders which are not yet delivered can be set as Delivered. Please uncheck invalid items to proceed", "Close");
+          this.utilService.showAlert("Only Delivery Orders which are not yet delivered can be set as Delivered. Please uncheck invalid items to proceed");
+          this.canClose = true;
+          return;
+        }
+        
+        const groupItems = await this.getGroupItems(item.id);
+        if (groupItems.length > 0) {
+          this.utilService.showAlert('This item can not be marked as Delivered as it is part of a Group Transaction. Please uncheck it to proceed');
+          this.canClose = true;
           return;
         }
 
@@ -238,12 +248,12 @@ export class AllTransactionsComponent implements OnInit {
       let item: Transaction = this.selectedRecord;
 
       if (item.is_mf == '1' || item.is_equity == '1') {
-        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed");
         return;
       }
 
       if (item.is_delivery_order != '1' && item.is_delivered != '1') {
-        this.utilService.showAlert("Only Delivery Orders which are delivered can be set as Return Order. Please uncheck invalid items to proceed", "Close");
+        this.utilService.showAlert("Only Delivery Orders which are delivered can be set as Return Order. Please uncheck invalid items to proceed");
         return;
       }
       
@@ -258,12 +268,12 @@ export class AllTransactionsComponent implements OnInit {
       let item: Transaction = this.selectedRecord;
 
       if (item.is_mf == '1' || item.is_equity == '1') {
-        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed");
         return;
       }
 
       if (item.is_return_order != '1' || item.is_returned == '1') {
-        this.utilService.showAlert("Only Return Orders which are not yet returned can be set as Returned. Please uncheck invalid items to proceed", "Close");
+        this.utilService.showAlert("Only Return Orders which are not yet returned can be set as Returned. Please uncheck invalid items to proceed");
         return;
       }
 
@@ -283,8 +293,32 @@ export class AllTransactionsComponent implements OnInit {
 
       for (var item of itemsToDelete) {
         if (item.is_mf == '1' || item.is_equity == '1') {
-          this.utilService.showAlert("MF/Stock transactions can't be deleted. Please uncheck them to proceed", "Close");
+          this.utilService.showAlert("MF/Stock transactions can't be deleted. Please uncheck them to proceed");
+          this.canClose = true;
           return;
+        }
+
+        const groupItems = await this.getGroupItems(item.id);
+        if (groupItems.length > 0) {
+          let apiPayload = [];
+          for (var groupItem of groupItems) {
+            apiPayload.push({
+              trans_item_id: groupItem.trans_item_id
+            });
+          }
+          
+          const response = await firstValueFrom(this.apiService.deleteTransactionGroupItem(apiPayload).pipe(
+            map((resp: any) => ({
+              hasSuccess: Array.isArray(resp) && resp.some((it: any) => it?.success === true),
+              response: resp
+            }))
+          ));
+
+          if (!response.hasSuccess) {
+            this.utilService.showAlert('Error deleting group items for ' + item.id + '. Please try again later.');
+            this.canClose = true;
+            return;
+          }
         }
 
         finalItemsToDelete.push({
@@ -369,7 +403,7 @@ export class AllTransactionsComponent implements OnInit {
     });
   }
 
-  markUnmarkDeliveryOrder(isDelivery: boolean = false) {
+  async markUnmarkDeliveryOrder(isDelivery: boolean = false) {
     let itemsToMarkDelivery: Transaction[] = [];
     this.transactions.filter((item: any) => item.selected == true).forEach((item: any) => {
       itemsToMarkDelivery.push(item);
@@ -379,13 +413,44 @@ export class AllTransactionsComponent implements OnInit {
 
     for (var item of itemsToMarkDelivery) {
       if (item.is_mf == '1' || item.is_equity == '1') {
-        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed", "Close");
+        this.utilService.showAlert("MF/Stock transactions can't be updated. Please uncheck them to proceed");
         return;
       }
 
       if (item.is_delivered == '1') {
-        this.utilService.showAlert("Only Delivery Orders which are not yet delivered can be marked/unmarked as Delivery order. Please uncheck invalid items to proceed", "Close");
+        this.utilService.showAlert("Only Delivery Orders which are not yet delivered can be marked/unmarked as Delivery order. Please uncheck invalid items to proceed");
         return;
+      }
+
+      const groupItems = await this.getGroupItems(item.id);
+      if (groupItems.length > 0) {
+        let apiPayload = [];
+        for (var groupItem of groupItems) {
+          let isDeliveryOrder = isDelivery ? '1' : '0';
+          let isDelivered = groupItem.is_delivered;
+          let isReturned = groupItem.is_returned;
+          let isReturnOrder = groupItem.is_return_order;
+          apiPayload.push({
+            trans_id: item.id,
+            trans_item_id: groupItem.trans_item_id,
+            is_delivery_order: isDeliveryOrder,
+            is_delivered: isDelivered,
+            is_returned: isReturned,
+            is_return_order: isReturnOrder
+          });
+        }
+        
+        const response = await firstValueFrom(this.apiService.updateTransactionGroupItems(apiPayload).pipe(
+          map((resp: any) => ({
+            hasSuccess: Array.isArray(resp) && resp.some((it: any) => it?.success === true),
+            response: resp
+          }))
+        ));
+
+        if (!response.hasSuccess) {
+          this.utilService.showAlert('Error updating group items. Please try again later.');
+          return;
+        }
       }
 
       finalItemsToMarkDelivery.push({
@@ -395,6 +460,11 @@ export class AllTransactionsComponent implements OnInit {
     }
 
     this.updateTransaction(finalItemsToMarkDelivery);
+  }
+
+  async getGroupItems(transId: any) {
+    const response: any = await firstValueFrom(this.apiService.getTransactionGroupItems({ trans_id: transId }));
+    return response.dataArray || [];
   }
 
   setOrderDelivered() {
@@ -433,7 +503,7 @@ export class AllTransactionsComponent implements OnInit {
         }
       }, error: (err) => {
         console.error(err);
-        this.utilService.showAlert("Transaction Update Failed. Error: " + JSON.stringify(err), "Close");
+        this.utilService.showAlert("Transaction Update Failed. Error: " + JSON.stringify(err));
       }
     });
   }

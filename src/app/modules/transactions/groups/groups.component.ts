@@ -200,7 +200,8 @@ export class GroupsComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const arr = control.get('items') as FormArray;
       if (!arr) return null;
-      const sum = arr.controls.reduce((s, g) => s + Number(g.get('itemAmount')?.value || 0), 0);
+      const sumRaw = arr.controls.reduce((s, g) => s + Number(g.get('itemAmount')?.value || 0), 0);
+      const sum = Math.round(sumRaw * 100) / 100;
       return sum != maxTotal ? { totalExceeded: { max: maxTotal, sum } } : null;
     };
   }

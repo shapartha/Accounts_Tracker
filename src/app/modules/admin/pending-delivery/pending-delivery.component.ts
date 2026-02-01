@@ -86,7 +86,7 @@ export class PendingDeliveryComponent implements OnInit, OnChanges {
             if (this.selectedDeliveryType == 'DELIVERED' && (parseInt(item.is_delivery_order) == 1 && item.is_delivered == 1)) {
               this.pendingDeliveries.push(_trans);
             }
-            if (this.selectedDeliveryType == 'RAISED_RETURN' && (parseInt(item.is_delivery_order) == 1 && parseInt(item.is_delivered) == 1 && parseInt(item.is_return_order) == 1)) {
+            if (this.selectedDeliveryType == 'RAISED_RETURN' && (parseInt(item.is_delivery_order) == 1 && parseInt(item.is_delivered) == 1 && parseInt(item.is_return_order) == 1 && parseInt(item.is_returned) != 1)) {
               this.pendingDeliveries.push(_trans);
             }
             if (this.selectedDeliveryType == 'RETURNED' && (parseInt(item.is_delivery_order) == 1 && parseInt(item.is_delivered) == 1 && parseInt(item.is_return_order) == 1 && parseInt(item.is_returned) == 1)) {
@@ -119,7 +119,7 @@ export class PendingDeliveryComponent implements OnInit, OnChanges {
       });
     } else if (this.selectedDeliveryType == 'RAISED_RETURN') {
       this.allDeliveries.forEach((item: any) => {
-        if (parseInt(item.is_delivery_order) == 1 && parseInt(item.is_delivered) == 1 && parseInt(item.is_return_order) == 1) {
+        if (parseInt(item.is_delivery_order) == 1 && parseInt(item.is_delivered) == 1 && parseInt(item.is_return_order) == 1 && parseInt(item.is_returned) != 1) {
           this.pendingDeliveries.push(item);
         }
       });
