@@ -1,7 +1,7 @@
 <div class="container mt-2" id="home-section">
     <app-scheduled [refreshIt]="refreshScheduled" (refreshParent)="refresh($event)"></app-scheduled>
     <app-recurring (refreshParent)="refresh($event)"></app-recurring>
-    <h5>Categories</h5>
+    <h5>Categories <span class="float-end hyperlink small" goto="/all-transactions">View All Transactions</span></h5>
     <div class="row">
         @for (category of categories; track category) {
         <div class="col-md-2" [contextMenu]="oneContextMenu" [contextMenuValue]="category">

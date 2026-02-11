@@ -6,11 +6,12 @@ import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { firstValueFrom } from 'rxjs';
 import { UpdateRecurringComponent } from './../../modals/update-recurring/update-recurring.component';
+import { GotoDirective } from 'app/directives/goto.directive';
 
 @Component({
   selector: 'app-recurring',
   standalone: true,
-  imports: [NgbCarouselModule, FormsModule, CommonModule, UpdateRecurringComponent],
+  imports: [NgbCarouselModule, FormsModule, CommonModule, UpdateRecurringComponent, GotoDirective],
   templateUrl: './recurring.component.html',
   styleUrl: './recurring.component.scss'
 })

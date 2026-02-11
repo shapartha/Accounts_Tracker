@@ -5,7 +5,7 @@
         @for (trans of pending_rec_trans; track trans; let i = $index) {
         <ng-template ngbSlide>
             <div class="card">
-                <h6 class="card-header bg-dark">{{ trans.rec_trans_desc }}</h6>
+                <h6 class="card-header bg-dark">{{ trans.rec_trans_desc }} <span class="float-end hyperlink" goto="/all-recurring">View All</span></h6>
                 <div [classList]="'card-body' + (trans.rec_trans_type == 'DEBIT' ? ' bg-danger-subtle' : ' bg-success-subtle')">
                     <div class="row">
                         <h6 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">

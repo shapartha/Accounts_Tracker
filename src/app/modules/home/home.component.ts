@@ -17,11 +17,12 @@ import { AddUpdateAccountComponent } from "../accounts/add-update-account/add-up
 import { AddUpdateCategoryComponent } from '../categories/add-update-category/add-update-category.component';
 import { SaveTransaction } from 'app/models/transaction';
 import { AppConstants } from 'app/const/app.constants';
+import { GotoDirective } from 'app/directives/goto.directive';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent, AddUpdateCategoryComponent],
+  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent, AddUpdateCategoryComponent, GotoDirective],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
