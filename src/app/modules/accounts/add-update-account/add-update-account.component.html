@@ -22,7 +22,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-md-4 mt-3">
                 <mat-label>Account Balance: </mat-label>
-                <input type="number" min="0" matInput placeholder="Balance" name="balance" required
+                <input type="number" matInput placeholder="Balance" name="balance" required
                     formControlName="balance">
                 <mat-error *ngIf="form.get('balance')?.value == null || form.get('balance')?.value == undefined">
                     Valid number required.
