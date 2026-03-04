@@ -23,6 +23,10 @@ export class MfDashboardComponent implements OnInit {
   @Output() selectedData: EventEmitter<any> = new EventEmitter();
   mfMappings: any[] = [];
   overallXirr: number = 0.00;
+  overallInvested: number = 0.00;
+  overallValuation: number = 0.00;
+  overallReturns: number = 0.00;
+  totalReturns: number = 0.00;
   dialogTitle = '';
   modalRef: any;
   selectedMfScheme: any;
@@ -87,8 +91,10 @@ export class MfDashboardComponent implements OnInit {
             };
             _item.curr_amt = this.utilService.formatAmountWithComma(this.utilService.roundUpAmount(_item.units * _item.nav_amt));
             _item.nav_date = this.utilService.formatDate(_item.nav_date);
+            this.overallValuation += _item.nav_amt * _item.units;
             this.mfMappings.push(_item);
           });
+          this.overallValuation = this.utilService.roundUpAmt(this.overallValuation);
           this.populateXIRR();
         } else {
           this.utilService.showAlert(resp);
@@ -154,6 +160,7 @@ export class MfDashboardComponent implements OnInit {
           }
           let _payments: number[] = [];
           let _days: Date[] = [];
+          let _totalInvested: any[] = [];
           mfTransResp.dataArray.forEach((itm: any) => {
             if (itm.trans_type.toUpperCase() === 'CREDIT') {
               _payments.push(0 - itm.amount);
@@ -161,9 +168,25 @@ export class MfDashboardComponent implements OnInit {
               _payments.push(Number(this.utilService.roundUpAmount(itm.amount)));
             }
             _days.push(new Date(itm.trans_date));
+
+            if (_totalInvested.find(item => item.scheme_code === itm.scheme_code) == null) {
+              _totalInvested.push({ scheme_code: itm.scheme_code, amount: Number(itm.amount), bal_units: Number(itm.balance_units) });
+            } else {
+              if (itm.trans_type.toUpperCase() === 'CREDIT') {
+                _totalInvested.find(item => item.scheme_code === itm.scheme_code).amount += Number(itm.amount);
+                _totalInvested.find(item => item.scheme_code === itm.scheme_code).bal_units += Number(itm.balance_units);
+              } else {
+                _totalInvested.find(item => item.scheme_code === itm.scheme_code).bal_units -= Number(itm.balance_units);
+              }
+            }
           });
+
+          this.overallInvested = this.utilService.roundUpAmt(_totalInvested.filter(item => item.bal_units > 0.1).reduce((acc, curr) => acc + curr.amount, 0));
           _payments.push(Number(this.utilService.formatStringValueToAmount(this.accountDetails.balance).toFixed(2)));
           _days.push(new Date());
+          this.totalReturns = this.utilService.roundUpAmt(this.overallValuation - this.overallInvested);
+          this.overallReturns = this.utilService.roundUpAmt((this.totalReturns / this.overallInvested) * 100);
+
           let xirrVal = this.xirrService.getXirrVal(0.1, _payments, _days);
           if (isNaN(xirrVal) || !isFinite(xirrVal)) {
             xirrVal = 0.00;

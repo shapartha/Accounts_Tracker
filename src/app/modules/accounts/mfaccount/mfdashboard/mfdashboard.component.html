@@ -1,4 +1,13 @@
 <div style="margin: 20px;">
+    <div class="row">
+        <div class="col-sm-6">Total Invested: ₹ {{overallInvested}}</div>
+        <div class="col-sm-6 text-end">Current Value: ₹ <span [classList]="getMoneyVal(overallValuation, '', 'negative-val', 'positive-val')">{{overallValuation}}</span></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-9">Absolute Returns: <span [classList]="getMoneyVal(totalReturns, '', 'negative-val', 'positive-val')">₹ {{totalReturns}}</span> (<span [classList]="getMoneyVal(overallReturns, '', 'negative-val', 'positive-val')">{{overallReturns}}%</span>)</div>
+        <div class="col-sm-3 text-end">XIRR: <span [classList]="getMoneyVal(overallXirr, '', 'negative-val', 'positive-val')">{{overallXirr}}%</span></div>
+    </div>
+    <hr />
     @for (item of mfMappings; track $index) {
     <div [classList]="getMoneyVal(item, 'row mf-mapping-item ', 'bg-danger-subtle', 'bg-success-subtle')" [contextMenu]="oneContextMenu"
         [contextMenuValue]="item">
