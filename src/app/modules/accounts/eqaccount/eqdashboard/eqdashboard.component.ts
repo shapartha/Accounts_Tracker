@@ -22,6 +22,11 @@ export class EqDashboardComponent implements OnInit {
   @Output() changedAccountDetails: EventEmitter<Account> = new EventEmitter();
   @Output() selectedData: EventEmitter<any> = new EventEmitter();
   eqMappings: any[] = [];
+  overallXirr: number = 0.00;
+  overallInvested: number = 0.00;
+  overallValuation: number = 0.00;
+  overallReturns: number = 0.00;
+  totalReturns: number = 0.00;
   selectedEqScheme: any;
   dialogTitle: string = '';
   modalRef: any;
@@ -68,6 +73,9 @@ export class EqDashboardComponent implements OnInit {
           if (resp.response !== '200') {
             return;
           }
+          let _payments: number[] = [];
+          let _days: Date[] = [];
+          let _totalInvested: any[] = [];
           resp.dataArray.forEach((element: any) => {
             let _item = {
               account_id: element.account_id,
@@ -84,12 +92,33 @@ export class EqDashboardComponent implements OnInit {
               ann_return: 0,
               abs_return: 0
             };
+
+            _payments.push(0 - Number(this.utilService.roundUpAmount(element.inv_amt)));
+            _days.push(new Date(element.purchase_date));
+            _totalInvested.push({ scheme_code: element.stock_symbol, amount: Number(element.inv_amt) });
+            this.overallValuation += element.current_market_price * element.no_of_shares;
+
             _item.curr_amt = this.utilService.formatAmountWithComma((_item.no_of_shares * element.current_market_price).toString());
             _item.abs_return = this.utilService.roundUpAmt((((_item.no_of_shares * element.current_market_price) / element.inv_amt) - 1) * 100);
             let _daydiff_ = this.utilService.calculateDateDiff(element.purchase_date);
             _item.ann_return = this.utilService.roundUpAmt((((_item.no_of_shares * element.current_market_price) - element.inv_amt) * 100) / (element.inv_amt * (_daydiff_ / 365)));
             this.eqMappings.push(_item);
           });
+
+          this.overallValuation = this.utilService.roundUpAmt(this.overallValuation);
+          _payments.push(Number(this.utilService.formatStringValueToAmount(this.accountDetails.balance).toFixed(2)));
+          _days.push(new Date());
+          this.overallInvested = this.utilService.roundUpAmt(_totalInvested.reduce((acc, curr) => acc + curr.amount, 0));
+          this.totalReturns = this.utilService.roundUpAmt(this.overallValuation - this.overallInvested);
+          this.overallReturns = this.utilService.roundUpAmt((this.totalReturns / this.overallInvested) * 100);
+
+          let xirrVal = this.xirrService.getXirrVal(0.1, _payments, _days);
+          if (isNaN(xirrVal) || !isFinite(xirrVal)) {
+            xirrVal = 0.00;
+          } else {
+            xirrVal = Number(this.utilService.roundUpAmount(xirrVal * 100));
+          }
+          this.overallXirr = xirrVal;
           this.refreshEqData('CMP_ONLY');
         } else {
           this.utilService.showAlert(resp);
