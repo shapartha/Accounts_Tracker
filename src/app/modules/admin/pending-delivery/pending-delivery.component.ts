@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Router } from '@angular/router';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ConfirmData } from 'app/models/confirm';
-import { Transaction } from 'app/models/transaction';
+import { SaveTransaction, Transaction } from 'app/models/transaction';
 import { ApiService } from 'app/services/api.service';
 import { UtilService } from 'app/services/util.service';
 import { MatSelectModule } from '@angular/material/select';
@@ -144,6 +144,88 @@ export class PendingDeliveryComponent implements OnInit, OnChanges {
       trans_id: item.id
     };
     this.updateTransaction(_updTrans);
+  }
+
+  revertOrderDelivered(e: any) {
+    let item = e.value;
+    let _updTrans = {
+      is_delivered: false,
+      is_return_order: false,
+      is_returned: false,
+      trans_id: item.id
+    };
+    this.updateTransaction(_updTrans);
+  }
+
+  raiseReturnRequest(e: any) {
+    let item = e.value;
+    let _updTrans = {
+      is_delivered: true,
+      is_return_order: true,
+      is_returned: false,
+      trans_id: item.id
+    };
+    this.updateTransaction(_updTrans);
+  }
+
+  setOrderReturned(e: any) {
+    let item = e.value;
+    let _updTrans = {
+      is_delivered: true,
+      is_return_order: true,
+      is_returned: true,
+      trans_id: item.id
+    };
+    this.updateTransaction(_updTrans);
+    this.addRefundTransaction(item);
+  }
+
+  revertReturnRequest(e: any) {
+    let item = e.value;
+    let _updTrans = {
+      is_delivered: true,
+      is_return_order: false,
+      is_returned: false,
+      trans_id: item.id
+    };
+    this.updateTransaction(_updTrans);
+  }
+
+  revertOrderReturned(e: any) {
+    let item = e.value;
+    let _updTrans = {
+      is_delivered: true,
+      is_return_order: true,
+      is_returned: false,
+      trans_id: item.id
+    };
+    this.updateTransaction(_updTrans);
+  }
+
+  addRefundTransaction(item: Transaction) {
+    let inputData: SaveTransaction = {};
+    inputData.acc_id = item.acc_id;
+    inputData.user_id = item.user_id;
+    inputData.amount = this.utilService.formatStringValueToAmount(item.amount).toString();
+    inputData.type = item.transType!.toUpperCase() == 'DEBIT' ? 'CREDIT' : 'DEBIT';
+    inputData.desc = 'Refund for ' + item.description;
+    let refundDate = new Date();
+    refundDate.setDate(refundDate.getDate() + 1);
+    inputData.date = this.utilService.convertDate(refundDate.toISOString().split('T')[0]);
+    inputData.is_delivery_order = '0';
+    inputData.is_delivered = '0';
+
+    this.apiService.saveTransaction(inputData).subscribe({
+      next: (resp: any) => {
+        if (resp.success !== true) {
+          this.utilService.showAlert("Some error occurred while saving. Please try again.");
+        }
+      },
+      error: (err) => {
+        console.error("Error -> " + err);
+        this.utilService.showAlert("Error Occurred while Saving ! Please try again.");
+      }
+    });
   }
 
   updateTransaction(inputs: any, fromDialog = false) {

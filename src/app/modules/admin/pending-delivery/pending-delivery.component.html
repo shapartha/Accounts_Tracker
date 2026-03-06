@@ -41,8 +41,25 @@
 </div>
 
 <context-menu #oneContextMenu [menuClass]="'app-pending-delivery-menu'">
-    <ng-template contextMenuItem (execute)="markDeliveryOrder($event)" let-value>Unmark as Delivery Order</ng-template>
-    <ng-template contextMenuItem (execute)="setOrderDelivered($event)" let-value>
+    <ng-template contextMenuItem (execute)="markDeliveryOrder($event)" let-value *ngIf="selectedDeliveryType == 'PENDING'">
+        Unmark as Delivery Order
+    </ng-template>
+    <ng-template contextMenuItem (execute)="setOrderDelivered($event)" let-value *ngIf="selectedDeliveryType == 'PENDING'">
         Set Order Delivered
+    </ng-template>
+    <ng-template contextMenuItem (execute)="revertOrderDelivered($event)" let-value *ngIf="selectedDeliveryType == 'DELIVERED'">
+        Revert Order Delivered
+    </ng-template>
+    <ng-template contextMenuItem (execute)="raiseReturnRequest($event)" let-value *ngIf="selectedDeliveryType == 'DELIVERED'">
+        Raise Return Request
+    </ng-template>
+    <ng-template contextMenuItem (execute)="revertReturnRequest($event)" let-value *ngIf="selectedDeliveryType == 'RAISED_RETURN'">
+        Revert Return Request
+    </ng-template>
+    <ng-template contextMenuItem (execute)="setOrderReturned($event)" let-value *ngIf="selectedDeliveryType == 'RAISED_RETURN'">
+        Set Order Returned
+    </ng-template>
+    <ng-template contextMenuItem (execute)="revertOrderReturned($event)" let-value *ngIf="selectedDeliveryType == 'RETURNED'">
+        Revert Order Returned
     </ng-template>
 </context-menu>
