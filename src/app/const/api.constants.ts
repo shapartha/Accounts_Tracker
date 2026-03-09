@@ -74,6 +74,7 @@ export class ApiConstants {
     static API_DELETE_TAGS_BY_TRANSID: string = "deleteTagsMappingForTransId";
     static API_DELETE_TRANS_BY_TAGID: string = "deleteTransactionMappingForTagId";
     static API_GET_TAGS_BY_TRANSID: string = "getTagsByTransId";
+    static API_GET_TAGS_VOLUME: string = "getTagVolumes";
     static API_GET_TRANS_BY_TAGID: string = "getTransactionsByTagId";
     static API_QUERY_ANYTHING: string = "excQry";
     static API_SERVER_TIME: string = "getServerTime";

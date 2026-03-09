@@ -17,12 +17,13 @@ import { AddUpdateAccountComponent } from "../accounts/add-update-account/add-up
 import { AddUpdateCategoryComponent } from '../categories/add-update-category/add-update-category.component';
 import { SaveTransaction } from 'app/models/transaction';
 import { AppConstants } from 'app/const/app.constants';
+import { PieChartComponent } from '../shared/pie-chart/pie-chart.component';
 import { GotoDirective } from 'app/directives/goto.directive';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent, AddUpdateCategoryComponent, GotoDirective],
+  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent, AddUpdateCategoryComponent, PieChartComponent, GotoDirective],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -40,12 +41,21 @@ export class HomeComponent implements OnInit {
   modalRef: any;
   modifiedRecord: any = {};
   refreshScheduled: boolean = false;
+  pieChart: {
+    labels: string[],
+    values: number[]
+  } = {
+      labels: [],
+      values: []
+    };
+  reportsData: any = {};
 
   constructor(private apiService: ApiService, public utilService: UtilService, private router: Router, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.utilService.removeSessionStorageData('lastAccountId');
     this.getAllCategories();
+    this.getReportsData();
   }
 
   setCategory(val: any) {
@@ -60,6 +70,31 @@ export class HomeComponent implements OnInit {
 
   getClassVal(value: any) {
     return this.utilService.getClassVal(value);
+  }
+
+  getReportsData() {
+    this.apiService.getTagsVolume().subscribe({
+      next: (resp: any) => {
+        if (resp.success === true) {
+          this.reportsData = resp.dataArray.slice(0, 10); // get top 10 tags
+          let _labels = this.reportsData.map((item: any) => item.tag_name);
+          let _values = this.reportsData.map((item: any) => item.TOTAL);
+          this.pieChart = { labels: _labels, values: _values };
+        } else {
+          this.utilService.showAlert("Some error occurred while fetching reports data. Please try again");
+        }
+      }, error: (err: any) => {
+        console.error("Error -> " + err);
+        this.utilService.showAlert("Error Occurred while fetching reports data ! Please try again");
+      }
+    });
+  }
+
+  onSliceClicked(evt: { index: number; label?: string; value?: number }) {
+    const selectedPie = this.reportsData[evt.index];
+    setTimeout(() => {
+      this.router.navigate(['all-transactions/tags/' + selectedPie.tag_id], { state: { tagName: selectedPie.tag_name } });
+    }, 1500);
   }
 
   getAllCategories() {

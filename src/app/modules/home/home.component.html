@@ -1,6 +1,11 @@
 <div class="container mt-2" id="home-section">
     <app-scheduled [refreshIt]="refreshScheduled" (refreshParent)="refresh($event)"></app-scheduled>
     <app-recurring (refreshParent)="refresh($event)"></app-recurring>
+
+    <app-pie-chart *ngIf="pieChart.values.length > 0" (sliceClick)="onSliceClicked($event)"
+      [chartTitle]="'Top 10 Expense Categories'" [labels]="pieChart.labels" [data]="pieChart.values">
+    </app-pie-chart>
+
     <h5>Categories <span class="float-end hyperlink small" goto="/all-transactions">View All Transactions</span></h5>
     <div class="row">
         @for (category of categories; track category) {

@@ -1,6 +1,6 @@
 {
   "name": "accounts-tracker",
-  "version": "14.7.1",
+  "version": "15.0.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -26,6 +26,7 @@
     "@angular/router": "^17.3.0",
     "@ng-bootstrap/ng-bootstrap": "^16.0.0",
     "@perfectmemory/ngx-contextmenu": "^17.0.0",
+    "chart.js": "^4.5.1",
     "moment-timezone": "^0.5.45",
     "ngx-image-compress": "^18.1.5",
     "ngx-spinner": "^17.0.0",

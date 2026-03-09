@@ -363,6 +363,11 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
+  getTagsVolume(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_TAGS_VOLUME;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   saveTransTagMapping(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SAVE_TRANS_TAG_MAPPING;
     return this.postApiCall(apiFuncName, apiFuncParams);
