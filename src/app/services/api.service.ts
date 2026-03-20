@@ -368,6 +368,11 @@ export class ApiService {
     return this.invokeApiCall(apiFuncName, apiFuncParams);
   }
 
+  getTagsSum(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_TAGS_SUM;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
+
   saveTransTagMapping(apiFuncParams: any = {}) {
     const apiFuncName = ApiConstants.API_SAVE_TRANS_TAG_MAPPING;
     return this.postApiCall(apiFuncName, apiFuncParams);

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, QueryList, TemplateRef, ViewChildren } from '@angular/core';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { Router } from '@angular/router';
 import { Account } from 'app/models/account';
@@ -12,18 +12,19 @@ import { ScheduledComponent } from '../transactions/scheduled/scheduled.componen
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { ConfirmDialogComponent } from '../modals/confirm-dialog/confirm-dialog.component';
 import { ConfirmData } from 'app/models/confirm';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule, NgbSlideEvent } from '@ng-bootstrap/ng-bootstrap';
 import { AddUpdateAccountComponent } from "../accounts/add-update-account/add-update-account.component";
 import { AddUpdateCategoryComponent } from '../categories/add-update-category/add-update-category.component';
 import { SaveTransaction } from 'app/models/transaction';
 import { AppConstants } from 'app/const/app.constants';
 import { PieChartComponent } from '../shared/pie-chart/pie-chart.component';
 import { GotoDirective } from 'app/directives/goto.directive';
+import { BarChartComponent } from '../shared/bar-chart/bar-chart.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent, AddUpdateCategoryComponent, PieChartComponent, GotoDirective],
+  imports: [CommonModule, MatListModule, RecurringComponent, ScheduledComponent, ContextMenuModule, ConfirmDialogComponent, AddUpdateAccountComponent, AddUpdateCategoryComponent, PieChartComponent, GotoDirective, BarChartComponent, NgbModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -48,7 +49,15 @@ export class HomeComponent implements OnInit {
       labels: [],
       values: []
     };
-  reportsData: any = {};
+  barChart: {
+    labels: string[],
+    values: number[]
+  } = {
+      labels: [],
+      values: []
+    };
+  expensesReportsData: any = {};
+  transactionVolumeReportsData: any = {};
 
   constructor(private apiService: ApiService, public utilService: UtilService, private router: Router, private modalService: NgbModal) { }
 
@@ -73,28 +82,65 @@ export class HomeComponent implements OnInit {
   }
 
   getReportsData() {
-    this.apiService.getTagsVolume().subscribe({
+    this.apiService.getTagsSum().subscribe({
       next: (resp: any) => {
         if (resp.success === true) {
-          this.reportsData = resp.dataArray.slice(0, 10); // get top 10 tags
-          let _labels = this.reportsData.map((item: any) => item.tag_name);
-          let _values = this.reportsData.map((item: any) => item.TOTAL);
+          this.expensesReportsData = resp.dataArray.slice(0, 10);
+          let _labels = this.expensesReportsData.map((item: any) => item.tag_name);
+          let _values = this.expensesReportsData.map((item: any) => item.TOTAL);
           this.pieChart = { labels: _labels, values: _values };
         } else {
-          this.utilService.showAlert("Some error occurred while fetching reports data. Please try again");
+          this.utilService.showAlert("Some error occurred while fetching expense reports data. Please try again");
         }
       }, error: (err: any) => {
         console.error("Error -> " + err);
-        this.utilService.showAlert("Error Occurred while fetching reports data ! Please try again");
+        this.utilService.showAlert("Error Occurred while fetching expense reports data ! Please try again");
+      }
+    });
+
+    this.apiService.getTagsVolume().subscribe({
+      next: (resp: any) => {
+        if (resp.success === true) {
+          this.transactionVolumeReportsData = resp.dataArray.slice(0, 10);
+          let _labels = this.transactionVolumeReportsData.map((item: any) => item.tag_name);
+          let _values = this.transactionVolumeReportsData.map((item: any) => item.TOTAL);
+          this.barChart = { labels: _labels, values: _values };
+        } else {
+          this.utilService.showAlert("Some error occurred while fetching transaction volume reports data. Please try again");
+        }
+      }, error: (err: any) => {
+        console.error("Error -> " + err);
+        this.utilService.showAlert("Error Occurred while fetching transaction volume reports data ! Please try again");
       }
     });
   }
 
   onSliceClicked(evt: { index: number; label?: string; value?: number }) {
-    const selectedPie = this.reportsData[evt.index];
+    const selectedPie = this.expensesReportsData[evt.index];
+    this.router.navigate(['all-transactions/tags/' + selectedPie.tag_id], { state: { tagName: selectedPie.tag_name } });
+  }
+
+  onBarClicked(evt: { index: number; label?: string; value?: number }) {
+    const selectedBar = this.transactionVolumeReportsData[evt.index];
+    this.router.navigate(['all-transactions/tags/' + selectedBar.tag_id], { state: { tagName: selectedBar.tag_name } });
+  }
+
+  @ViewChildren(BarChartComponent) totalTransactionChart!: QueryList<BarChartComponent>;
+  @ViewChildren(PieChartComponent) expenseDistributionChart!: QueryList<PieChartComponent>;
+  onSlide(event: NgbSlideEvent) {
+    // give browser a moment to finish the slide transition
     setTimeout(() => {
-      this.router.navigate(['all-transactions/tags/' + selectedPie.tag_id], { state: { tagName: selectedPie.tag_name } });
-    }, 1500);
+      if (typeof this.totalTransactionChart.first?.update === 'function') {
+        let _labels = this.expensesReportsData.map((item: any) => item.tag_name);
+        let _values = this.expensesReportsData.map((item: any) => item.TOTAL);
+        this.totalTransactionChart.first.update(_values, _labels);
+      }
+      if (typeof this.expenseDistributionChart.first?.update === 'function') {
+        let _labels = this.transactionVolumeReportsData.map((item: any) => item.tag_name);
+        let _values = this.transactionVolumeReportsData.map((item: any) => item.TOTAL);
+        this.expenseDistributionChart.first.update(_values, _labels);
+      }
+    }, 100);
   }
 
   getAllCategories() {

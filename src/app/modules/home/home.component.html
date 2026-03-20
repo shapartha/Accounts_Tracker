@@ -2,9 +2,22 @@
     <app-scheduled [refreshIt]="refreshScheduled" (refreshParent)="refresh($event)"></app-scheduled>
     <app-recurring (refreshParent)="refresh($event)"></app-recurring>
 
-    <app-pie-chart *ngIf="pieChart.values.length > 0" (sliceClick)="onSliceClicked($event)"
-      [chartTitle]="'Top 10 Expense Categories'" [labels]="pieChart.labels" [data]="pieChart.values">
-    </app-pie-chart>
+    <ngb-carousel [interval]="0" (slide)="onSlide($event)">
+        <ng-template ngbSlide>
+            <div class="d-flex justify-content-center">
+                <app-pie-chart class="canvas-resizer" *ngIf="pieChart.values.length > 0" (sliceClick)="onSliceClicked($event)" [chartTitle]="'Top 10 Expense Categories'"
+                    [labels]="pieChart.labels" [data]="pieChart.values">
+                </app-pie-chart>
+            </div>
+        </ng-template>
+        <ng-template ngbSlide>
+            <div class="d-flex justify-content-center">
+                <app-bar-chart class="canvas-resizer" *ngIf="barChart.values.length > 0" [chartTitle]="'Top 10 Transaction Categories'" [labels]="barChart.labels" [data]="barChart.values"
+                    (barClick)="onBarClicked($event)">
+                </app-bar-chart>
+            </div>
+        </ng-template>
+    </ngb-carousel>
 
     <h5>Categories <span class="float-end hyperlink small" goto="/all-transactions">View All Transactions</span></h5>
     <div class="row">
@@ -28,11 +41,9 @@
         <div class="col-md-12">
             <mat-selection-list #accounts [multiple]="false" (selectionChange)="onAccountSelected($event)">
                 @for (account of selectedCategory.accounts; track account) {
-                <mat-list-option [value]="account" togglePosition="before" [contextMenu]="oneContextMenu"
-                    [contextMenuValue]="account">
+                <mat-list-option [value]="account" togglePosition="before" [contextMenu]="oneContextMenu" [contextMenuValue]="account">
                     {{ account.name }}
-                    <span class="float-end"
-                        [ngClass]="(utilService.formatStringValueToAmount(account.balance) < 0) ? 'negative-val': 'positive-val'">{{
+                    <span class="float-end" [ngClass]="(utilService.formatStringValueToAmount(account.balance) < 0) ? 'negative-val': 'positive-val'">{{
                         account.balance }}</span>
                 </mat-list-option>
                 }
@@ -60,10 +71,10 @@
     <div class="modal-body">
         <form>
             <div class="mb-3">
-                <app-add-update-account *ngIf="updateObject.itemType == 'ACCOUNT'" [isUpdate]="true"
-                    [updateAccount]="updateObject" (formData)="updatedRecord($event)"></app-add-update-account>
-                <app-add-update-category *ngIf="updateObject.itemType == 'CATEGORY'" [isUpdate]="true"
-                    [updateCategory]="updateObject" (formData)="updatedRecord($event)"></app-add-update-category>
+                <app-add-update-account *ngIf="updateObject.itemType == 'ACCOUNT'" [isUpdate]="true" [updateAccount]="updateObject"
+                    (formData)="updatedRecord($event)"></app-add-update-account>
+                <app-add-update-category *ngIf="updateObject.itemType == 'CATEGORY'" [isUpdate]="true" [updateCategory]="updateObject"
+                    (formData)="updatedRecord($event)"></app-add-update-category>
             </div>
         </form>
     </div>
@@ -76,5 +87,5 @@
 <button id="confirmBtn" type="button" data-toggle="modal" class="d-none" data-target="#confirmDialog">Launch
     modal</button>
 
-<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle"
-    [confirmObj]="confirmData" [canClose]="canClose" [modalMainButton]="modalBtnName"></app-confirm-dialog>
+<app-confirm-dialog (onConfirmSubmit)="confirm($event)" [modalBody]="modalBody" [modalTitle]="modalTitle" [confirmObj]="confirmData" [canClose]="canClose"
+    [modalMainButton]="modalBtnName"></app-confirm-dialog>

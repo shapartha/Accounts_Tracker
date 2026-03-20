@@ -35,3 +35,27 @@
     padding: 10px;
     text-align: center;
 }
+
+.canvas-resizer {
+    max-width: 600px;
+    width: 100vw;
+}
+
+/* Ensure the parent container allows the indicators to exist outside */
+.carousel {
+    position: relative;
+    /* Add padding to prevent the indicators from overlapping 
+       other content below the chart */
+    padding-bottom: 40px; 
+}
+
+/* Position indicators outside */
+.carousel-indicators {
+    position: absolute;
+    bottom: -30px; /* Move below the chart area */
+    margin-bottom: 0;
+}
+
+::ng-deep.carousel-control-next-icon, .carousel-control-prev-icon {
+    width: 1rem !important;
+}

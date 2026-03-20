@@ -1,0 +1,17 @@
+.bar-chart-container {
+  max-width: 700px;
+  margin: 0 auto;
+  min-height: 240px;   /* desired minimum height */
+  max-height: 400px;
+  position: relative;  /* keeps absolutely positioned children inside */
+}
+
+.chart-go-btn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+}
