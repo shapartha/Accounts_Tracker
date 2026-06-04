@@ -11,7 +11,7 @@
                         <h6 class="" [classList]="getMoneyVal(trans, 'card-title col-md-6 ', 'negative-val', 'positive-val')">
                             {{ utilService.formatAmountWithComma(trans.trans_amount) }}</h6>
                         <h6 class="col-md-6" *ngIf="trans.is_mf == 1 || trans.is_equity == 1">{{ trans.scheme_name }} @if (trans.is_mf == 1 || trans.is_equity == 1) { ({{
-                            trans.mf_nav }}) }</h6>
+                            trans.mf_nav }} - {{ trans.nav_date }}) }</h6>
                     </div>
                     <div class="card-text row">
                         <p class="col-md-4">{{ trans.account_name }}</p>
