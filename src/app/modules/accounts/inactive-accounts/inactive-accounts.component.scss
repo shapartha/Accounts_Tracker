@@ -1,0 +1,22 @@
+@media (max-width: 767px) {
+    .card-text.row {
+        .col-md-6 {
+            width: 50% !important;
+        }
+        .col-md-3 {
+            width: 25% !important;
+        }
+    }
+
+    .card {
+        margin-bottom: 0 !important;
+    }
+}
+
+#inactive-accounts-section {
+    padding-bottom: 40px;
+}
+
+.card-text.row {
+    font-size: 10px;
+}

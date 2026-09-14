@@ -4,6 +4,7 @@ export interface Account {
     category_id?: string;
     category_name?: string;
     balance?: string;
+    is_active?: boolean | string;
     is_equity?: boolean | string;
     is_mf?: boolean | string;
     created_date?: string;

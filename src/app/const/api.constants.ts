@@ -84,6 +84,7 @@ export class ApiConstants {
     static API_DELETE_TRANSACTION_GROUP_ITEM: string = "deleteTransGroupMapping";
     static API_SAVE_TRANSACTION_GROUP_ITEMS: string = "saveTransGroupMapping";
     static API_UPDATE_TRANSACTION_GROUP_ITEMS: string = "updateTransGroupMapping";
+    static API_GET_INACTIVE_ACCOUNTS: string = "getInactiveAccounts";
     
     static SERVER_PATH_URL: string = "https://shapartha.online/accountstracker/";
     static SERVER_URL: string = this.SERVER_PATH_URL + "api/";

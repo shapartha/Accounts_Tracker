@@ -497,4 +497,9 @@ export class ApiService {
     const apiFuncName = ApiConstants.API_DELETE_TRANSACTION_GROUP_ITEM;
     return this.postApiCall(apiFuncName, apiFuncParams);
   }
+
+  getInactiveAccounts(apiFuncParams: any = {}) {
+    const apiFuncName = ApiConstants.API_GET_INACTIVE_ACCOUNTS;
+    return this.invokeApiCall(apiFuncName, apiFuncParams);
+  }
 }

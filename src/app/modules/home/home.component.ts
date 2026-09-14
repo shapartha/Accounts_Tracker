@@ -180,6 +180,7 @@ export class HomeComponent implements OnInit {
                     _account.created_date = val.dataArray[j].created_date;
                     _account.updated_date = val.dataArray[j].updated_date;
                     _account.user_id = Number(val.dataArray[j].user_id);
+                    _account.is_active = val.dataArray[j].is_active === 'Y' ? true : false;
                     _account.is_equity = Boolean(Number(val.dataArray[j].is_equity));
                     _account.is_mf = Boolean(Number(val.dataArray[j].is_mf));
                     __category.accounts.push(_account);
@@ -284,6 +285,7 @@ export class HomeComponent implements OnInit {
       this.modifiedRecord.balance = event.balance;
       this.modifiedRecord.isMf = event.isMf;
       this.modifiedRecord.isEquity = event.isEquity;
+      this.modifiedRecord.isActive = event.isActive;
       this.modifiedRecord.is_valid = event.valid;
     }
   }
@@ -348,6 +350,7 @@ export class HomeComponent implements OnInit {
       balance: item.balance.toString(),
       user_id: this.utilService.appUserId,
       category_id: item.category,
+      is_active: (item.isActive ? 'Y' : 'N'),
       is_mf: (item.isMf ? 1 : 0),
       is_equity: (item.isEquity ? 1 : 0)
     };

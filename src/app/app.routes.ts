@@ -20,6 +20,7 @@ import { EqAccountComponent } from './modules/accounts/eqaccount/eqaccount.compo
 import { AutoMailsComponent } from './modules/auto-mails/auto-mails.component';
 import { TagsComponent } from './modules/transactions/tags/tags.component';
 import { GroupsComponent } from './modules/transactions/groups/groups.component';
+import { InactiveAccountsComponent } from './modules/accounts/inactive-accounts/inactive-accounts.component';
 
 export const routes: Routes = [
     {
@@ -111,5 +112,9 @@ export const routes: Routes = [
     {
         path: 'transaction-group/:transId',
         component: GroupsComponent, canActivate : [AuthGuard]
+    },
+    {
+        path: 'admin/inactive-accounts',
+        component: InactiveAccountsComponent, canActivate : [AuthGuard]
     }
 ];

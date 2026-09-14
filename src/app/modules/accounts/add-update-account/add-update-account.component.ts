@@ -30,6 +30,7 @@ export class AddUpdateAccountComponent implements OnInit {
       accountName: [],
       category: [],
       balance: [0],
+      isActive: [true],
       isMf: [false],
       isEquity: [false]
     });
@@ -43,6 +44,7 @@ export class AddUpdateAccountComponent implements OnInit {
         accountName: [this.updateAccount.name],
         category: [this.updateAccount.category_id],
         balance: [this.utilService.formatStringValueToAmount(this.updateAccount.balance)],
+        isActive: [this.updateAccount.is_active],
         isMf: [this.updateAccount.is_mf],
         isEquity: [this.updateAccount.is_equity]
       });
