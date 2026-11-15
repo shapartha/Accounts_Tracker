@@ -33,7 +33,7 @@ export class InactiveAccountsComponent implements OnInit {
             let _itm = {
               account_id: obj.account_id,
               account_name: obj.account_name,
-              balance: this.utilService.formatAmountWithComma(obj.balance),
+              account_balance: this.utilService.formatAmountWithComma(obj.balance),
               is_active: obj.is_active
             };
             this.inactive_accounts.push(_itm);
